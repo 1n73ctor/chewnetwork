@@ -85,7 +85,7 @@ export default function RestaurantSection() {
           {restaurants?.map((rest, i) =>
           <article
             key={rest?.id}
-            className="scroll-reveal opacity-1 group bg-white border border-border rounded-3xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            className="scroll-reveal opacity-1 group bg-card border border-border rounded-3xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             style={{ animationDelay: `${i * 0.12}s` }}
             aria-label={`Restaurant: ${rest?.name}`}>
             

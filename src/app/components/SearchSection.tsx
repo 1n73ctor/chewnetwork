@@ -81,7 +81,7 @@ export default function SearchSection() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="What are you hungry for today?"
-                className="w-full pl-14 pr-32 py-5 rounded-2xl border-2 border-border bg-white text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary text-base font-medium shadow-sm transition-all duration-200"
+                className="w-full pl-14 pr-32 py-5 rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary text-base font-medium shadow-sm transition-all duration-200"
                 aria-label="Search recipes, restaurants, or ask Chef Pepe"
               />
               <button
@@ -100,7 +100,7 @@ export default function SearchSection() {
               <button
                 key={ex}
                 onClick={() => setQuery(ex)}
-                className="px-4 py-2 rounded-full bg-white border border-border text-foreground/70 text-sm font-medium hover:border-primary hover:text-primary transition-all duration-200"
+                className="px-4 py-2 rounded-full bg-card border border-border text-foreground/70 text-sm font-medium hover:border-primary hover:text-primary transition-all duration-200"
                 role="listitem"
                 aria-label={`Search for ${ex}`}
               >
@@ -125,7 +125,7 @@ export default function SearchSection() {
                 key={action.label}
                 href={action.href}
                 onClick={() => Analytics.talkToChefPepe('homepage_search_section')}
-                className="group relative overflow-hidden bg-white border border-border rounded-2xl p-5 hover:border-primary hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                className="group relative overflow-hidden bg-card border border-border rounded-2xl p-5 hover:border-primary hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
                 aria-label={action.label}
                 style={{ animationDelay: `${i * 0.1}s` }}
               >

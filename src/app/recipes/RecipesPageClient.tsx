@@ -334,7 +334,7 @@ export default function RecipesPageClient() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder='Try "30-minute chicken," "vegan pasta," or "what can I make with eggs?"'
-              className="w-full pl-5 pr-14 py-4 rounded-2xl border-2 border-border bg-white text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary text-sm shadow-sm"
+              className="w-full pl-5 pr-14 py-4 rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary text-sm shadow-sm"
               aria-label="Search recipes" />
             <button
               className="absolute right-3 top-1/2 -translate-y-1/2 btn-primary py-2 px-4 text-xs"
@@ -346,7 +346,7 @@ export default function RecipesPageClient() {
       </section>
 
       {/* Category Chips + Filter Button */}
-      <section className="sticky top-16 z-30 bg-white/95 backdrop-blur-sm border-b border-border px-4 py-3">
+      <section className="sticky top-16 z-30 bg-background/95 backdrop-blur-sm border-b border-border px-4 py-3">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 flex-1">
