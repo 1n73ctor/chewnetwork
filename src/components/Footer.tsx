@@ -46,7 +46,7 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="bg-foreground text-white pt-16 pb-8 rounded-t-[3rem] lg:rounded-t-[4rem]" role="contentinfo">
+    <footer className="bg-[#1a1f1b] text-white pt-16 pb-8 rounded-t-[3rem] lg:rounded-t-[4rem]" role="contentinfo">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Brand row */}
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 mb-12 pb-12 border-b border-white/10">

@@ -118,7 +118,7 @@ function RecipeCard({ recipe, delay }: {recipe: typeof trendingRecipes[0];delay:
         </div>
         {/* Save button */}
         <button
-          className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-foreground hover:bg-white hover:text-primary transition-all"
+          className="absolute top-3 right-3 w-8 h-8 bg-card/90 backdrop-blur-sm rounded-full flex items-center justify-center text-foreground hover:bg-card hover:text-primary transition-all"
           aria-label={`Save ${recipe.title}`}>
           
           <Icon name="BookmarkIcon" size={14} />

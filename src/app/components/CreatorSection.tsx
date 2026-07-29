@@ -73,7 +73,7 @@ export default function CreatorSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="bg-foreground py-16 lg:py-24 overflow-hidden" aria-labelledby="creator-heading">
+    <section ref={sectionRef} className="bg-[#1a1f1b] py-16 lg:py-24 overflow-hidden" aria-labelledby="creator-heading">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Header */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-14">

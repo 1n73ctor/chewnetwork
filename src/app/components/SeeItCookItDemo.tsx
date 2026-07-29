@@ -162,7 +162,7 @@ export default function SeeItCookItDemo() {
               className={`scroll-reveal opacity-1 group relative overflow-hidden rounded-2xl border-2 p-6 transition-all duration-500 cursor-default ${
               activeStep === i ?
               'border-primary bg-muted shadow-lg' :
-              'border-border bg-white hover:border-primary/50'}`
+              'border-border bg-card hover:border-primary/50'}`
               }
               style={{ animationDelay: `${i * 0.15}s` }}>
               
@@ -194,7 +194,7 @@ export default function SeeItCookItDemo() {
           <p className="text-muted-foreground text-sm mb-6">From quick weeknight dinners to recreating that dish you had in Paris.</p>
           <div className="flex flex-wrap gap-3">
             {useCases?.map((uc) =>
-            <span key={uc} className="px-4 py-2 bg-white border border-border rounded-full text-foreground text-sm font-medium">
+            <span key={uc} className="px-4 py-2 bg-card border border-border rounded-full text-foreground text-sm font-medium">
                 {uc}
               </span>
             )}

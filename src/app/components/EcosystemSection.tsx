@@ -193,7 +193,7 @@ export default function EcosystemSection() {
                 <h3 className="text-white font-extrabold text-xl mb-2">{ecosystemCards?.[3]?.heading}</h3>
                 <p className="text-white/80 text-sm leading-relaxed max-w-md">{ecosystemCards?.[3]?.text}</p>
               </div>
-              <Link href={ecosystemCards?.[3]?.href} className="inline-flex items-center gap-2 bg-white text-foreground px-5 py-3 rounded-full text-sm font-bold hover:bg-secondary transition-colors shrink-0">
+              <Link href={ecosystemCards?.[3]?.href} className="inline-flex items-center gap-2 bg-white text-gray-900 px-5 py-3 rounded-full text-sm font-bold hover:bg-gray-100 transition-colors shrink-0">
                 Explore Restaurants
                 <Icon name="ArrowRightIcon" size={14} />
               </Link>
