@@ -22,6 +22,24 @@
   --font-sans: var(--font-plus-jakarta-sans), sans-serif;
 }
 
+.dark {
+  --primary: #2EAD7A;
+  --primary-foreground: #FFFFFF;
+  --accent: #E07040;
+  --accent-foreground: #FFFFFF;
+  --background: #0F1410;
+  --foreground: #F0F5F2;
+  --secondary: #1A2420;
+  --secondary-foreground: #F0F5F2;
+  --muted: #1E2E28;
+  --muted-foreground: #8AB5A0;
+  --card: #161E1A;
+  --card-foreground: #F0F5F2;
+  --border: #2A3D35;
+  --input: #1E2E28;
+  --ring: #2EAD7A;
+}
+
 @layer base {
   *, ::before, ::after {
     box-sizing: border-box;
@@ -117,6 +135,12 @@
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+  }
+
+  .dark .nav-solid {
+    background: rgba(15, 20, 16, 0.95);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.3);
   }
 }
 

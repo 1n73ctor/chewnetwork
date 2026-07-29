@@ -70,15 +70,15 @@ export default function ChallengeSection() {
               Cook it your way. Share your creation. Let the community choose the favorites. Build your best burger, tell us what makes it special, and share your final plate.
             </p>
             <div className="flex flex-wrap gap-4 mb-8">
-              <div className="bg-white border border-border rounded-2xl px-5 py-3">
+              <div className="bg-card border border-border rounded-2xl px-5 py-3">
                 <p className="text-xs text-muted-foreground font-medium mb-0.5">Entries</p>
                 <p className="text-foreground font-extrabold text-xl">1,247</p>
               </div>
-              <div className="bg-white border border-border rounded-2xl px-5 py-3">
+              <div className="bg-card border border-border rounded-2xl px-5 py-3">
                 <p className="text-xs text-muted-foreground font-medium mb-0.5">Days Left</p>
                 <p className="text-foreground font-extrabold text-xl">4</p>
               </div>
-              <div className="bg-white border border-border rounded-2xl px-5 py-3">
+              <div className="bg-card border border-border rounded-2xl px-5 py-3">
                 <p className="text-xs text-muted-foreground font-medium mb-0.5">Countries</p>
                 <p className="text-foreground font-extrabold text-xl">38</p>
               </div>
@@ -99,7 +99,7 @@ export default function ChallengeSection() {
             {challengeEntries?.map((entry, i) =>
             <div
               key={entry?.id}
-              className="scroll-reveal opacity-1 group bg-white border border-border rounded-2xl overflow-hidden flex gap-0 hover:border-primary/40 hover:shadow-md transition-all duration-300"
+              className="scroll-reveal opacity-1 group bg-card border border-border rounded-2xl overflow-hidden flex gap-0 hover:border-primary/40 hover:shadow-md transition-all duration-300"
               style={{ animationDelay: `${i * 0.12}s` }}>
               
                 {/* Rank badge */}
