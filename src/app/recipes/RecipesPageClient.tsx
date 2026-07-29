@@ -159,7 +159,7 @@ function RecipeCard({ recipe, size = 'md' }: {recipe: Recipe;size?: 'sm' | 'md';
         <img src={recipe.image} alt={recipe.alt} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         <button
-          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-foreground hover:bg-white transition-colors"
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-gray-800 hover:bg-white transition-colors"
           aria-label="Save recipe"
           onClick={(e) => e.preventDefault()}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -196,6 +196,121 @@ interface FilterState {
   time: string;
   difficulty: string;
   dietary: string[];
+}
+
+// ── All recipes flat list for search ──────────────────────────────────────────
+interface SearchableRecipe {
+  title: string;
+  creator: string;
+  time?: string;
+  difficulty?: string;
+  image: string;
+  alt: string;
+  slug: string;
+  cuisine?: string;
+  mealType?: string;
+  keywords: string; // searchable blob
+}
+
+const allRecipes: SearchableRecipe[] = [
+  // trending
+  { title: 'Smash Burger Tacos', creator: 'Jake Torres', time: '20 min', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1acf3cb0a-1772799442431.png", alt: 'Smash burger patty folded in a crispy taco shell with cheese and toppings', slug: 'smash-burger-tacos', cuisine: 'American', mealType: 'Dinner', keywords: 'burger taco beef cheese american street food' },
+  { title: 'One-Pan Lemon Orzo', creator: 'Sofia Patel', time: '30 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1485921325833-c519f76c4927", alt: 'Creamy lemon orzo pasta with spinach and parmesan in a cast iron pan', slug: 'one-pan-lemon-orzo', cuisine: 'Mediterranean', mealType: 'Dinner', keywords: 'orzo pasta lemon spinach parmesan mediterranean one pan' },
+  { title: 'Korean Corn Dogs', creator: 'Yuna Kim', time: '35 min', difficulty: 'Medium', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1eead6026-1771887177210.png", alt: 'Korean-style corn dogs coated in crispy batter with sugar and ketchup drizzle', slug: 'korean-corn-dogs', cuisine: 'Korean', mealType: 'Snack', keywords: 'corn dog batter fried korean street food snack' },
+  { title: 'Mango Coconut Chia Pudding', creator: 'Priya Nair', time: '10 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1629180050285-7c56c6671f19", alt: 'Layered mango coconut chia pudding in a glass jar topped with fresh mango slices', slug: 'mango-coconut-chia-pudding', cuisine: 'Any', mealType: 'Breakfast', keywords: 'mango coconut chia pudding vegan healthy breakfast' },
+  // quick
+  { title: 'Garlic Butter Shrimp Pasta', creator: 'Marco Rossi', time: '20 min', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1f19f6fbe-1775504653966.png", alt: 'Garlic butter shrimp tossed with linguine pasta and fresh parsley', slug: 'garlic-butter-shrimp-pasta', cuisine: 'Italian', mealType: 'Dinner', keywords: 'shrimp pasta garlic butter linguine seafood italian' },
+  { title: 'Avocado Toast with Poached Egg', creator: 'Emma Walsh', time: '15 min', image: "https://img.rocket.new/generatedImages/rocket_gen_img_18e6c1a9c-1772204197800.png", alt: 'Thick sourdough toast topped with smashed avocado and a perfectly poached egg', slug: 'avocado-toast-poached-egg', cuisine: 'American', mealType: 'Breakfast', keywords: 'avocado toast egg poached sourdough breakfast healthy' },
+  { title: 'Spicy Peanut Noodles', creator: 'Lin Wei', time: '25 min', image: "https://images.unsplash.com/photo-1626066014976-cd53fe450b3e", alt: 'Cold spicy peanut noodles garnished with cucumber, scallions, and sesame seeds', slug: 'spicy-peanut-noodles', cuisine: 'Chinese', mealType: 'Lunch', keywords: 'peanut noodles spicy sesame cucumber chinese asian' },
+  { title: 'Sheet Pan Fajitas', creator: 'Carlos Mendez', time: '30 min', image: "https://images.unsplash.com/photo-1679060301613-2ff2050db858", alt: 'Colorful bell peppers and chicken strips roasted on a sheet pan for fajitas', slug: 'sheet-pan-fajitas', cuisine: 'Mexican', mealType: 'Dinner', keywords: 'fajitas chicken peppers mexican sheet pan' },
+  { title: 'Caprese Salad', creator: 'Sofia Romano', time: '10 min', image: "https://images.unsplash.com/photo-1725464781841-2d6f9ac10fb2", alt: 'Classic caprese salad with fresh mozzarella, tomatoes, basil and balsamic glaze', slug: 'caprese-salad', cuisine: 'Italian', mealType: 'Lunch', keywords: 'caprese salad mozzarella tomato basil balsamic italian vegetarian' },
+  { title: 'Egg Fried Rice', creator: 'Lin Wei', time: '15 min', image: "https://img.rocket.new/generatedImages/rocket_gen_img_14631f803-1772367083673.png", alt: 'Wok-tossed egg fried rice with vegetables and soy sauce in a bowl', slug: 'egg-fried-rice', cuisine: 'Chinese', mealType: 'Dinner', keywords: 'fried rice egg vegetables soy sauce wok chinese' },
+  // global
+  { title: 'Chicken Tikka Masala', creator: 'Aisha Sharma', image: "https://images.unsplash.com/photo-1657205937641-01d8c906274f", alt: 'Rich and creamy chicken tikka masala in a bowl with naan bread on the side', slug: 'chicken-tikka-masala', cuisine: 'Indian', mealType: 'Dinner', keywords: 'chicken tikka masala curry indian spice naan' },
+  { title: 'Beef Pho', creator: 'Nguyen Lan', image: "https://images.unsplash.com/photo-1707153438523-3d32f2bed0f3", alt: 'Steaming bowl of Vietnamese beef pho with rice noodles, herbs, and bean sprouts', slug: 'beef-pho', cuisine: 'Any', mealType: 'Lunch', keywords: 'pho beef noodles vietnamese soup broth herbs' },
+  { title: 'Shakshuka', creator: 'Leila Hassan', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1e54a3842-1783627091192.png", alt: 'Eggs poached in spiced tomato and pepper sauce in a cast iron skillet', slug: 'shakshuka', cuisine: 'Middle Eastern', mealType: 'Breakfast', keywords: 'shakshuka eggs tomato pepper middle eastern spice' },
+  { title: 'Tacos al Pastor', creator: 'Rosa Gutierrez', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1f6aa0250-1772893483543.png", alt: 'Authentic tacos al pastor with marinated pork, pineapple, cilantro, and onion', slug: 'tacos-al-pastor', cuisine: 'Mexican', mealType: 'Dinner', keywords: 'tacos pastor pork pineapple cilantro mexican' },
+  { title: 'Pad Thai', creator: 'Somchai Wongsa', image: "https://images.unsplash.com/photo-1663905494561-f70d406eff0d", alt: 'Classic pad thai noodles with shrimp, bean sprouts, peanuts, and lime wedge', slug: 'pad-thai', cuisine: 'Thai', mealType: 'Dinner', keywords: 'pad thai noodles shrimp peanut bean sprout thai' },
+  { title: 'Bibimbap', creator: 'Min-Jun Oh', image: "https://images.unsplash.com/photo-1733231323270-82dd8a5efe4b", alt: 'Colorful Korean bibimbap bowl with rice, vegetables, egg, and gochujang sauce', slug: 'bibimbap', cuisine: 'Korean', mealType: 'Lunch', keywords: 'bibimbap rice vegetables egg gochujang korean bowl' },
+  // healthy
+  { title: 'Rainbow Buddha Bowl', creator: 'Priya Nair', time: '20 min', image: "https://img.rocket.new/generatedImages/rocket_gen_img_13da08aa3-1772139613628.png", alt: 'Colorful buddha bowl with roasted vegetables, quinoa, and tahini dressing', slug: 'rainbow-buddha-bowl', cuisine: 'Any', mealType: 'Lunch', keywords: 'buddha bowl quinoa vegetables tahini healthy vegan' },
+  { title: 'Zucchini Noodles with Pesto', creator: 'Emma Walsh', time: '15 min', image: "https://img.rocket.new/generatedImages/rocket_gen_img_19ed2983c-1768144943727.png", alt: 'Spiralized zucchini noodles tossed with fresh basil pesto and cherry tomatoes', slug: 'zucchini-noodles-pesto', cuisine: 'Italian', mealType: 'Dinner', keywords: 'zucchini noodles pesto basil tomato vegetarian healthy low carb' },
+  { title: 'Grilled Chicken & Quinoa', creator: 'Sofia Patel', time: '30 min', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1105e39ee-1784981318339.png", alt: 'Grilled chicken breast sliced over fluffy quinoa with roasted vegetables', slug: 'grilled-chicken-quinoa', cuisine: 'American', mealType: 'Dinner', keywords: 'grilled chicken quinoa healthy protein vegetables' },
+  { title: 'Berry Smoothie Bowl', creator: 'Aisha Sharma', time: '10 min', image: "https://images.unsplash.com/photo-1623783398179-078261d586d3", alt: 'Thick acai smoothie bowl topped with fresh berries, granola, and coconut flakes', slug: 'berry-smoothie-bowl', cuisine: 'Any', mealType: 'Breakfast', keywords: 'smoothie bowl acai berry granola coconut healthy breakfast' },
+  { title: 'Salmon & Avocado Salad', creator: 'Maria Chen', time: '20 min', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1300967e4-1773173912136.png", alt: 'Fresh salmon salad with avocado, mixed greens, and lemon vinaigrette', slug: 'salmon-avocado-salad', cuisine: 'Any', mealType: 'Lunch', keywords: 'salmon avocado salad greens lemon healthy seafood' },
+  { title: 'Lentil Soup', creator: 'Leila Hassan', time: '35 min', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1a176c584-1782375166859.png", alt: 'Hearty red lentil soup with cumin, turmeric, and fresh lemon in a bowl', slug: 'lentil-soup', cuisine: 'Middle Eastern', mealType: 'Lunch', keywords: 'lentil soup cumin turmeric vegan healthy middle eastern' },
+  // family
+  { title: 'Sunday Pot Roast', creator: 'Marco Rossi', time: '3 hrs', image: "https://img.rocket.new/generatedImages/rocket_gen_img_118501734-1771898937177.png", alt: 'Slow-cooked pot roast with root vegetables in a Dutch oven', slug: 'sunday-pot-roast', cuisine: 'American', mealType: 'Dinner', keywords: 'pot roast beef vegetables slow cook family american' },
+  { title: "Grandma's Chicken Soup", creator: 'Rosa Gutierrez', time: '1.5 hrs', image: "https://images.unsplash.com/photo-1727417376054-a3a6d6f31999", alt: 'Hearty homemade chicken noodle soup with vegetables in a white bowl', slug: 'grandmas-chicken-soup', cuisine: 'American', mealType: 'Lunch', keywords: 'chicken soup noodle vegetables comfort family american' },
+  { title: 'Classic Lasagna', creator: 'Maria Chen', time: '2 hrs', image: "https://img.rocket.new/generatedImages/rocket_gen_img_18ea24141-1772646976917.png", alt: 'Layered classic lasagna with meat sauce and bubbling mozzarella cheese', slug: 'classic-lasagna', cuisine: 'Italian', mealType: 'Dinner', keywords: 'lasagna pasta beef mozzarella italian family baked' },
+  { title: 'Apple Pie from Scratch', creator: 'Emma Walsh', time: '2.5 hrs', image: "https://images.unsplash.com/photo-1638329261528-1932b0e63212", alt: 'Golden homemade apple pie with lattice crust cooling on a wooden table', slug: 'apple-pie-scratch', cuisine: 'American', mealType: 'Dessert', keywords: 'apple pie baking dessert crust family american' },
+  { title: 'Beef Stew', creator: 'Jake Torres', time: '2 hrs', image: "https://images.unsplash.com/photo-1517847043-aa5de082df8a", alt: 'Rich beef stew with carrots, potatoes, and herbs in a deep pot', slug: 'beef-stew', cuisine: 'American', mealType: 'Dinner', keywords: 'beef stew carrots potatoes herbs comfort family' },
+  { title: 'Roast Chicken', creator: 'Sofia Romano', time: '1.5 hrs', image: "https://images.unsplash.com/photo-1602534923950-d2c7e6be0ca0", alt: 'Golden roast chicken with crispy skin and herbs on a roasting pan', slug: 'roast-chicken', cuisine: 'American', mealType: 'Dinner', keywords: 'roast chicken herbs crispy skin family dinner' },
+  // breakfast
+  { title: 'Fluffy Buttermilk Pancakes', creator: 'Emma Walsh', time: '20 min', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1c1966aab-1767129915183.png", alt: 'Stack of fluffy golden buttermilk pancakes with maple syrup and fresh berries', slug: 'fluffy-buttermilk-pancakes', cuisine: 'American', mealType: 'Breakfast', keywords: 'pancakes buttermilk maple syrup berries breakfast fluffy' },
+  { title: 'Eggs Benedict', creator: 'Marco Rossi', time: '25 min', difficulty: 'Medium', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1890ea5f7-1772766498216.png", alt: 'Classic eggs benedict with hollandaise sauce on toasted English muffin', slug: 'eggs-benedict', cuisine: 'American', mealType: 'Breakfast', keywords: 'eggs benedict hollandaise muffin breakfast brunch' },
+  { title: 'Overnight Oats', creator: 'Priya Nair', time: '5 min', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_13d3c8d39-1772083435970.png", alt: 'Creamy overnight oats in a mason jar topped with fresh fruit and nuts', slug: 'overnight-oats', cuisine: 'Any', mealType: 'Breakfast', keywords: 'overnight oats fruit nuts healthy breakfast easy' },
+  { title: 'French Toast', creator: 'Sofia Patel', time: '15 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1623375477518-9d04f307e82b", alt: 'Golden thick-cut French toast dusted with powdered sugar and fresh strawberries', slug: 'french-toast', cuisine: 'American', mealType: 'Breakfast', keywords: 'french toast egg bread strawberry powdered sugar breakfast' },
+  { title: 'Breakfast Burrito', creator: 'Carlos Mendez', time: '20 min', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_116ccbc83-1772393582608.png", alt: 'Loaded breakfast burrito with scrambled eggs, cheese, salsa, and avocado', slug: 'breakfast-burrito', cuisine: 'Mexican', mealType: 'Breakfast', keywords: 'burrito eggs cheese salsa avocado mexican breakfast' },
+  { title: 'Acai Bowl', creator: 'Aisha Sharma', time: '10 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1455099797519-a70bccc199c1", alt: 'Vibrant purple acai bowl topped with granola, banana slices, and honey drizzle', slug: 'acai-bowl', cuisine: 'Any', mealType: 'Breakfast', keywords: 'acai bowl granola banana honey healthy breakfast' },
+  // pasta
+  { title: 'Cacio e Pepe', creator: 'Sofia Romano', time: '20 min', difficulty: 'Medium', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1e568055d-1772085885754.png", alt: 'Creamy cacio e pepe pasta with black pepper and pecorino romano cheese', slug: 'cacio-e-pepe', cuisine: 'Italian', mealType: 'Dinner', keywords: 'cacio pepe pasta cheese pepper italian simple' },
+  { title: 'Pesto Gnocchi', creator: 'Marco Rossi', time: '25 min', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1a38c4769-1784801278829.png", alt: 'Pillowy gnocchi tossed in vibrant green basil pesto with pine nuts', slug: 'pesto-gnocchi', cuisine: 'Italian', mealType: 'Dinner', keywords: 'gnocchi pesto basil pine nuts italian vegetarian' },
+  { title: 'Pasta Arrabbiata', creator: 'Sofia Romano', time: '20 min', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_156bff04d-1772207897368.png", alt: 'Spicy arrabbiata pasta with tomato sauce, garlic, and red chili flakes', slug: 'pasta-arrabbiata', cuisine: 'Italian', mealType: 'Dinner', keywords: 'pasta arrabbiata tomato garlic chili spicy italian' },
+  { title: 'Mushroom Risotto', creator: 'Maria Chen', time: '40 min', difficulty: 'Medium', image: "https://images.unsplash.com/photo-1680420574628-225def8eea0a", alt: 'Creamy mushroom risotto with parmesan cheese and fresh thyme garnish', slug: 'mushroom-risotto', cuisine: 'Italian', mealType: 'Dinner', keywords: 'mushroom risotto parmesan thyme italian vegetarian' },
+  { title: 'Baked Mac & Cheese', creator: 'Jake Torres', time: '45 min', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1beb1562f-1772222748789.png", alt: 'Golden baked macaroni and cheese with crispy breadcrumb topping', slug: 'baked-mac-cheese', cuisine: 'American', mealType: 'Dinner', keywords: 'mac cheese macaroni baked breadcrumb american comfort' },
+  { title: 'Spaghetti Bolognese', creator: 'Marco Rossi', time: '1 hr', difficulty: 'Medium', image: "https://images.unsplash.com/photo-1634838512151-0773b35c91ee", alt: 'Classic spaghetti bolognese with rich meat sauce and parmesan cheese', slug: 'spaghetti-bolognese', cuisine: 'Italian', mealType: 'Dinner', keywords: 'spaghetti bolognese beef meat sauce parmesan italian' },
+  // bbq
+  { title: 'BBQ Baby Back Ribs', creator: 'Jake Torres', time: '3 hrs', difficulty: 'Medium', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1c57cdb81-1770832572556.png", alt: 'Smoky BBQ baby back ribs with caramelized sauce on a wooden board', slug: 'bbq-baby-back-ribs', cuisine: 'American', mealType: 'Dinner', keywords: 'bbq ribs pork smoky sauce american grill' },
+  { title: 'Grilled Corn on the Cob', creator: 'Carlos Mendez', time: '15 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1570716774271-ab30ad4924a8", alt: 'Charred grilled corn on the cob with butter, lime, and chili powder', slug: 'grilled-corn', cuisine: 'American', mealType: 'Snack', keywords: 'corn grilled butter lime chili bbq vegetarian' },
+  { title: 'Smoked Brisket', creator: 'Jake Torres', time: '8 hrs', difficulty: 'Hard', image: "https://images.unsplash.com/photo-1614231558486-b5bc24dd2d84", alt: 'Thick sliced smoked brisket with dark bark and pink smoke ring', slug: 'smoked-brisket', cuisine: 'American', mealType: 'Dinner', keywords: 'brisket smoked beef bbq slow cook american' },
+  { title: 'Grilled Veggie Skewers', creator: 'Priya Nair', time: '20 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1635882686740-edfc701b48ae", alt: 'Colorful grilled vegetable skewers with zucchini, peppers, and mushrooms', slug: 'grilled-veggie-skewers', cuisine: 'Any', mealType: 'Dinner', keywords: 'veggie skewers zucchini peppers mushrooms grilled vegetarian bbq' },
+  { title: 'Pulled Pork Sandwiches', creator: 'Carlos Mendez', time: '6 hrs', difficulty: 'Medium', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1557b105b-1773111482327.png", alt: 'Tender pulled pork piled high on a brioche bun with coleslaw', slug: 'pulled-pork-sandwiches', cuisine: 'American', mealType: 'Dinner', keywords: 'pulled pork sandwich brioche coleslaw bbq american' },
+  { title: 'Grilled Salmon Fillet', creator: 'Maria Chen', time: '20 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1693164224779-9a7a8fc7b6d2", alt: 'Perfectly grilled salmon fillet with lemon and herbs on a grill', slug: 'grilled-salmon-fillet', cuisine: 'Any', mealType: 'Dinner', keywords: 'salmon grilled lemon herbs seafood healthy bbq' },
+  // baking
+  { title: 'Sourdough Bread', creator: 'Emma Walsh', time: '24 hrs', difficulty: 'Hard', image: "https://images.unsplash.com/photo-1658695985093-86cccecf81a5", alt: 'Rustic sourdough loaf with scored crust cooling on a wire rack', slug: 'sourdough-bread', cuisine: 'Any', mealType: 'Snack', keywords: 'sourdough bread baking flour yeast crust' },
+  { title: 'Chocolate Lava Cake', creator: 'Sofia Romano', time: '25 min', difficulty: 'Medium', image: "https://img.rocket.new/generatedImages/rocket_gen_img_19e43404e-1773176612518.png", alt: 'Warm chocolate lava cake with molten center and powdered sugar dusting', slug: 'chocolate-lava-cake', cuisine: 'Any', mealType: 'Dessert', keywords: 'chocolate lava cake molten dessert baking' },
+  { title: 'Banana Bread', creator: 'Priya Nair', time: '1 hr', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_12da978a7-1778500554885.png", alt: 'Moist golden banana bread loaf with walnuts on a cutting board', slug: 'banana-bread', cuisine: 'Any', mealType: 'Snack', keywords: 'banana bread walnut baking moist easy' },
+  { title: 'Cinnamon Rolls', creator: 'Emma Walsh', time: '2 hrs', difficulty: 'Medium', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1aecd958f-1772207180241.png", alt: 'Freshly baked cinnamon rolls with cream cheese frosting in a baking pan', slug: 'cinnamon-rolls', cuisine: 'Any', mealType: 'Breakfast', keywords: 'cinnamon rolls cream cheese frosting baking sweet' },
+  { title: 'Blueberry Muffins', creator: 'Aisha Sharma', time: '35 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1558303420-f814d8a590f5", alt: 'Golden blueberry muffins with sugar crumble topping in a muffin tin', slug: 'blueberry-muffins', cuisine: 'Any', mealType: 'Breakfast', keywords: 'blueberry muffins baking sugar crumble breakfast' },
+  { title: 'Cheesecake', creator: 'Sofia Patel', time: '4 hrs', difficulty: 'Medium', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1e366641f-1772871592638.png", alt: 'Creamy New York style cheesecake with graham cracker crust and berry topping', slug: 'cheesecake', cuisine: 'American', mealType: 'Dessert', keywords: 'cheesecake cream cheese graham cracker berry dessert baking' },
+  // air fryer
+  { title: 'Air Fryer Chicken Wings', creator: 'Jake Torres', time: '25 min', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1dc41e977-1772091572034.png", alt: 'Crispy air fryer chicken wings with buffalo sauce and blue cheese dip', slug: 'air-fryer-chicken-wings', cuisine: 'American', mealType: 'Snack', keywords: 'chicken wings air fryer buffalo sauce crispy' },
+  { title: 'Air Fryer French Fries', creator: 'Carlos Mendez', time: '20 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1601592430325-e0e1551b48ef", alt: 'Golden crispy air fryer french fries with sea salt in a paper cone', slug: 'air-fryer-french-fries', cuisine: 'American', mealType: 'Snack', keywords: 'french fries air fryer potato crispy salt' },
+  { title: 'Air Fryer Salmon', creator: 'Maria Chen', time: '12 min', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_13cb601db-1782924149319.png", alt: 'Perfectly cooked air fryer salmon with lemon and dill garnish', slug: 'air-fryer-salmon', cuisine: 'Any', mealType: 'Dinner', keywords: 'salmon air fryer lemon dill seafood healthy' },
+  { title: 'Air Fryer Donuts', creator: 'Emma Walsh', time: '20 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1606312618872-929717f93c21", alt: 'Fluffy air fryer donuts with glaze and colorful sprinkles', slug: 'air-fryer-donuts', cuisine: 'Any', mealType: 'Dessert', keywords: 'donuts air fryer glaze sprinkles dessert sweet' },
+  { title: 'Air Fryer Vegetables', creator: 'Priya Nair', time: '15 min', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1b3a1542b-1772084616223.png", alt: 'Crispy roasted air fryer vegetables with olive oil and herbs', slug: 'air-fryer-vegetables', cuisine: 'Any', mealType: 'Dinner', keywords: 'vegetables air fryer olive oil herbs crispy vegan' },
+  { title: 'Air Fryer Steak', creator: 'Jake Torres', time: '15 min', difficulty: 'Medium', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1db10218f-1772446279214.png", alt: 'Perfectly seared air fryer steak with herb butter on a cast iron plate', slug: 'air-fryer-steak', cuisine: 'American', mealType: 'Dinner', keywords: 'steak air fryer herb butter seared beef' },
+  // vegetarian
+  { title: 'Stuffed Bell Peppers', creator: 'Leila Hassan', time: '45 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1706222173694-5264de2d23d9", alt: 'Colorful stuffed bell peppers filled with rice, vegetables, and melted cheese', slug: 'stuffed-bell-peppers', cuisine: 'Mediterranean', mealType: 'Dinner', keywords: 'stuffed peppers rice vegetables cheese vegetarian mediterranean' },
+  { title: 'Vegetable Curry', creator: 'Aisha Sharma', time: '35 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1585034888529-0898b2145847", alt: 'Fragrant vegetable curry with chickpeas, spinach, and coconut milk', slug: 'vegetable-curry', cuisine: 'Indian', mealType: 'Dinner', keywords: 'vegetable curry chickpeas spinach coconut milk indian vegan' },
+  { title: 'Caprese Pasta', creator: 'Sofia Romano', time: '20 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1610817153377-e54299ffdb1e", alt: 'Fresh caprese pasta with cherry tomatoes, mozzarella, and basil', slug: 'caprese-pasta', cuisine: 'Italian', mealType: 'Dinner', keywords: 'caprese pasta tomato mozzarella basil italian vegetarian' },
+  { title: 'Falafel Wrap', creator: 'Leila Hassan', time: '30 min', difficulty: 'Medium', image: "https://images.unsplash.com/photo-1636168655089-5e625a233354", alt: 'Crispy falafel wrap with hummus, vegetables, and tahini sauce', slug: 'falafel-wrap', cuisine: 'Middle Eastern', mealType: 'Lunch', keywords: 'falafel wrap hummus tahini vegetarian middle eastern' },
+  { title: 'Margherita Pizza', creator: 'Marco Rossi', time: '30 min', difficulty: 'Medium', image: "https://images.unsplash.com/photo-1703784022146-b72677752ce5", alt: 'Classic margherita pizza with fresh mozzarella, tomato sauce, and basil leaves', slug: 'margherita-pizza', cuisine: 'Italian', mealType: 'Dinner', keywords: 'pizza margherita mozzarella tomato basil italian vegetarian' },
+  { title: 'Mushroom Tacos', creator: 'Rosa Gutierrez', time: '20 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1721001309902-939443092f13", alt: 'Savory mushroom tacos with chipotle sauce, avocado, and pickled onions', slug: 'mushroom-tacos', cuisine: 'Mexican', mealType: 'Dinner', keywords: 'mushroom tacos chipotle avocado pickled onion mexican vegetarian' },
+  // soups
+  { title: 'Tomato Bisque', creator: 'Emma Walsh', time: '30 min', difficulty: 'Easy', image: "https://images.unsplash.com/photo-1616537380218-372f4d2830ee", alt: 'Creamy roasted tomato bisque with fresh basil and a swirl of cream', slug: 'tomato-bisque', cuisine: 'American', mealType: 'Lunch', keywords: 'tomato bisque soup cream basil roasted american' },
+  { title: 'French Onion Soup', creator: 'Sofia Romano', time: '1 hr', difficulty: 'Medium', image: "https://img.rocket.new/generatedImages/rocket_gen_img_13b832fd6-1772088178489.png", alt: 'Classic French onion soup with caramelized onions and melted gruyere crouton', slug: 'french-onion-soup', cuisine: 'Any', mealType: 'Lunch', keywords: 'french onion soup caramelized gruyere crouton' },
+  { title: 'Ramen from Scratch', creator: 'Yuna Kim', time: '3 hrs', difficulty: 'Hard', image: "https://img.rocket.new/generatedImages/rocket_gen_img_16fa22663-1772767892756.png", alt: 'Rich tonkotsu ramen with chashu pork, soft-boiled egg, and nori', slug: 'ramen-from-scratch', cuisine: 'Japanese', mealType: 'Dinner', keywords: 'ramen tonkotsu pork egg nori japanese noodle soup' },
+  { title: 'Minestrone', creator: 'Marco Rossi', time: '45 min', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_1e2f801ab-1773084071073.png", alt: 'Hearty Italian minestrone soup with vegetables, beans, and pasta', slug: 'minestrone', cuisine: 'Italian', mealType: 'Lunch', keywords: 'minestrone soup vegetables beans pasta italian' },
+  { title: 'Clam Chowder', creator: 'Maria Chen', time: '40 min', difficulty: 'Medium', image: "https://img.rocket.new/generatedImages/rocket_gen_img_166dafed2-1773214700374.png", alt: 'Creamy New England clam chowder with potatoes and crispy bacon bits', slug: 'clam-chowder', cuisine: 'American', mealType: 'Lunch', keywords: 'clam chowder potato bacon cream seafood american soup' },
+  { title: 'Miso Soup', creator: 'Yuki Tanaka', time: '10 min', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_19eb07291-1773191218850.png", alt: 'Traditional Japanese miso soup with tofu, wakame seaweed, and green onions', slug: 'miso-soup', cuisine: 'Japanese', mealType: 'Lunch', keywords: 'miso soup tofu seaweed green onion japanese' },
+];
+
+function filterRecipes(recipes: SearchableRecipe[], query: string, filters: FilterState): SearchableRecipe[] {
+  const q = query.toLowerCase().trim();
+  return recipes.filter((r) => {
+    // text search
+    if (q) {
+      const haystack = `${r.title} ${r.creator} ${r.cuisine ?? ''} ${r.mealType ?? ''} ${r.keywords}`.toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    // cuisine filter
+    if (filters.cuisine !== 'Any' && r.cuisine !== filters.cuisine && r.cuisine !== 'Any') return false;
+    // meal type filter
+    if (filters.mealType !== 'Any' && r.mealType !== filters.mealType) return false;
+    return true;
+  });
 }
 
 function FilterPanel({ filters, setFilters, onClose
@@ -304,6 +419,7 @@ function SectionHeader({ id, label, title, subtitle, filterLink }: {id: string;l
 export default function RecipesPageClient() {
   const [activeCategory, setActiveCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [inputValue, setInputValue] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<FilterState>({ cuisine: 'Any', mealType: 'Any', time: 'Any', difficulty: 'Any', dietary: [] });
 
@@ -314,6 +430,17 @@ export default function RecipesPageClient() {
   filters.difficulty !== 'Any' ? 1 : 0,
   filters.dietary.length].
   reduce((a, b) => a + b, 0);
+
+  const isSearchActive = searchQuery.trim().length > 0 || filters.cuisine !== 'Any' || filters.mealType !== 'Any';
+  const searchResults = isSearchActive ? filterRecipes(allRecipes, searchQuery, filters) : [];
+
+  const handleSearch = () => {
+    setSearchQuery(inputValue);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') handleSearch();
+  };
 
   return (
     <main className="bg-background min-h-screen">
@@ -331,12 +458,14 @@ export default function RecipesPageClient() {
           <div className="relative">
             <input
               type="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={inputValue}
+              onChange={(e) => { setInputValue(e.target.value); setSearchQuery(e.target.value); }}
+              onKeyDown={handleKeyDown}
               placeholder='Try "30-minute chicken," "vegan pasta," or "what can I make with eggs?"'
               className="w-full pl-5 pr-14 py-4 rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary text-sm shadow-sm"
               aria-label="Search recipes" />
             <button
+              onClick={handleSearch}
               className="absolute right-3 top-1/2 -translate-y-1/2 btn-primary py-2 px-4 text-xs"
               aria-label="Search">
               Search
@@ -377,11 +506,49 @@ export default function RecipesPageClient() {
       </section>
 
       {showFilters &&
-      <FilterPanel filters={filters} setFilters={setFilters} onClose={() => setShowFilters(false)} />
+      <FilterPanel filters={filters} setFilters={(f) => { setFilters(f); }} onClose={() => setShowFilters(false)} />
       }
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
 
+        {/* ── Search Results ── */}
+        {isSearchActive ? (
+          <section aria-labelledby="search-results-heading">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 id="search-results-heading" className="text-2xl font-extrabold text-foreground">
+                  {searchResults.length > 0
+                    ? `${searchResults.length} recipe${searchResults.length !== 1 ? 's' : ''} found`
+                    : 'No recipes found'}
+                </h2>
+                {searchQuery.trim() && (
+                  <p className="text-muted-foreground text-sm mt-1">
+                    Results for &ldquo;{searchQuery}&rdquo;
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={() => { setSearchQuery(''); setInputValue(''); setFilters({ cuisine: 'Any', mealType: 'Any', time: 'Any', difficulty: 'Any', dietary: [] }); }}
+                className="text-primary text-sm font-semibold hover:underline shrink-0">
+                Clear search
+              </button>
+            </div>
+            {searchResults.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                {searchResults.map((recipe) => (
+                  <RecipeCard key={recipe.slug} recipe={recipe} size="sm" />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <p className="text-5xl mb-4">🍽️</p>
+                <p className="text-foreground font-semibold text-lg mb-2">No recipes match your search</p>
+                <p className="text-muted-foreground text-sm">Try a different keyword, cuisine, or meal type</p>
+              </div>
+            )}
+          </section>
+        ) : (
+          <>
         {/* Featured Recipe of the Day */}
         <section aria-labelledby="featured-heading">
           <div className="flex items-center justify-between mb-6">
@@ -617,6 +784,8 @@ export default function RecipesPageClient() {
             <Link href="/chef-pepe" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-foreground">Ask Chef Pepe</Link>
           </div>
         </section>
+          </>
+        )}
 
       </div>
 
