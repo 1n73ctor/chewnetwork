@@ -32,7 +32,7 @@ export default function SignupCTA() {
   };
 
   return (
-    <section ref={sectionRef} className="relative py-20 lg:py-28 overflow-hidden bg-foreground" aria-labelledby="cta-heading">
+    <section ref={sectionRef} className="relative py-20 lg:py-28 overflow-hidden bg-[#1a1f1b]" aria-labelledby="cta-heading">
       {/* Background food image */}
       <div className="absolute inset-0 z-0">
         <AppImage

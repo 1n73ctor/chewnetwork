@@ -93,7 +93,7 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+                <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 dark:text-red-400 text-sm">
                   {error}
                 </div>
               )}
@@ -218,7 +218,7 @@ export default function LoginPage() {
                   </div>
 
                   {error && (
-                    <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+                    <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 dark:text-red-400 text-sm">
                       {error}
                     </div>
                   )}

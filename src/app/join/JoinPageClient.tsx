@@ -131,7 +131,7 @@ export default function JoinPageClient() {
                 <div className="flex-1 h-px bg-border" />
               </div>
 
-              {error && <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>}
+              {error && <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 dark:text-red-400 text-sm">{error}</div>}
 
               <form onSubmit={handleDetailsSubmit} className="space-y-4">
                 <div>
@@ -175,7 +175,7 @@ export default function JoinPageClient() {
                 <h2 className="text-2xl font-extrabold text-foreground mb-2">Welcome, {formData.firstName || 'food lover'}!</h2>
                 <p className="text-muted-foreground text-sm">Help us personalise your experience.</p>
               </div>
-              {error && <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>}
+              {error && <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 dark:text-red-400 text-sm">{error}</div>}
               <div className="space-y-8">
                 <div>
                   <p className="font-bold text-foreground mb-3">What do you want help with?</p>

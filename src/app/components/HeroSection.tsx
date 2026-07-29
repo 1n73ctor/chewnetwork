@@ -34,7 +34,7 @@ export default function HeroSection() {
   return (
     <section
       ref={heroRef}
-      className="relative w-full min-h-screen overflow-hidden bg-foreground flex flex-col justify-end"
+      className="relative w-full min-h-screen overflow-hidden bg-[#1a1f1b] flex flex-col justify-end"
       aria-label="Hero section">
       
       {/* Background food image */}
@@ -158,7 +158,7 @@ export default function HeroSection() {
         <div className="lg:col-span-5 hidden lg:flex justify-end items-end pb-4 animate-slide-up opacity-0 delay-1200">
           <div className="relative">
             {/* Phone frame */}
-            <div className="w-64 h-[480px] bg-foreground border-4 border-white/20 rounded-[2.5rem] overflow-hidden shadow-2xl relative">
+            <div className="w-64 h-[480px] bg-[#1a1f1b] border-4 border-white/20 rounded-[2.5rem] overflow-hidden shadow-2xl relative">
               <AppImage
                 src="https://images.unsplash.com/photo-1728289114485-b03aa8ddf584"
                 alt="Chef Pepe AI analyzing a colorful meal bowl — phone screen showing ingredient identification overlay with green scanning lines"
