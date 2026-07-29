@@ -415,7 +415,7 @@ export default function RecipesPageClient() {
 
         {/* Trending on Chew */}
         <section aria-labelledby="trending-heading">
-          <SectionHeader id="trending-heading" label="Hot right now" title="Trending on Chew" filterLink="/recipes?filter=trending" />
+          <SectionHeader id="trending-heading" label="Hot right now" title="Trending on Chew" filterLink="/recipes/section/trending" />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {trendingRecipes.map((recipe) =>
             <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="card-recipe group block">
@@ -444,7 +444,7 @@ export default function RecipesPageClient() {
 
         {/* Breakfast */}
         <section aria-labelledby="breakfast-heading">
-          <SectionHeader id="breakfast-heading" label="Morning meals" title="Breakfast & Brunch" subtitle="Start your day the delicious way" filterLink="/recipes?filter=breakfast" />
+          <SectionHeader id="breakfast-heading" label="Morning meals" title="Breakfast & Brunch" subtitle="Start your day the delicious way" filterLink="/recipes/section/breakfast" />
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {breakfastRecipes.map((recipe) =>
             <RecipeCard key={recipe.slug} recipe={recipe} size="sm" />
@@ -454,7 +454,7 @@ export default function RecipesPageClient() {
 
         {/* Ready in 30 minutes */}
         <section aria-labelledby="quick-heading">
-          <SectionHeader id="quick-heading" title="Ready in 30 minutes or less" filterLink="/recipes?filter=quick" />
+          <SectionHeader id="quick-heading" title="Ready in 30 minutes or less" filterLink="/recipes/section/quick" />
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-6">
             {quickRecipes.map((recipe) =>
             <div key={recipe.slug} className="shrink-0 w-48 lg:w-auto">
@@ -466,7 +466,7 @@ export default function RecipesPageClient() {
 
         {/* Cook around the world */}
         <section aria-labelledby="global-heading" className="section-cream rounded-3xl p-8">
-          <SectionHeader id="global-heading" title="Cook around the world" subtitle="Explore cuisines from every corner of the globe" filterLink="/recipes?filter=global" />
+          <SectionHeader id="global-heading" title="Cook around the world" subtitle="Explore cuisines from every corner of the globe" filterLink="/recipes/section/global" />
           <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
             {globalRecipes.map((recipe) =>
             <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="card-recipe group block">
@@ -488,7 +488,7 @@ export default function RecipesPageClient() {
 
         {/* Pasta & Noodles */}
         <section aria-labelledby="pasta-heading">
-          <SectionHeader id="pasta-heading" label="Comfort food" title="Pasta & Noodles" subtitle="From classic Italian to Asian noodle bowls" filterLink="/recipes?filter=pasta" />
+          <SectionHeader id="pasta-heading" label="Comfort food" title="Pasta & Noodles" subtitle="From classic Italian to Asian noodle bowls" filterLink="/recipes/section/pasta" />
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {pastaRecipes.map((recipe) =>
             <RecipeCard key={recipe.slug} recipe={recipe} size="sm" />
@@ -498,7 +498,7 @@ export default function RecipesPageClient() {
 
         {/* Healthy choices */}
         <section aria-labelledby="healthy-heading">
-          <SectionHeader id="healthy-heading" title="Healthy choices" subtitle="Fresh, balanced, and full of flavor" filterLink="/recipes?filter=healthy" />
+          <SectionHeader id="healthy-heading" title="Healthy choices" subtitle="Fresh, balanced, and full of flavor" filterLink="/recipes/section/healthy" />
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-6">
             {healthyRecipes.map((recipe) =>
             <div key={recipe.slug} className="shrink-0 w-48 lg:w-auto">
@@ -510,7 +510,7 @@ export default function RecipesPageClient() {
 
         {/* Vegetarian */}
         <section aria-labelledby="vegetarian-heading" className="section-cream rounded-3xl p-8">
-          <SectionHeader id="vegetarian-heading" label="Plant-based" title="Vegetarian Favorites" subtitle="Satisfying meals without the meat" filterLink="/recipes?filter=vegetarian" />
+          <SectionHeader id="vegetarian-heading" label="Plant-based" title="Vegetarian Favorites" subtitle="Satisfying meals without the meat" filterLink="/recipes/section/vegetarian" />
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {vegetarianRecipes.map((recipe) =>
             <RecipeCard key={recipe.slug} recipe={recipe} size="sm" />
@@ -520,7 +520,7 @@ export default function RecipesPageClient() {
 
         {/* BBQ & Grilling */}
         <section aria-labelledby="bbq-heading">
-          <SectionHeader id="bbq-heading" label="Fire it up" title="BBQ & Grilling" subtitle="Low and slow, or hot and fast" filterLink="/recipes?filter=bbq" />
+          <SectionHeader id="bbq-heading" label="Fire it up" title="BBQ & Grilling" subtitle="Low and slow, or hot and fast" filterLink="/recipes/section/bbq" />
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {bbqRecipes.map((recipe) =>
             <RecipeCard key={recipe.slug} recipe={recipe} size="sm" />
@@ -530,7 +530,7 @@ export default function RecipesPageClient() {
 
         {/* Soups & Stews */}
         <section aria-labelledby="soups-heading">
-          <SectionHeader id="soups-heading" label="Warm up" title="Soups & Stews" subtitle="Bowl food for every season" filterLink="/recipes?filter=soups" />
+          <SectionHeader id="soups-heading" label="Warm up" title="Soups & Stews" subtitle="Bowl food for every season" filterLink="/recipes/section/soups" />
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-6">
             {soupRecipes.map((recipe) =>
             <div key={recipe.slug} className="shrink-0 w-48 lg:w-auto">
@@ -542,7 +542,7 @@ export default function RecipesPageClient() {
 
         {/* Air Fryer */}
         <section aria-labelledby="airfryer-heading" className="section-cream rounded-3xl p-8">
-          <SectionHeader id="airfryer-heading" label="Crispy & quick" title="Air Fryer Recipes" subtitle="Crispy results with less oil" filterLink="/recipes?filter=air-fryer" />
+          <SectionHeader id="airfryer-heading" label="Crispy & quick" title="Air Fryer Recipes" subtitle="Crispy results with less oil" filterLink="/recipes/section/air-fryer" />
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {airFryerRecipes.map((recipe) =>
             <RecipeCard key={recipe.slug} recipe={recipe} size="sm" />
@@ -552,7 +552,7 @@ export default function RecipesPageClient() {
 
         {/* Baking & Desserts */}
         <section aria-labelledby="baking-heading">
-          <SectionHeader id="baking-heading" label="Sweet treats" title="Baking & Desserts" subtitle="From everyday bakes to showstoppers" filterLink="/recipes?filter=baking" />
+          <SectionHeader id="baking-heading" label="Sweet treats" title="Baking & Desserts" subtitle="From everyday bakes to showstoppers" filterLink="/recipes/section/baking" />
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {bakingRecipes.map((recipe) =>
             <RecipeCard key={recipe.slug} recipe={recipe} size="sm" />
@@ -562,7 +562,7 @@ export default function RecipesPageClient() {
 
         {/* Family recipes */}
         <section aria-labelledby="family-heading">
-          <SectionHeader id="family-heading" title="Family recipes" subtitle="Recipes worth passing down" filterLink="/recipes?filter=family" />
+          <SectionHeader id="family-heading" title="Family recipes" subtitle="Recipes worth passing down" filterLink="/recipes/section/family" />
           <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
             {familyRecipes.map((recipe) =>
             <Link key={recipe.slug} href={`/recipes/${recipe.slug}`} className="card-recipe group block">
