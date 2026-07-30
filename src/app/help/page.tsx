@@ -71,7 +71,7 @@ export default function HelpPage() {
           <input
             type="search"
             placeholder="Search for help..."
-            className="w-full pl-5 pr-14 py-4 rounded-2xl border-2 border-border bg-white text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary text-sm shadow-sm"
+            className="w-full pl-5 pr-14 py-4 rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary text-sm shadow-sm"
           />
           <button className="absolute right-3 top-1/2 -translate-y-1/2 btn-primary py-2 px-4 text-xs">
             Search
@@ -124,7 +124,7 @@ export default function HelpPage() {
         </section>
 
         {/* Contact CTA */}
-        <div className="bg-foreground rounded-3xl p-8 text-center">
+        <div className="bg-dark-panel rounded-3xl p-8 text-center">
           <h2 className="text-2xl font-extrabold text-white mb-2">Still need help?</h2>
           <p className="text-white/70 mb-6 text-sm">Our support team typically responds within 1–2 business days.</p>
           <Link href="/contact" className="btn-primary">Contact Support</Link>

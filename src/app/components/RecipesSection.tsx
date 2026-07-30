@@ -16,6 +16,7 @@ import Icon from '@/components/ui/AppIcon';
 const trendingRecipes = [
 {
   id: 1,
+  slug: 'miso-glazed-salmon',
   title: 'Miso Glazed Salmon',
   creator: 'Yuki Tanaka',
   time: '25 min',
@@ -29,8 +30,9 @@ const trendingRecipes = [
 },
 {
   id: 2,
+  slug: 'birria-tacos',
   title: 'Birria Tacos',
-  creator: 'Marco Hernández',
+  creator: 'Rosa Gutierrez',
   time: '3 hrs',
   difficulty: 'Medium',
   tag: 'Popular',
@@ -42,12 +44,13 @@ const trendingRecipes = [
 },
 {
   id: 3,
+  slug: 'butter-chicken',
   title: 'Butter Chicken',
-  creator: 'Priya Sharma',
-  time: '45 min',
+  creator: 'Aisha Sharma',
+  time: '50 min',
   difficulty: 'Medium',
   tag: 'Fan Favorite',
-  tagColor: 'bg-foreground',
+  tagColor: 'bg-dark-panel',
   image: "https://images.unsplash.com/photo-1613385109438-668d376fa611",
   imageAlt: 'Creamy orange butter chicken in a dark bowl with fresh naan bread and cilantro garnish, warm Indian kitchen setting',
   saves: '8.7k',
@@ -55,9 +58,10 @@ const trendingRecipes = [
 },
 {
   id: 4,
+  slug: 'shakshuka',
   title: 'Shakshuka',
-  creator: 'Layla Hassan',
-  time: '20 min',
+  creator: 'Leila Hassan',
+  time: '25 min',
   difficulty: 'Easy',
   tag: 'Quick',
   tagColor: 'bg-primary',
@@ -68,6 +72,7 @@ const trendingRecipes = [
 },
 {
   id: 5,
+  slug: 'pasta-carbonara',
   title: 'Pasta Carbonara',
   creator: 'Sofia Romano',
   time: '20 min',
@@ -81,6 +86,7 @@ const trendingRecipes = [
 },
 {
   id: 6,
+  slug: 'korean-fried-chicken',
   title: 'Korean Fried Chicken',
   creator: 'Min-Jun Oh',
   time: '40 min',
@@ -103,13 +109,15 @@ function RecipeCard({ recipe, delay }: {recipe: typeof trendingRecipes[0];delay:
       
       {/* Image */}
       <div className="relative h-52 overflow-hidden">
-        <AppImage
-          src={recipe.image}
-          alt={recipe.imageAlt}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-700"
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" />
-        
+        <Link href={`/recipes/${recipe.slug}`} className="block w-full h-full" aria-label={`View the ${recipe.title} recipe`}>
+          <AppImage
+            src={recipe.image}
+            alt={recipe.imageAlt}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-700"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" />
+        </Link>
+
         {/* Tag */}
         <div className="absolute top-3 left-3">
           <span className={`${recipe.tagColor} text-white text-xs font-bold px-3 py-1 rounded-full`}>
@@ -130,7 +138,11 @@ function RecipeCard({ recipe, delay }: {recipe: typeof trendingRecipes[0];delay:
           <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs">👤</div>
           <span className="text-muted-foreground text-xs font-medium">{recipe.creator}</span>
         </div>
-        <h3 className="font-bold text-foreground text-base mb-3 leading-tight">{recipe.title}</h3>
+        <h3 className="font-bold text-foreground text-base mb-3 leading-tight">
+          <Link href={`/recipes/${recipe.slug}`} className="hover:text-primary transition-colors">
+            {recipe.title}
+          </Link>
+        </h3>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">

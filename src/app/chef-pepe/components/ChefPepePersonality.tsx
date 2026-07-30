@@ -44,11 +44,11 @@ export default function ChefPepePersonality() {
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw" />
               
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-dark-panel/50 to-transparent" />
             </div>
 
             {/* Floating quote */}
-            <div className="absolute bottom-8 -right-4 lg:-right-8 bg-white rounded-2xl shadow-xl p-5 max-w-xs animate-float">
+            <div className="absolute bottom-8 -right-4 lg:-right-8 bg-card rounded-2xl shadow-xl p-5 max-w-xs animate-float">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xl">🍳</span>
                 <span className="text-foreground font-bold text-sm">Chef Pepe</span>
@@ -73,7 +73,7 @@ export default function ChefPepePersonality() {
               {traits?.map((trait, i) =>
               <div
                 key={trait?.label}
-                className="flex items-start gap-3 p-4 bg-white border border-border rounded-xl hover:border-primary/30 transition-all duration-200"
+                className="flex items-start gap-3 p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all duration-200"
                 style={{ animationDelay: `${i * 0.08}s` }}>
                 
                   <span className="text-xl shrink-0">{trait?.icon}</span>

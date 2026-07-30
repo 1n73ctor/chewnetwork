@@ -24,7 +24,7 @@ export default function ChefPepeCTA() {
   return (
     <section ref={sectionRef} className="bg-background py-16 lg:py-24" aria-labelledby="pepe-cta-heading">
       <div className="max-w-4xl mx-auto px-6 lg:px-8">
-        <div className="scroll-reveal bg-foreground rounded-[3rem] overflow-hidden relative">
+        <div className="scroll-reveal bg-dark-panel rounded-[3rem] overflow-hidden relative">
           {/* Background decoration */}
           <div className="absolute top-0 right-0 w-64 h-64 blob-green opacity-10 pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-48 h-48 blob-orange opacity-10 pointer-events-none" />

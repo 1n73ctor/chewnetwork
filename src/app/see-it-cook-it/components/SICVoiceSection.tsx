@@ -57,7 +57,7 @@ export default function SICVoiceSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="voice-demo" className="bg-foreground py-16 lg:py-24 overflow-hidden" aria-labelledby="voice-heading">
+    <section ref={sectionRef} id="voice-demo" className="bg-dark-panel py-16 lg:py-24 overflow-hidden" aria-labelledby="voice-heading">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left: copy */}

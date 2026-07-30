@@ -105,7 +105,7 @@ export default function CreatorsPage() {
       <Header />
 
       {/* Hero */}
-      <section className="pt-28 pb-20 px-4 relative overflow-hidden bg-foreground text-white">
+      <section className="pt-28 pb-20 px-4 relative overflow-hidden bg-dark-panel text-white">
         <div className="absolute inset-0 opacity-10">
           <img
             src="https://img.rocket.new/generatedImages/rocket_gen_img_1d40c8c94-1772826969087.png"
@@ -127,7 +127,7 @@ export default function CreatorsPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="/join?type=creator" className="btn-primary text-base px-8 py-4">Apply as a Creator</Link>
-            <Link href="#tools" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-foreground text-base px-8 py-4">See Creator Tools</Link>
+            <Link href="#tools" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-[#1a1f1b] text-base px-8 py-4">See Creator Tools</Link>
           </div>
         </div>
       </section>
@@ -166,7 +166,7 @@ export default function CreatorsPage() {
               key={benefit.title}
               className={`rounded-2xl p-6 border border-border hover:shadow-card-hover transition-all duration-300 ${
               i === 0 ? 'lg:col-span-2 bg-primary text-white' :
-              i === 3 ? 'lg:col-span-2 bg-foreground text-white' : 'bg-card'}`
+              i === 3 ? 'lg:col-span-2 bg-dark-panel text-white' : 'bg-card'}`
               }>
               
                 <span className="text-3xl mb-4 block">{benefit.icon}</span>
@@ -237,18 +237,18 @@ export default function CreatorsPage() {
               <p className="text-muted-foreground text-lg leading-relaxed mb-4">
                 See what people are viewing, saving, cooking, and sharing — then use that insight to decide what to create next.
               </p>
-              <div className="bg-white border border-primary/20 rounded-xl p-3 mb-4 flex items-start gap-2">
+              <div className="bg-card border border-primary/20 rounded-xl p-3 mb-4 flex items-start gap-2">
                 <span className="text-primary text-sm shrink-0">🚀</span>
                 <p className="text-sm text-foreground">
                   <strong>Coming in Phase 5:</strong> Publishing dashboard, analytics, newsletters, affiliate tools, and Academy LMS.{' '}
                   <a href="#apply" className="text-primary font-semibold hover:underline">Apply for early access →</a>
                 </p>
               </div>
-              <p className="text-xs text-muted-foreground bg-white border border-border rounded-xl p-3">
+              <p className="text-xs text-muted-foreground bg-card border border-border rounded-xl p-3">
                 ⚠️ Monetization features will launch in stages and may require eligibility, verification, and additional terms.
               </p>
             </div>
-            <div className="bg-white rounded-2xl border border-border p-6 shadow-sm">
+            <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
               <div className="flex items-center justify-between mb-6">
                 <p className="font-bold text-foreground">Creator Dashboard</p>
                 <span className="text-xs bg-accent/20 text-accent font-bold px-2 py-1 rounded-full">Phase 5 — Coming Soon</span>
@@ -268,7 +268,7 @@ export default function CreatorsPage() {
         </section>
 
         {/* Creator Academy Preview */}
-        <section className="bg-foreground rounded-3xl p-8 sm:p-12 text-white">
+        <section className="bg-dark-panel rounded-3xl p-8 sm:p-12 text-white">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div>
               <span className="text-accent text-xs font-bold uppercase tracking-widest">Creator Academy</span>

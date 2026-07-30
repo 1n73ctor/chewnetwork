@@ -3,47 +3,53 @@
 @tailwind utilities;
 
 :root {
-  --primary: #1F7A5A;
-  --primary-foreground: #FFFFFF;
-  --accent: #BF5925;
-  --accent-foreground: #FFFFFF;
-  --background: #FFFFFF;
-  --foreground: #252525;
-  --secondary: #FFF8EF;
-  --secondary-foreground: #252525;
-  --muted: #EAF5EF;
-  --muted-foreground: #4A6B5A;
-  --card: #FFFFFF;
-  --card-foreground: #252525;
-  --border: #E8EDE9;
-  --input: #F0F4F1;
-  --ring: #1F7A5A;
+  /* Colours are stored as space-separated RGB channels, not hex, so Tailwind can
+     inject alpha — `bg-primary/10` only compiles when the value supports
+     `rgb(... / <alpha-value>)`. Consume them in plain CSS as rgb(var(--token)). */
+  --primary: 31 122 90;            /* #1F7A5A */
+  --primary-foreground: 255 255 255;
+  --accent: 191 89 37;             /* #BF5925 */
+  --accent-foreground: 255 255 255;
+  --background: 255 255 255;
+  --foreground: 37 37 37;          /* #252525 */
+  --secondary: 255 248 239;        /* #FFF8EF */
+  --secondary-foreground: 37 37 37;
+  --muted: 234 245 239;            /* #EAF5EF */
+  --muted-foreground: 74 107 90;   /* #4A6B5A */
+  --card: 255 255 255;
+  --card-foreground: 37 37 37;
+  --border: 232 237 233;           /* #E8EDE9 */
+  --input: 240 244 241;            /* #F0F4F1 */
+  --ring: 31 122 90;
+  /* Always-dark panel: identical in both themes, for sections that are dark by
+     design and carry white text. Never use --foreground for these; it inverts. */
+  --dark-panel: 26 31 27;          /* #1a1f1b */
   --radius: 1rem;
   --font-sans: var(--font-plus-jakarta-sans), sans-serif;
 }
 
 .dark {
-  --primary: #2EAD7A;
-  --primary-foreground: #FFFFFF;
-  --accent: #E07040;
-  --accent-foreground: #FFFFFF;
-  --background: #0F1410;
-  --foreground: #F0F5F2;
-  --secondary: #1A2420;
-  --secondary-foreground: #F0F5F2;
-  --muted: #1E2E28;
-  --muted-foreground: #8AB5A0;
-  --card: #161E1A;
-  --card-foreground: #F0F5F2;
-  --border: #2A3D35;
-  --input: #1E2E28;
-  --ring: #2EAD7A;
+  --primary: 46 173 122;           /* #2EAD7A */
+  --primary-foreground: 255 255 255;
+  --accent: 224 112 64;            /* #E07040 */
+  --accent-foreground: 255 255 255;
+  --background: 15 20 16;          /* #0F1410 */
+  --foreground: 240 245 242;       /* #F0F5F2 */
+  --secondary: 26 36 32;           /* #1A2420 */
+  --secondary-foreground: 240 245 242;
+  --muted: 30 46 40;               /* #1E2E28 */
+  --muted-foreground: 138 181 160; /* #8AB5A0 */
+  --card: 22 30 26;                /* #161E1A */
+  --card-foreground: 240 245 242;
+  --border: 42 61 53;              /* #2A3D35 */
+  --input: 30 46 40;
+  --ring: 46 173 122;
 }
 
 @layer base {
   *, ::before, ::after {
     box-sizing: border-box;
-    border-color: var(--border);
+    border-color: rgb(var(--border));
   }
 
   html {
@@ -51,8 +57,8 @@
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -91,7 +97,7 @@
   }
 
   .text-highlight-dark {
-    background-color: var(--foreground);
+    background-color: rgb(var(--dark-panel));
     color: #FFFFFF;
     padding: 0.05em 0.25em;
     box-decoration-break: clone;
@@ -100,7 +106,7 @@
   }
 
   .text-highlight-green {
-    background-color: var(--primary);
+    background-color: rgb(var(--primary));
     color: #FFFFFF;
     padding: 0.05em 0.25em;
     box-decoration-break: clone;
@@ -157,7 +163,7 @@
   .btn-secondary {
     @apply inline-flex items-center gap-2 border-2 border-primary text-primary px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300;
     &:hover {
-      background-color: var(--primary);
+      background-color: rgb(var(--primary));
       color: white;
       transform: translateY(-1px);
     }
@@ -181,15 +187,15 @@
   }
 
   .section-cream {
-    background-color: var(--secondary);
+    background-color: rgb(var(--secondary));
   }
 
   .section-muted {
-    background-color: var(--muted);
+    background-color: rgb(var(--muted));
   }
 
     .section-dark {
-    background-color: #1a1f1b;
+    background-color: rgb(var(--dark-panel));
   }
 }
 
@@ -310,7 +316,7 @@
 
 /* ─── Item 100: Accessibility — visible keyboard focus ─────────────────────── */
 :focus-visible {
-  outline: 3px solid var(--primary);
+  outline: 3px solid rgb(var(--primary));
   outline-offset: 3px;
   border-radius: 6px;
 }

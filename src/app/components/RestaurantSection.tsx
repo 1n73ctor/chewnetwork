@@ -100,7 +100,7 @@ export default function RestaurantSection() {
               
                 {/* Status badge */}
                 <div className="absolute top-3 left-3">
-                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${rest?.status === 'Open Now' ? 'bg-primary/90 text-white' : 'bg-foreground/80 text-white'}`}>
+                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${rest?.status === 'Open Now' ? 'bg-primary/90 text-white' : 'bg-dark-panel/80 text-white'}`}>
                     {rest?.status}
                   </span>
                 </div>

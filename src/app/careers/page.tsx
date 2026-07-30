@@ -81,7 +81,7 @@ export default function CareersPage() {
         </section>
 
         {/* General application */}
-        <div className="bg-foreground rounded-3xl p-8 sm:p-10 text-center">
+        <div className="bg-dark-panel rounded-3xl p-8 sm:p-10 text-center">
           <h2 className="text-2xl font-extrabold text-white mb-3">Don&apos;t see your role?</h2>
           <p className="text-white/70 mb-6 max-w-md mx-auto text-sm leading-relaxed">
             We are always looking for exceptional people. Send us your resume and tell us how you would contribute to Chew Network.

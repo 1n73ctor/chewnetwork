@@ -84,7 +84,7 @@ export default function SICHowItWorks() {
               className={`scroll-reveal opacity-1 group relative border-2 rounded-3xl p-8 cursor-pointer transition-all duration-300 ${
                 activeStep === i
                   ? `${step?.borderColor} bg-muted shadow-lg`
-                  : 'border-border bg-white hover:border-primary/30 hover:shadow-md'
+                  : 'border-border bg-card hover:border-primary/30 hover:shadow-md'
               }`}
               style={{ animationDelay: `${i * 0.15}s` }}
               onClick={() => setActiveStep(i)}

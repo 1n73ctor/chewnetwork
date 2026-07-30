@@ -23,7 +23,7 @@ export default function SICHero() {
   }, []);
 
   return (
-    <section className="relative w-full min-h-screen overflow-hidden bg-foreground flex items-center" aria-label="See It. Cook It. hero">
+    <section className="relative w-full min-h-screen overflow-hidden bg-dark-panel flex items-center" aria-label="See It. Cook It. hero">
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <AppImage
@@ -34,8 +34,8 @@ export default function SICHero() {
           className="object-cover opacity-30 animate-cinematic"
           sizes="100vw" />
         
-        <div className="absolute inset-0 bg-gradient-to-r from-foreground/95 via-foreground/70 to-foreground/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-dark-panel/95 via-dark-panel/70 to-dark-panel/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-dark-panel/80 to-transparent" />
       </div>
       <div className="absolute top-1/4 right-1/4 w-96 h-96 blob-green opacity-10 pointer-events-none" />
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-32 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
@@ -79,7 +79,7 @@ export default function SICHero() {
             <div className="absolute inset-0 blob-green opacity-30 scale-125" />
 
             {/* Phone */}
-            <div className="relative w-72 bg-foreground border-4 border-white/10 rounded-[3rem] overflow-hidden shadow-2xl">
+            <div className="relative w-72 bg-dark-panel border-4 border-white/10 rounded-[3rem] overflow-hidden shadow-2xl">
               <div className="relative h-[560px]">
                 <AppImage
                   src="https://img.rocket.new/generatedImages/rocket_gen_img_1b625721b-1785264827921.png"
@@ -139,7 +139,7 @@ export default function SICHero() {
             </div>
 
             {/* Floating badges */}
-            <div className="absolute -left-10 top-1/3 bg-white rounded-2xl shadow-xl p-3 animate-float">
+            <div className="absolute -left-10 top-1/3 bg-card rounded-2xl shadow-xl p-3 animate-float">
               <div className="flex items-center gap-2">
                 <span className="text-xl">🍅</span>
                 <div>
@@ -148,7 +148,7 @@ export default function SICHero() {
                 </div>
               </div>
             </div>
-            <div className="absolute -right-8 bottom-1/3 bg-white rounded-2xl shadow-xl p-3" style={{ animationDelay: '1s' }}>
+            <div className="absolute -right-8 bottom-1/3 bg-card rounded-2xl shadow-xl p-3" style={{ animationDelay: '1s' }}>
               <div className="flex items-center gap-2">
                 <span className="text-xl">🧀</span>
                 <div>

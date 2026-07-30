@@ -87,7 +87,7 @@ export default function SeeItCookItDemo() {
               {/* Glow */}
               <div className="absolute inset-0 blob-green opacity-40 scale-110" />
               {/* Phone */}
-              <div className="relative w-72 lg:w-80 bg-foreground rounded-[3rem] border-4 border-foreground/80 overflow-hidden shadow-2xl">
+              <div className="relative w-72 lg:w-80 bg-dark-panel rounded-[3rem] border-4 border-dark-panel/80 overflow-hidden shadow-2xl">
                 <div className="relative h-[520px]">
                   <AppImage
                     src="https://img.rocket.new/generatedImages/rocket_gen_img_1da6bf0c1-1785264827580.png"
@@ -141,11 +141,11 @@ export default function SeeItCookItDemo() {
               {/* Floating ingredient tags */}
               {activeStep >= 1 &&
               <>
-                  <div className="absolute -right-4 top-1/3 bg-white rounded-full px-3 py-1.5 shadow-lg flex items-center gap-1.5 animate-slide-up opacity-0">
+                  <div className="absolute -right-4 top-1/3 bg-card rounded-full px-3 py-1.5 shadow-lg flex items-center gap-1.5 animate-slide-up opacity-0">
                     <span className="text-sm">🍅</span>
                     <span className="text-foreground text-xs font-bold">San Marzano</span>
                   </div>
-                  <div className="absolute -left-4 top-1/2 bg-white rounded-full px-3 py-1.5 shadow-lg flex items-center gap-1.5 animate-slide-up opacity-0 delay-200">
+                  <div className="absolute -left-4 top-1/2 bg-card rounded-full px-3 py-1.5 shadow-lg flex items-center gap-1.5 animate-slide-up opacity-0 delay-200">
                     <span className="text-sm">🧀</span>
                     <span className="text-foreground text-xs font-bold">Mozzarella</span>
                   </div>

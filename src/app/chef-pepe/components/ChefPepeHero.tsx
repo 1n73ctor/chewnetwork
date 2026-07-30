@@ -45,13 +45,13 @@ export default function ChefPepeHero() {
     micState === 'denied'? 'Microphone access denied' : 'Talk to Chef Pepe via microphone';
 
   const micBg =
-    micState === 'active' ? '#1F7A5A' :
-    micState === 'denied'? '#9CA3AF' : '#BF5925';
+    micState === 'active' ? 'rgb(var(--primary))' :
+    micState === 'denied'? 'rgb(var(--muted-foreground))' : 'rgb(var(--accent))';
 
   return (
     <section
       className="relative w-full min-h-screen overflow-hidden flex items-center"
-      style={{ backgroundColor: '#FFF8EF' }}
+      style={{ backgroundColor: 'rgb(var(--secondary))' }}
       aria-label="Chef Pepe hero">
       
       {/* Subtle background blobs */}
@@ -64,34 +64,34 @@ export default function ChefPepeHero() {
         <div>
           {/* Eyebrow */}
           <div className="flex items-center gap-3 mb-6">
-            <span className="h-px w-8" style={{ backgroundColor: '#BF5925' }} />
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#BF5925' }}>
+            <span className="h-px w-8" style={{ backgroundColor: 'rgb(var(--accent))' }} />
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'rgb(var(--accent))' }}>
               Meet Your AI Cooking Companion
             </span>
           </div>
 
           {/* Headline */}
-          <h1 className="font-extrabold mb-6" style={{ color: '#252525' }}>
+          <h1 className="font-extrabold mb-6" style={{ color: 'rgb(var(--foreground))' }}>
             <span className="block text-hero-xl">Meet</span>
-            <span className="block text-hero-xl" style={{ color: '#BF5925' }}>Chef Pepe.</span>
+            <span className="block text-hero-xl" style={{ color: 'rgb(var(--accent))' }}>Chef Pepe.</span>
           </h1>
 
           {/* Body */}
-          <p className="text-lg leading-relaxed mb-8 max-w-lg font-medium" style={{ color: '#4A6B5A' }}>
+          <p className="text-lg leading-relaxed mb-8 max-w-lg font-medium" style={{ color: 'rgb(var(--muted-foreground))' }}>
             Friendly enough for your first grilled cheese. Smart enough to help with tonight&apos;s dinner. Patient enough to stay with you step by step.
           </p>
 
           {/* Chef Pepe greeting bubble */}
           <div
             className="rounded-2xl rounded-tl-sm p-5 mb-6 max-w-sm border"
-            style={{ backgroundColor: '#FFFFFF', borderColor: '#E8EDE9', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
+            style={{ backgroundColor: 'rgb(var(--card))', borderColor: 'rgb(var(--border))', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
             
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xl">🍳</span>
-              <span className="font-bold text-sm" style={{ color: '#252525' }}>Chef Pepe</span>
+              <span className="font-bold text-sm" style={{ color: 'rgb(var(--foreground))' }}>Chef Pepe</span>
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 ml-1" />
             </div>
-            <p className="text-base font-medium" style={{ color: '#252525' }}>
+            <p className="text-base font-medium" style={{ color: 'rgb(var(--foreground))' }}>
               Hey! I&apos;m Chef Pepe. What are we cooking today? 👨‍🍳
             </p>
             {/* Waveform — animated when mic is active */}
@@ -102,7 +102,7 @@ export default function ChefPepeHero() {
                   className="w-1 rounded-full"
                   style={{
                     height: `${h}px`,
-                    backgroundColor: micState === 'active' ? '#1F7A5A' : '#BF5925',
+                    backgroundColor: micState === 'active' ? 'rgb(var(--primary))' : 'rgb(var(--accent))',
                     opacity: micState === 'active' ? 0.9 : 0.5,
                     transition: 'background-color 0.3s',
                   }} />
@@ -112,7 +112,7 @@ export default function ChefPepeHero() {
 
           {/* Mic denied notice */}
           {micState === 'denied' && (
-            <div className="mb-4 flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2 max-w-lg">
+            <div className="mb-4 flex items-center gap-2 text-sm text-red-600 dark:text-red-400 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-2 max-w-lg">
               <Icon name="ExclamationCircleIcon" size={16} />
               <span>Microphone access was denied. Please allow access in your browser settings, or type your question below.</span>
             </div>
@@ -121,7 +121,7 @@ export default function ChefPepeHero() {
           {/* Voice + text prompt input */}
           <div
             className="flex items-center gap-3 rounded-2xl border p-3 mb-4 max-w-lg"
-            style={{ backgroundColor: '#FFFFFF', borderColor: micState === 'active' ? '#1F7A5A' : '#E8EDE9', boxShadow: '0 4px 20px rgba(0,0,0,0.06)', transition: 'border-color 0.3s' }}>
+            style={{ backgroundColor: 'rgb(var(--card))', borderColor: micState === 'active' ? 'rgb(var(--primary))' : 'rgb(var(--border))', boxShadow: '0 4px 20px rgba(0,0,0,0.06)', transition: 'border-color 0.3s' }}>
             
             <button
               className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 relative"
@@ -148,13 +148,13 @@ export default function ChefPepeHero() {
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Ask about a dish, ingredient, technique, substitution, or meal plan..."
               className="flex-1 bg-transparent text-sm outline-none"
-              style={{ color: '#252525' }}
+              style={{ color: 'rgb(var(--foreground))' }}
               aria-label="Type a question for Chef Pepe" />
             
             {inputValue &&
               <button
                 className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200"
-                style={{ backgroundColor: '#1F7A5A' }}
+                style={{ backgroundColor: 'rgb(var(--primary))' }}
                 aria-label="Send question">
                 <Icon name="ArrowRightIcon" size={16} className="text-white" />
               </button>
@@ -168,7 +168,7 @@ export default function ChefPepeHero() {
                 key={prompt}
                 onClick={() => { setInputValue(prompt); inputRef.current?.focus(); }}
                 className="text-xs font-semibold px-3 py-1.5 rounded-full border transition-all duration-200 hover:border-accent"
-                style={{ backgroundColor: '#EAF5EF', borderColor: '#E8EDE9', color: '#1F7A5A' }}>
+                style={{ backgroundColor: 'rgb(var(--muted))', borderColor: 'rgb(var(--border))', color: 'rgb(var(--primary))' }}>
                 {prompt}
               </button>
             )}
@@ -185,9 +185,9 @@ export default function ChefPepeHero() {
             <button
               onClick={focusInput}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-sm border-2 transition-all duration-300"
-              style={{ borderColor: '#BF5925', color: '#BF5925', backgroundColor: 'transparent' }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#BF5925'; (e.currentTarget as HTMLButtonElement).style.color = '#FFFFFF'; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = '#BF5925'; }}>
+              style={{ borderColor: 'rgb(var(--accent))', color: 'rgb(var(--accent))', backgroundColor: 'transparent' }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgb(var(--accent))'; (e.currentTarget as HTMLButtonElement).style.color = 'rgb(var(--accent-foreground))'; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = 'rgb(var(--accent))'; }}>
               <Icon name="ChatBubbleLeftRightIcon" size={18} />
               Type a Question
             </button>
@@ -198,21 +198,21 @@ export default function ChefPepeHero() {
             <Link
               href="/see-it-cook-it"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm border transition-all duration-300 hover:bg-muted"
-              style={{ borderColor: '#E8EDE9', color: '#252525' }}>
+              style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--foreground))' }}>
               <Icon name="CameraIcon" size={16} />
               Show Chef Pepe a Meal
             </Link>
             <Link
               href="/recipes"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm border transition-all duration-300 hover:bg-muted"
-              style={{ borderColor: '#E8EDE9', color: '#252525' }}>
+              style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--foreground))' }}>
               <Icon name="BookOpenIcon" size={16} />
               Start Cooking
             </Link>
             <Link
               href="/join?interest=chef-pepe"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-300"
-              style={{ backgroundColor: '#EAF5EF', color: '#1F7A5A' }}>
+              style={{ backgroundColor: 'rgb(var(--muted))', color: 'rgb(var(--primary))' }}>
               <Icon name="UserPlusIcon" size={16} />
               Join Chew
             </Link>
@@ -261,17 +261,17 @@ export default function ChefPepeHero() {
             {/* Capability chips */}
             <div
               className="absolute -top-3 -right-6 rounded-2xl shadow-lg px-4 py-2 border"
-              style={{ backgroundColor: '#FFFFFF', borderColor: '#E8EDE9' }}>
-              <span className="text-xs font-bold" style={{ color: '#252525' }}>🥩 Steak tips</span>
+              style={{ backgroundColor: 'rgb(var(--card))', borderColor: 'rgb(var(--border))' }}>
+              <span className="text-xs font-bold" style={{ color: 'rgb(var(--foreground))' }}>🥩 Steak tips</span>
             </div>
             <div
               className="absolute -bottom-3 -left-6 rounded-2xl shadow-lg px-4 py-2 border"
-              style={{ backgroundColor: '#FFFFFF', borderColor: '#E8EDE9' }}>
-              <span className="text-xs font-bold" style={{ color: '#252525' }}>🥗 Meal plans</span>
+              style={{ backgroundColor: 'rgb(var(--card))', borderColor: 'rgb(var(--border))' }}>
+              <span className="text-xs font-bold" style={{ color: 'rgb(var(--foreground))' }}>🥗 Meal plans</span>
             </div>
             <div
               className="absolute top-1/2 -right-14 rounded-2xl shadow-lg px-4 py-2 -translate-y-1/2"
-              style={{ backgroundColor: '#BF5925' }}>
+              style={{ backgroundColor: 'rgb(var(--accent))' }}>
               <span className="text-xs font-bold text-white">🔊 Voice guide</span>
             </div>
           </div>

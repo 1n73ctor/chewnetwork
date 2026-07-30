@@ -63,9 +63,9 @@ export default function AIDisclosurePage() {
                   ))}
                 </ul>
               </div>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-                <p className="text-xs font-bold uppercase tracking-wide text-yellow-700 mb-1">Limitations</p>
-                <p className="text-yellow-800 text-sm leading-relaxed">{feature?.limitations}</p>
+              <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
+                <p className="text-xs font-bold uppercase tracking-wide text-amber-700 dark:text-amber-400 mb-1">Limitations</p>
+                <p className="text-amber-800 dark:text-amber-300 text-sm leading-relaxed">{feature?.limitations}</p>
               </div>
             </section>
           ))}

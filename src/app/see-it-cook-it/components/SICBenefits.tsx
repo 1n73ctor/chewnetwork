@@ -69,7 +69,7 @@ export default function SICBenefits() {
           {benefits?.map((b, i) => (
             <div
               key={b?.title}
-              className="scroll-reveal opacity-1 group bg-white border border-border rounded-2xl p-6 hover:border-primary/40 hover:shadow-md transition-all duration-300"
+              className="scroll-reveal opacity-1 group bg-card border border-border rounded-2xl p-6 hover:border-primary/40 hover:shadow-md transition-all duration-300"
               style={{ animationDelay: `${i * 0.08}s` }}
             >
               <div className="text-3xl mb-4">{b?.icon}</div>

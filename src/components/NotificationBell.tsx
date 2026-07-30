@@ -26,9 +26,9 @@ function notifIcon(type: Notification['notificationType']): string {
 
 function notifColor(type: Notification['notificationType']): string {
   switch (type) {
-    case 'new_follower': return 'text-violet-500 bg-violet-50';
-    case 'recipe_saved': return 'text-amber-500 bg-amber-50';
-    case 'comment': return 'text-emerald-500 bg-emerald-50';
+    case 'new_follower': return 'text-violet-500 bg-violet-500/10';
+    case 'recipe_saved': return 'text-amber-500 bg-amber-500/10';
+    case 'comment': return 'text-emerald-500 bg-emerald-500/10';
     default: return 'text-primary bg-primary/10';
   }
 }
@@ -79,7 +79,7 @@ export default function NotificationBell({ scrolled }: { scrolled: boolean }) {
       {open && (
         <div
           ref={panelRef}
-          className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-border z-50 overflow-hidden"
+          className="absolute right-0 top-full mt-2 w-80 bg-card rounded-2xl shadow-2xl border border-border z-50 overflow-hidden"
           role="dialog"
           aria-label="Notifications panel"
         >

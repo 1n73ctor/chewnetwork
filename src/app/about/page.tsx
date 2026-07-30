@@ -23,7 +23,7 @@ const products = [
   name: 'Creator Academy',
   description: 'Practical education for food creators. From your first recipe post to a complete creator business — learn the craft behind the content.',
   href: '/creator-academy',
-  color: 'bg-foreground'
+  color: 'bg-dark-panel'
 }];
 
 
@@ -76,7 +76,7 @@ export default function AboutPage() {
     <main className="bg-background min-h-screen">
       <Header />
       {/* Vision Hero */}
-      <section className="pt-28 pb-20 px-4 bg-foreground text-white relative overflow-hidden">
+      <section className="pt-28 pb-20 px-4 bg-dark-panel text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img
             src="https://images.unsplash.com/photo-1721742603176-a0edbf7abdc8"
@@ -95,7 +95,7 @@ export default function AboutPage() {
           </h1>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="/see-it-cook-it" className="btn-primary text-base px-8 py-4">Explore See It. Cook It.</Link>
-            <Link href="/chef-pepe" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-foreground text-base px-8 py-4">Meet Chef Pepe</Link>
+            <Link href="/chef-pepe" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-[#1a1f1b] text-base px-8 py-4">Meet Chef Pepe</Link>
           </div>
         </div>
       </section>
@@ -187,7 +187,7 @@ export default function AboutPage() {
         </section>
 
         {/* Principles */}
-        <section aria-labelledby="principles-heading" className="bg-foreground rounded-3xl p-8 sm:p-12 text-white">
+        <section aria-labelledby="principles-heading" className="bg-dark-panel rounded-3xl p-8 sm:p-12 text-white">
           <h2 id="principles-heading" className="text-3xl font-extrabold mb-10 text-center">
             How we want to build.
           </h2>

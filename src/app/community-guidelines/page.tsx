@@ -77,7 +77,7 @@ export default function CommunityGuidelinesPage() {
           ))}
         </div>
 
-        <div className="bg-foreground rounded-3xl p-8 sm:p-10 text-center">
+        <div className="bg-dark-panel rounded-3xl p-8 sm:p-10 text-center">
           <h2 className="text-2xl font-extrabold text-white mb-3">Violations & Enforcement</h2>
           <p className="text-white/70 mb-6 max-w-xl mx-auto text-sm leading-relaxed">
             Violations of these guidelines may result in content removal, account suspension, or permanent ban depending on severity. We take a graduated approach for first-time violations and act swiftly on serious or repeated offenses.
