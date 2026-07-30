@@ -15,7 +15,7 @@ const capabilities = [
     label: 'Plan a Meal',
     example: '"Give me three dinners using chicken, rice, and broccoli."',
     desc: 'Chef Pepe builds full meal plans around your ingredients, preferences, and schedule.',
-    color: 'border-primary/30 hover:border-primary bg-white',
+    color: 'border-primary/30 hover:border-primary bg-card',
     iconBg: 'bg-primary/10',
   },
   {
@@ -23,7 +23,7 @@ const capabilities = [
     label: 'Teach a Technique',
     example: '"How do I know when my steak is medium-rare?"',
     desc: 'From knife skills to sauce emulsification — Chef Pepe explains the why, not just the how.',
-    color: 'border-accent/30 hover:border-accent bg-white',
+    color: 'border-accent/30 hover:border-accent bg-card',
     iconBg: 'bg-accent/10',
   },
   {
@@ -31,7 +31,7 @@ const capabilities = [
     label: 'Guide a Recipe',
     example: '"Read the next step when I say ready."',
     desc: 'Step-by-step voice or text guidance. Chef Pepe waits for you at every stage.',
-    color: 'border-primary/30 hover:border-primary bg-white',
+    color: 'border-primary/30 hover:border-primary bg-card',
     iconBg: 'bg-primary/10',
   },
   {
@@ -39,7 +39,7 @@ const capabilities = [
     label: 'Fix a Problem',
     example: '"My sauce is too salty. What can I do?"',
     desc: 'Real-time troubleshooting for common cooking mistakes and unexpected results.',
-    color: 'border-accent/30 hover:border-accent bg-white',
+    color: 'border-accent/30 hover:border-accent bg-card',
     iconBg: 'bg-accent/10',
   },
   {
@@ -47,7 +47,7 @@ const capabilities = [
     label: 'Adjust a Recipe',
     example: '"Make this recipe serve eight people."',
     desc: 'Instantly scale any recipe up or down. Ingredient quantities recalculate automatically.',
-    color: 'border-primary/30 hover:border-primary bg-white',
+    color: 'border-primary/30 hover:border-primary bg-card',
     iconBg: 'bg-primary/10',
   },
   {
@@ -55,7 +55,7 @@ const capabilities = [
     label: 'Build a Shopping List',
     example: '"Organize everything I need by grocery aisle."',
     desc: 'Chef Pepe compiles your ingredients and organizes them for an efficient shopping trip.',
-    color: 'border-accent/30 hover:border-accent bg-white',
+    color: 'border-accent/30 hover:border-accent bg-card',
     iconBg: 'bg-accent/10',
   },
 ];

@@ -32,7 +32,7 @@ function RecipeCard({ recipe }: {recipe: Recipe;}) {
         <p className="text-muted-foreground text-xs">{recipe.creator}</p>
         {(recipe.time || recipe.difficulty) && <div className="flex items-center gap-3 mt-2">
           {recipe.time && <span className="text-xs text-muted-foreground flex items-center gap-1"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth={2} /><path strokeLinecap="round" strokeWidth={2} d="M12 6v6l4 2" /></svg>{recipe.time}</span>}
-          {recipe.difficulty && <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${recipe.difficulty === 'Easy' ? 'bg-muted text-primary' : recipe.difficulty === 'Hard' ? 'bg-red-50 text-red-600' : 'bg-secondary text-accent'}`}>{recipe.difficulty}</span>}
+          {recipe.difficulty && <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${recipe.difficulty === 'Easy' ? 'bg-muted text-primary' : recipe.difficulty === 'Hard' ? 'bg-red-500/10 text-red-600 dark:text-red-400' : 'bg-secondary text-accent'}`}>{recipe.difficulty}</span>}
         </div>}
       </div>
     </Link>);
@@ -462,7 +462,7 @@ export default function RecipeSectionPage({ params }: {params: Promise<{section:
 
       {/* CTA */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="bg-foreground rounded-3xl p-8 sm:p-12 text-center">
+        <div className="bg-dark-panel rounded-3xl p-8 sm:p-12 text-center">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
             Save recipes. Build collections. Cook with Chef Pepe.
           </h2>
@@ -471,7 +471,7 @@ export default function RecipeSectionPage({ params }: {params: Promise<{section:
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/join" className="btn-primary">Join Chew — it&apos;s free</Link>
-            <Link href="/recipes" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-foreground">
+            <Link href="/recipes" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-[#1a1f1b]">
               Explore all recipes
             </Link>
           </div>

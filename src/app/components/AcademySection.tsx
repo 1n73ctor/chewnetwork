@@ -55,7 +55,7 @@ export default function AcademySection() {
           </div>
 
           {/* Preview stat card */}
-          <div className="bg-foreground rounded-3xl p-8 flex flex-col justify-between min-h-[200px] h-full">
+          <div className="bg-dark-panel rounded-3xl p-8 flex flex-col justify-between min-h-[200px] h-full">
             <div>
               <p className="text-accent text-xs font-bold uppercase tracking-widest mb-3">Creator Academy</p>
               <p className="text-white font-extrabold text-2xl mb-2">Start as a food lover.</p>

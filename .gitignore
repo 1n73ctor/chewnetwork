@@ -35,3 +35,8 @@ jest-test-results.json
 
 # Optional: if using TurboRepo or monorepo
 turbo/
+# Supabase CLI local state (contains the pooled DB connection string)
+supabase/.temp/
+
+# Claude Code local tool permissions
+.claude/

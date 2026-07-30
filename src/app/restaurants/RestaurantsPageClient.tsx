@@ -28,7 +28,7 @@ const neighborhoodCollections = [
 
 function VerifiedBadge() {
   return (
-    <span className="inline-flex items-center gap-1 text-xs font-medium text-brand-green">
+    <span className="inline-flex items-center gap-1 text-xs font-medium text-primary">
       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
       </svg>
@@ -58,24 +58,24 @@ export default function RestaurantsPageClient() {
       <main className="min-h-screen bg-background pt-16">
 
         {/* Search Hero */}
-        <section className="relative overflow-hidden bg-foreground" aria-label="Restaurant search">
+        <section className="relative overflow-hidden bg-dark-panel" aria-label="Restaurant search">
           <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1600&q=60')`, backgroundSize: 'cover', backgroundPosition: 'center' }} aria-hidden="true" />
-          <div className="absolute inset-0 bg-gradient-to-b from-foreground/80 via-foreground/70 to-foreground/90" aria-hidden="true" />
+          <div className="absolute inset-0 bg-gradient-to-b from-dark-panel/80 via-dark-panel/70 to-dark-panel/90" aria-hidden="true" />
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
-            <p className="text-brand-orange font-semibold text-sm uppercase tracking-widest mb-4">Restaurant Discovery</p>
+            <p className="text-accent font-semibold text-sm uppercase tracking-widest mb-4">Restaurant Discovery</p>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-5">Discover food worth<br className="hidden sm:block" /> leaving home for.</h1>
             <p className="text-white/70 text-lg md:text-xl max-w-2xl mx-auto mb-10">Find restaurants, signature dishes, local favorites, creator recommendations, and the stories behind the people serving them.</p>
             <div className="relative max-w-2xl mx-auto mb-6">
-              <div className="flex items-center bg-white rounded-2xl shadow-2xl overflow-hidden">
+              <div className="flex items-center bg-card rounded-2xl shadow-2xl overflow-hidden">
                 <div className="pl-5 text-muted-foreground" aria-hidden="true">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </div>
                 <input type="search" value={searchQuery} onChange={(e) => setSearchQuery(e?.target?.value)} placeholder="Search restaurants, dishes, neighborhoods, or cuisines..." className="flex-1 px-4 py-4 text-foreground placeholder-muted-foreground bg-transparent outline-none text-sm md:text-base" aria-label="Search restaurants" />
-                <button className="m-2 bg-brand-orange hover:bg-brand-orange/90 text-white font-semibold px-5 py-3 rounded-xl transition-colors text-sm whitespace-nowrap" aria-label="Search restaurants">Search Restaurants</button>
+                <button className="m-2 bg-accent hover:bg-accent/90 text-white font-semibold px-5 py-3 rounded-xl transition-colors text-sm whitespace-nowrap" aria-label="Search restaurants">Search Restaurants</button>
               </div>
             </div>
             <button onClick={handleUseLocation} className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium transition-colors group" aria-label="Use my current location">
-              <svg className="w-4 h-4 text-brand-orange group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <svg className="w-4 h-4 text-accent group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
@@ -88,7 +88,7 @@ export default function RestaurantsPageClient() {
               <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1">
                 {cuisineFilters?.map((cuisine) => (
                   <button key={cuisine} onClick={() => setActiveCuisine(cuisine)}
-                    className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${activeCuisine === cuisine ? 'bg-brand-orange text-white shadow-md' : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white'}`}
+                    className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${activeCuisine === cuisine ? 'bg-accent text-white shadow-md' : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white'}`}
                     aria-pressed={activeCuisine === cuisine}>
                     {cuisine}
                   </button>
@@ -107,7 +107,7 @@ export default function RestaurantsPageClient() {
             <div className="flex items-center gap-1 bg-muted rounded-xl p-1 ml-auto">
               <button
                 onClick={() => setViewMode('list')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${viewMode === 'list' ? 'bg-white text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${viewMode === 'list' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                 aria-pressed={viewMode === 'list'}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
@@ -115,7 +115,7 @@ export default function RestaurantsPageClient() {
               </button>
               <button
                 onClick={() => setViewMode('map')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${viewMode === 'map' ? 'bg-white text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${viewMode === 'map' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                 aria-pressed={viewMode === 'map'}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
@@ -139,9 +139,9 @@ export default function RestaurantsPageClient() {
 
         {/* Accuracy disclaimer */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-start gap-3">
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3 flex items-start gap-3">
             <span className="text-amber-500 text-sm shrink-0 mt-0.5">ℹ️</span>
-            <p className="text-amber-800 text-xs leading-relaxed">Restaurant details, menus, prices, hours, and availability can change. Confirm directly with the restaurant before visiting or ordering.</p>
+            <p className="text-amber-800 dark:text-amber-300 text-xs leading-relaxed">Restaurant details, menus, prices, hours, and availability can change. Confirm directly with the restaurant before visiting or ordering.</p>
           </div>
         </div>
 
@@ -155,7 +155,7 @@ export default function RestaurantsPageClient() {
                     <AppImage src={restaurant?.image} alt={restaurant?.alt} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                     {restaurant?.badge && (
-                      <span className="absolute top-3 left-3 bg-brand-orange text-white text-xs font-bold px-2 py-1 rounded-full">{restaurant?.badge}</span>
+                      <span className="absolute top-3 left-3 bg-accent text-white text-xs font-bold px-2 py-1 rounded-full">{restaurant?.badge}</span>
                     )}
                     <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">
                       <svg className="w-3 h-3 text-amber-500 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
@@ -202,12 +202,12 @@ export default function RestaurantsPageClient() {
 
         {/* Become a Partner CTA */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="bg-foreground rounded-3xl p-8 sm:p-12 text-center text-white">
+          <div className="bg-dark-panel rounded-3xl p-8 sm:p-12 text-center text-white">
             <h2 className="text-2xl sm:text-3xl font-extrabold mb-3">Is your restaurant on Chew?</h2>
             <p className="text-white/70 mb-8 max-w-md mx-auto">Claim your profile, showcase your signature dishes, and connect with food creators and local food lovers.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/join?type=restaurant" className="btn-primary">Claim Your Restaurant</Link>
-              <Link href="/contact?topic=restaurant" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-foreground">Become a Restaurant Partner</Link>
+              <Link href="/contact?topic=restaurant" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-[#1a1f1b]">Become a Restaurant Partner</Link>
             </div>
           </div>
         </section>

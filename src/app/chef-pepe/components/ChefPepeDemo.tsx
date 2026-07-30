@@ -67,7 +67,7 @@ export default function ChefPepeDemo() {
         </div>
 
         {/* Chat window */}
-        <div className="bg-white border border-border rounded-3xl overflow-hidden shadow-xl">
+        <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-xl">
           {/* Chat header */}
           <div className="flex items-center gap-3 px-6 py-4 border-b border-border bg-muted/50">
             <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center text-xl">🍳</div>
@@ -144,7 +144,7 @@ export default function ChefPepeDemo() {
               <button
                 key={prompt}
                 onClick={() => sendMessage(prompt)}
-                className="px-4 py-2 bg-white border border-border rounded-full text-foreground text-xs font-medium hover:border-primary hover:text-primary transition-all duration-200"
+                className="px-4 py-2 bg-card border border-border rounded-full text-foreground text-xs font-medium hover:border-primary hover:text-primary transition-all duration-200"
                 role="listitem"
                 aria-label={`Ask Chef Pepe: ${prompt}`}
               >

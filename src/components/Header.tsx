@@ -171,7 +171,7 @@ export default function Header() {
       {/* Mobile Menu Overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-foreground/95 backdrop-blur-xl lg:hidden"
+          className="fixed inset-0 z-40 bg-dark-panel/95 backdrop-blur-xl lg:hidden"
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
@@ -194,7 +194,7 @@ export default function Header() {
               <Link
                 href="/login"
                 onClick={() => { setMobileOpen(false); Analytics?.signInClick('mobile_menu'); }}
-                className="btn-secondary w-full justify-center border-white/30 text-white hover:bg-white hover:text-foreground"
+                className="btn-secondary w-full justify-center border-white/30 text-white hover:bg-white hover:text-[#1a1f1b]"
               >
                 Sign In
               </Link>

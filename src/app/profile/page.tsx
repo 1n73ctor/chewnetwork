@@ -386,7 +386,7 @@ export default function ProfilePage() {
                 </div>
                 <button
                   onClick={() => setShowDeleteModal(true)}
-                  className="text-xs font-semibold px-4 py-2 rounded-full border-2 border-red-300 text-red-600 hover:bg-red-50 transition-colors shrink-0"
+                  className="text-xs font-semibold px-4 py-2 rounded-full border-2 border-red-300 text-red-600 hover:bg-red-500/10 transition-colors shrink-0"
                 >
                   Delete Account
                 </button>

@@ -42,7 +42,7 @@ export default function SignupCTA() {
           className="object-cover opacity-20"
           sizes="100vw" />
         
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/80 to-foreground/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-dark-panel via-dark-panel/80 to-dark-panel/60" />
       </div>
 
       {/* Background blobs */}

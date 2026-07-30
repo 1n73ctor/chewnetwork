@@ -145,7 +145,7 @@ export default function RestaurantDetailPage() {
 
         {/* Quick info bar */}
         <div className="flex flex-wrap items-center gap-4 pb-6 border-b border-border mb-8">
-          <span className={`text-sm font-semibold px-3 py-1 rounded-full ${restaurant.open ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+          <span className={`text-sm font-semibold px-3 py-1 rounded-full ${restaurant.open ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400' : 'bg-red-500/15 text-red-700 dark:text-red-400'}`}>
             {restaurant.hours}
           </span>
           <span className="text-muted-foreground text-sm">{restaurant.price}</span>

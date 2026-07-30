@@ -188,7 +188,7 @@ export default function HeroSection() {
               </div>
             </div>
             {/* Floating badge */}
-            <div className="absolute -left-8 top-1/2 bg-white rounded-2xl shadow-xl p-3 animate-float">
+            <div className="absolute -left-8 top-1/2 bg-card rounded-2xl shadow-xl p-3 animate-float">
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🥑</span>
                 <div>

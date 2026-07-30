@@ -214,7 +214,7 @@ export default function CommunityPage() {
 
         {/* Current Challenge */}
         <section id="challenge" aria-labelledby="challenge-heading">
-          <div className="relative rounded-3xl overflow-hidden bg-foreground text-white">
+          <div className="relative rounded-3xl overflow-hidden bg-dark-panel text-white">
             <div className="absolute inset-0 opacity-20">
               <img
                 src="https://images.unsplash.com/photo-1513185158878-8d8c2a2a3da3"
@@ -247,7 +247,7 @@ export default function CommunityPage() {
                 </div>
                 <div className="flex flex-col gap-3 shrink-0">
                   <Link href="/join?interest=community" className="btn-accent">Join the Challenge</Link>
-                  <button className="btn-secondary border-white/30 text-white hover:bg-white hover:text-foreground">View All Entries</button>
+                  <button className="btn-secondary border-white/30 text-white hover:bg-white hover:text-[#1a1f1b]">View All Entries</button>
                 </div>
               </div>
             </div>

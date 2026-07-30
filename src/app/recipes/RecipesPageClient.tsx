@@ -179,7 +179,7 @@ function RecipeCard({ recipe, size = 'md' }: {recipe: Recipe;size?: 'sm' | 'md';
               </span>
           }
             {recipe.difficulty &&
-          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${recipe.difficulty === 'Easy' ? 'bg-muted text-primary' : recipe.difficulty === 'Hard' ? 'bg-red-50 text-red-600' : 'bg-secondary text-accent'}`}>
+          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${recipe.difficulty === 'Easy' ? 'bg-muted text-primary' : recipe.difficulty === 'Hard' ? 'bg-red-500/10 text-red-600 dark:text-red-400' : 'bg-secondary text-accent'}`}>
                 {recipe.difficulty}
               </span>
           }
@@ -772,7 +772,7 @@ export default function RecipesPageClient() {
         </section>
 
         {/* Join CTA */}
-        <section className="bg-foreground rounded-3xl p-8 sm:p-12 text-center">
+        <section className="bg-dark-panel rounded-3xl p-8 sm:p-12 text-center">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
             Save recipes. Build collections. Cook with Chef Pepe.
           </h2>
@@ -781,7 +781,7 @@ export default function RecipesPageClient() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/join" className="btn-primary">Join Chew — it&apos;s free</Link>
-            <Link href="/chef-pepe" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-foreground">Ask Chef Pepe</Link>
+            <Link href="/chef-pepe" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-[#1a1f1b]">Ask Chef Pepe</Link>
           </div>
         </section>
           </>

@@ -46,7 +46,7 @@ const modes = [
       'Technique variations and history',
       'Professional kitchen context',
     ],
-    color: 'bg-foreground',
+    color: 'bg-dark-panel',
     selected: false,
   },
   {
@@ -87,7 +87,7 @@ export default function ChefPepeModes() {
   const active = modes?.find((m) => m?.id === activeMode) || modes?.[0];
 
   return (
-    <section ref={sectionRef} className="bg-foreground py-16 lg:py-24 overflow-hidden" aria-labelledby="modes-heading">
+    <section ref={sectionRef} className="bg-dark-panel py-16 lg:py-24 overflow-hidden" aria-labelledby="modes-heading">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         <div className="text-center mb-14 scroll-reveal">
           <span className="inline-block text-xs font-bold uppercase tracking-widest text-accent mb-3 px-3 py-1 bg-white/10 rounded-full">Cooking Modes</span>

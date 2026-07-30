@@ -8,10 +8,10 @@ import Footer from '@/components/Footer';
 const tracks = [
   { number: '01', title: 'Food Creator Foundations', description: 'Choose your focus, define your audience, and build a repeatable content plan.', lessons: 8, duration: '3h 20m', level: 'Beginner', color: 'bg-primary' },
   { number: '02', title: 'Recipe Development & Publishing', description: 'Test, write, photograph, structure, and publish recipes people can actually follow.', lessons: 12, duration: '5h 10m', level: 'Beginner', color: 'bg-accent' },
-  { number: '03', title: 'Short-Form Food Video', description: 'Plan, film, edit, caption, and package food videos for discovery.', lessons: 10, duration: '4h 45m', level: 'Intermediate', color: 'bg-foreground' },
+  { number: '03', title: 'Short-Form Food Video', description: 'Plan, film, edit, caption, and package food videos for discovery.', lessons: 10, duration: '4h 45m', level: 'Intermediate', color: 'bg-dark-panel' },
   { number: '04', title: 'Audience Growth', description: 'Build trust, use platforms intentionally, and turn viewers into a community.', lessons: 9, duration: '3h 55m', level: 'Intermediate', color: 'bg-primary' },
   { number: '05', title: 'Affiliate & Product Reviews', description: 'Create useful product content, disclose relationships, and build ethical recommendations.', lessons: 7, duration: '2h 40m', level: 'Intermediate', color: 'bg-accent' },
-  { number: '06', title: 'Cookbooks & Digital Products', description: 'Organize expertise into guides, classes, collections, and sellable products.', lessons: 11, duration: '4h 30m', level: 'Advanced', color: 'bg-foreground' },
+  { number: '06', title: 'Cookbooks & Digital Products', description: 'Organize expertise into guides, classes, collections, and sellable products.', lessons: 11, duration: '4h 30m', level: 'Advanced', color: 'bg-dark-panel' },
   { number: '07', title: 'Restaurant & Local Food Content', description: 'Tell stronger food stories and build respectful restaurant partnerships.', lessons: 6, duration: '2h 15m', level: 'Intermediate', color: 'bg-primary' },
 ];
 
@@ -53,7 +53,7 @@ export default function CreatorAcademyClient() {
     <main className="bg-background min-h-screen">
       <Header />
       {/* Hero */}
-      <section className="pt-28 pb-20 px-4 bg-gradient-to-b from-foreground to-foreground/90 text-white relative overflow-hidden">
+      <section className="pt-28 pb-20 px-4 bg-gradient-to-b from-dark-panel to-dark-panel/90 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-15">
           <img src="https://img.rocket.new/generatedImages/rocket_gen_img_1e0df319d-1784100421499.png" alt="Food creator working in a professional kitchen" className="w-full h-full object-cover" />
         </div>
@@ -64,7 +64,7 @@ export default function CreatorAcademyClient() {
           <p className="text-white/80 text-xl max-w-2xl mx-auto mb-10">Creator Academy teaches the practical work behind food content — from your first recipe post to a complete creator business.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="#tracks" className="btn-primary text-base px-8 py-4">View Learning Tracks</Link>
-            <Link href="#waitlist" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-foreground text-base px-8 py-4">Join the Waitlist</Link>
+            <Link href="#waitlist" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-[#1a1f1b] text-base px-8 py-4">Join the Waitlist</Link>
           </div>
         </div>
       </section>
@@ -158,7 +158,7 @@ export default function CreatorAcademyClient() {
             </div>
             <div className="space-y-3">
               {outcomes?.map((outcome, i) => (
-                <div key={i} className="flex items-start gap-3 bg-white rounded-xl p-4 border border-border">
+                <div key={i} className="flex items-start gap-3 bg-card rounded-xl p-4 border border-border">
                   <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center shrink-0 mt-0.5">
                     <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                   </div>
@@ -191,7 +191,7 @@ export default function CreatorAcademyClient() {
         </section>
 
         {/* Waitlist CTA */}
-        <section id="waitlist" aria-labelledby="waitlist-heading" className="bg-foreground rounded-3xl p-8 sm:p-12 text-white text-center">
+        <section id="waitlist" aria-labelledby="waitlist-heading" className="bg-dark-panel rounded-3xl p-8 sm:p-12 text-white text-center">
           <h2 id="waitlist-heading" className="text-3xl font-extrabold mb-3">Start as a food lover. Grow into a food creator.</h2>
           <p className="text-white/70 mb-8 max-w-md mx-auto">Join the Creator Academy waitlist and be first to access new tracks, free lessons, and early-member benefits.</p>
           {waitlisted ? (

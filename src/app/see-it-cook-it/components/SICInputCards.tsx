@@ -235,7 +235,7 @@ export default function SICInputCards() {
 
         {/* Upload result state */}
         {uploadState === 'result' && uploadResult && (
-          <div className="mb-10 bg-white border-2 border-primary rounded-3xl p-8 shadow-xl animate-slide-up opacity-0">
+          <div className="mb-10 bg-card border-2 border-primary rounded-3xl p-8 shadow-xl animate-slide-up opacity-0">
             <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">✅</div>
             <h3 className="font-extrabold text-foreground text-xl mb-2 text-center">{modeLabels[uploadResult.mode] || 'Upload Complete'}</h3>
 
@@ -360,7 +360,7 @@ export default function SICInputCards() {
 
         {/* Uploading / Analyzing state */}
         {(uploadState === 'uploading' || uploadState === 'analyzing') && (
-          <div className="mb-10 bg-white border-2 border-primary/30 rounded-3xl p-8 text-center shadow-xl">
+          <div className="mb-10 bg-card border-2 border-primary/30 rounded-3xl p-8 text-center shadow-xl">
             <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 animate-pulse">🍳</div>
             <h3 className="font-extrabold text-foreground text-xl mb-2">
               {uploadState === 'uploading' ? 'Uploading your image…' : 'Chef Pepe is analysing…'}
@@ -378,10 +378,10 @@ export default function SICInputCards() {
 
         {/* Error state */}
         {uploadState === 'error' && (
-          <div className="mb-10 bg-red-50 border-2 border-red-200 rounded-3xl p-8 text-center" role="alert">
-            <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">⚠️</div>
+          <div className="mb-10 bg-red-500/10 border-2 border-red-500/30 rounded-3xl p-8 text-center" role="alert">
+            <div className="w-16 h-16 bg-red-500/15 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">⚠️</div>
             <h3 className="font-extrabold text-foreground text-xl mb-2">Upload failed</h3>
-            <p className="text-red-700 text-sm mb-6">{errorMessage}</p>
+            <p className="text-red-600 dark:text-red-400 text-sm mb-6">{errorMessage}</p>
             <button onClick={handleReset} className="btn-primary bg-red-600 hover:bg-red-700">
               Try Again
             </button>
@@ -394,7 +394,7 @@ export default function SICInputCards() {
             {inputCards.map((card, i) => (
               <div
                 key={card.title}
-                className={`group bg-white border-2 ${card.color} rounded-3xl p-7 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col`}
+                className={`group bg-card border-2 ${card.color} rounded-3xl p-7 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col`}
                 style={{ animationDelay: `${i * 0.12}s` }}
                 onDrop={(e) => handleDrop(card.mode, e)}
                 onDragOver={(e) => e.preventDefault()}
@@ -434,7 +434,7 @@ export default function SICInputCards() {
         )}
 
         {/* Privacy note */}
-        <div className="mt-8 bg-white border border-border rounded-2xl p-5 max-w-2xl mx-auto">
+        <div className="mt-8 bg-card border border-border rounded-2xl p-5 max-w-2xl mx-auto">
           <div className="flex items-start gap-3">
             <Icon name="ShieldCheckIcon" size={20} className="text-primary shrink-0 mt-0.5" />
             <div>
