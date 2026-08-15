@@ -5,7 +5,16 @@ import Link from 'next/link';
 import AppLogo from '@/components/ui/AppLogo';
 import { Analytics } from '@/lib/analytics';
 
-const footerLinks = {
+type FooterLink = {
+  label: string;
+  href: string;
+  /** Static asset (e.g. a downloadable document) rather than an app route. */
+  file?: boolean;
+};
+
+type FooterGroup = 'explore' | 'products' | 'forBusiness' | 'company' | 'support' | 'legal';
+
+const footerLinks: Record<FooterGroup, FooterLink[]> = {
   explore: [
     { label: 'Recipes', href: '/recipes' },
     { label: 'Community', href: '/community' },
@@ -41,6 +50,7 @@ const footerLinks = {
     { label: 'Terms of Use', href: '/terms' },
     { label: 'Cookie Settings', href: '/cookies' },
     { label: 'AI Disclosure', href: '/ai-disclosure' },
+    { label: 'Sample Agreement', href: '/documents/Chew_Network_Participation_and_Service_Selection_Agreement_FINAL.docx', file: true },
   ],
 };
 
@@ -127,9 +137,22 @@ export default function Footer() {
               <ul className="space-y-2">
                 {footerLinks?.legal?.map((l) => (
                   <li key={l?.href}>
-                    <Link href={l?.href} onClick={() => Analytics?.footerLinkClick(l?.label)} className="text-white/70 hover:text-white text-sm transition-colors font-medium">
-                      {l?.label}
-                    </Link>
+                    {l?.file ? (
+                      <a
+                        href={l?.href}
+                        onClick={() => Analytics?.footerLinkClick(l?.label)}
+                        className="text-white/70 hover:text-white text-sm transition-colors font-medium"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${l?.label} (Word document, opens in a new tab)`}
+                      >
+                        {l?.label}
+                      </a>
+                    ) : (
+                      <Link href={l?.href} onClick={() => Analytics?.footerLinkClick(l?.label)} className="text-white/70 hover:text-white text-sm transition-colors font-medium">
+                        {l?.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
