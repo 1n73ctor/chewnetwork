@@ -8,7 +8,7 @@ import { Analytics } from '@/lib/analytics';
 type FooterLink = {
   label: string;
   href: string;
-  /** Static asset (e.g. a downloadable document) rather than an app route. */
+  /** Static asset served from /public (e.g. a PDF) rather than an app route. */
   file?: boolean;
 };
 
@@ -50,7 +50,7 @@ const footerLinks: Record<FooterGroup, FooterLink[]> = {
     { label: 'Terms of Use', href: '/terms' },
     { label: 'Cookie Settings', href: '/cookies' },
     { label: 'AI Disclosure', href: '/ai-disclosure' },
-    { label: 'Sample Agreement', href: '/documents/Chew_Network_Participation_and_Service_Selection_Agreement_FINAL.docx', file: true },
+    { label: 'Sample Agreement', href: '/documents/Chew_Network_Participation_and_Service_Selection_Agreement_FINAL.pdf', file: true },
   ],
 };
 
@@ -144,7 +144,7 @@ export default function Footer() {
                         className="text-white/70 hover:text-white text-sm transition-colors font-medium"
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={`${l?.label} (Word document, opens in a new tab)`}
+                        aria-label={`${l?.label} (PDF, opens in a new tab)`}
                       >
                         {l?.label}
                       </a>
