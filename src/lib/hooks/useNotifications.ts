@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { getClient } from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
 export interface Notification {
@@ -36,7 +36,8 @@ export function useNotifications() {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
-  const supabase = createClient();
+  // Lazy — see getClient(): constructing during render breaks prerendering.
+  const getSupabase = () => getClient();
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
@@ -45,7 +46,7 @@ export function useNotifications() {
     if (!user?.id) return;
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('notifications')
         .select('*')
         .eq('recipient_id', user.id)
@@ -68,7 +69,7 @@ export function useNotifications() {
     setNotifications((prev) =>
       prev.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n))
     );
-    await supabase
+    await getSupabase()
       .from('notifications')
       .update({ is_read: true })
       .eq('id', notificationId)
@@ -79,7 +80,7 @@ export function useNotifications() {
   const markAllAsRead = useCallback(async () => {
     if (!user?.id) return;
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-    await supabase.rpc('mark_all_notifications_read', { p_user_id: user.id });
+    await getSupabase().rpc('mark_all_notifications_read', { p_user_id: user.id });
   }, [user?.id]);
 
   // Real-time subscription
@@ -91,7 +92,7 @@ export function useNotifications() {
 
     fetchNotifications();
 
-    const channel = supabase
+    const channel = getSupabase()
       .channel(`notifications:${user.id}`)
       .on(
         'postgres_changes',
@@ -138,7 +139,7 @@ export function useNotifications() {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      getSupabase().removeChannel(channel);
     };
   }, [user?.id, fetchNotifications]);
 

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
-import { createClient } from '@/lib/supabase/client';
+import { getClient } from '@/lib/supabase/client';
 
 const PAGE_SIZE = 9;
 
@@ -79,7 +79,8 @@ export default function ProfilePage() {
 
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
-  const supabase = createClient();
+  // Lazy — see getClient(): constructing during render breaks prerendering.
+  const getSupabase = () => getClient();
   const initialFetchDone = useRef(false);
 
   const handleComingSoon = (feature: string) => {
@@ -104,7 +105,7 @@ export default function ProfilePage() {
       const from = (page - 1) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
 
-      const { data, count } = await supabase
+      const { data, count } = await getSupabase()
         .from('saved_recipes')
         .select('*', { count: 'exact' })
         .eq('user_id', userId)
@@ -125,7 +126,7 @@ export default function ProfilePage() {
     } finally {
       setSavedLoading(false);
     }
-  }, [supabase]);
+  }, []);
 
   // ── Fetch activity feed (paginated) ──────────────────────────────────────
   const fetchActivityFeed = useCallback(async (page: number, userId: string, useCache = false) => {
@@ -144,7 +145,7 @@ export default function ProfilePage() {
       const from = (page - 1) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
 
-      const { data, count } = await supabase
+      const { data, count } = await getSupabase()
         .from('activity_feed')
         .select('*', { count: 'exact' })
         .eq('user_id', userId)
@@ -164,7 +165,7 @@ export default function ProfilePage() {
     } finally {
       setActivityLoading(false);
     }
-  }, [supabase]);
+  }, []);
 
   // ── Initial data fetch ────────────────────────────────────────────────────
   const fetchInitialData = useCallback(async (userId: string) => {
@@ -187,10 +188,10 @@ export default function ProfilePage() {
       const to = PAGE_SIZE - 1;
 
       const [profileRes, collectionsRes, recipesRes, activityRes] = await Promise.all([
-        supabase.from('user_profiles').select('first_name, full_name, created_at').eq('id', userId).single(),
-        supabase.from('collections').select('id, title, recipe_count, cover_image').eq('user_id', userId).order('created_at', { ascending: false }),
-        supabase.from('saved_recipes').select('*', { count: 'exact' }).eq('user_id', userId).order('saved_at', { ascending: false }).range(from, to),
-        supabase.from('activity_feed').select('*', { count: 'exact' }).eq('user_id', userId).order('created_at', { ascending: false }).range(from, to),
+        getSupabase().from('user_profiles').select('first_name, full_name, created_at').eq('id', userId).single(),
+        getSupabase().from('collections').select('id, title, recipe_count, cover_image').eq('user_id', userId).order('created_at', { ascending: false }),
+        getSupabase().from('saved_recipes').select('*', { count: 'exact' }).eq('user_id', userId).order('saved_at', { ascending: false }).range(from, to),
+        getSupabase().from('activity_feed').select('*', { count: 'exact' }).eq('user_id', userId).order('created_at', { ascending: false }).range(from, to),
       ]);
 
       const profileData = profileRes.data ?? null;
@@ -223,7 +224,7 @@ export default function ProfilePage() {
     } finally {
       setDataLoading(false);
     }
-  }, [supabase]);
+  }, []);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -244,7 +245,7 @@ export default function ProfilePage() {
   };
 
   const handleUnsaveRecipe = async (recipeId: string) => {
-    await supabase.from('saved_recipes').delete().eq('id', recipeId);
+    await getSupabase().from('saved_recipes').delete().eq('id', recipeId);
     setSavedRecipes(prev => prev.filter(r => r.id !== recipeId));
     setSavedTotal(prev => Math.max(0, prev - 1));
     if (user) {
@@ -262,9 +263,9 @@ export default function ProfilePage() {
     try {
       // Delete user data from Supabase tables
       if (user) {
-        await supabase.from('saved_recipes').delete().eq('user_id', user.id);
-        await supabase.from('activity_feed').delete().eq('user_id', user.id);
-        await supabase.from('user_profiles').delete().eq('id', user.id);
+        await getSupabase().from('saved_recipes').delete().eq('user_id', user.id);
+        await getSupabase().from('activity_feed').delete().eq('user_id', user.id);
+        await getSupabase().from('user_profiles').delete().eq('id', user.id);
       }
       await signOut();
       router.push('/');

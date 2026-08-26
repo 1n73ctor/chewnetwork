@@ -94,6 +94,21 @@ if (typeof window !== 'undefined' && !(window as Record<string, unknown>).__sb_p
   };
 }
 
+let browserClient: ReturnType<typeof createBrowserClient> | null = null;
+
+/**
+ * The browser client, created once and reused.
+ *
+ * Constructing it during a component's render body also runs it during
+ * server-side prerendering, where the NEXT_PUBLIC_* values may be absent — that
+ * threw and took the whole build down. Call this from effects and event
+ * handlers instead, so the client is only built where it is actually used.
+ */
+export function getClient() {
+  if (!browserClient) browserClient = createClient();
+  return browserClient;
+}
+
 export function createClient() {
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
