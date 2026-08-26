@@ -297,18 +297,78 @@ const allRecipes: SearchableRecipe[] = [
   { title: 'Miso Soup', creator: 'Yuki Tanaka', time: '10 min', difficulty: 'Easy', image: "https://img.rocket.new/generatedImages/rocket_gen_img_19eb07291-1773191218850.png", alt: 'Traditional Japanese miso soup with tofu, wakame seaweed, and green onions', slug: 'miso-soup', cuisine: 'Japanese', mealType: 'Lunch', keywords: 'miso soup tofu seaweed green onion japanese' },
 ];
 
-function filterRecipes(recipes: SearchableRecipe[], query: string, filters: FilterState): SearchableRecipe[] {
+/** Everything about a recipe that free-text and category matching search over. */
+const blobOf = (r: SearchableRecipe) =>
+  `${r.title} ${r.creator} ${r.cuisine ?? ''} ${r.mealType ?? ''} ${r.keywords}`.toLowerCase();
+
+/** Recipe times read as '20 min', '1 hr', '1.5 hrs'. Returns minutes, or null. */
+const minutesOf = (time?: string): number | null => {
+  if (!time || time === 'Any') return null;
+  const m = time.match(/([\d.]+)\s*(min|hr)/i);
+  if (!m) return null;
+  const n = parseFloat(m[1]);
+  return m[2].toLowerCase().startsWith('hr') ? n * 60 : n;
+};
+
+const TIME_LIMITS: Record<string, (mins: number) => boolean> = {
+  'Under 15 min': (m) => m < 15,
+  'Under 30 min': (m) => m < 30,
+  'Under 1 hour': (m) => m < 60,
+  '1+ hours': (m) => m >= 60,
+};
+
+/**
+ * The category chips are broader than any single recipe field, so each one gets
+ * an explicit predicate; anything unlisted falls back to a keyword match.
+ */
+const CATEGORY_MATCHERS: Record<string, (r: SearchableRecipe) => boolean> = {
+  'Quick & Easy': (r) => { const m = minutesOf(r.time); return (m !== null && m <= 30) || r.difficulty === 'Easy'; },
+  'Dinner': (r) => r.mealType === 'Dinner',
+  'Breakfast': (r) => r.mealType === 'Breakfast',
+  'Desserts': (r) => r.mealType === 'Dessert' || /dessert|\bcake|cookie|brownie|ice cream|\bpie\b|\btart/.test(blobOf(r)),
+  'Vegetarian': (r) => /vegetarian|vegan/.test(blobOf(r)),
+  'Baking': (r) => /\bbake|baking|bread|\bcake|cookie|pastry|muffin|\bpie\b|\btart|brownie|scone|biscuit/.test(blobOf(r)),
+  'Healthy': (r) => /healthy|salad|bowl|quinoa|kale|greens|light|protein|vegetable/.test(blobOf(r)),
+  'Air Fryer': (r) => /air fryer|air-fry|airfry/.test(blobOf(r)),
+  'BBQ': (r) => /bbq|barbecue|grill|smoke|smoked|smoky/.test(blobOf(r)),
+  'Global Flavors': (r) => Boolean(r.cuisine) && r.cuisine !== 'American' && r.cuisine !== 'Any',
+  'Pasta': (r) => /pasta|spaghetti|noodle|orzo|lasagna|penne|linguine|ravioli|gnocchi/.test(blobOf(r)),
+  'Soups': (r) => /soup|chowder|broth|stew|bisque|ramen|pho/.test(blobOf(r)),
+};
+
+const matchesCategory = (r: SearchableRecipe, category: string) =>
+  (CATEGORY_MATCHERS[category] ?? ((x: SearchableRecipe) => blobOf(x).includes(category.toLowerCase())))(r);
+
+function filterRecipes(
+  recipes: SearchableRecipe[],
+  query: string,
+  filters: FilterState,
+  category = ''
+): SearchableRecipe[] {
   const q = query.toLowerCase().trim();
   return recipes.filter((r) => {
     // text search
-    if (q) {
-      const haystack = `${r.title} ${r.creator} ${r.cuisine ?? ''} ${r.mealType ?? ''} ${r.keywords}`.toLowerCase();
-      if (!haystack.includes(q)) return false;
-    }
+    if (q && !blobOf(r).includes(q)) return false;
+    // category chip
+    if (category && !matchesCategory(r, category)) return false;
     // cuisine filter
-    if (filters.cuisine !== 'Any' && r.cuisine !== filters.cuisine && r.cuisine !== 'Any') return false;
+    // Exact match: a recipe tagged cuisine 'Any' is uncategorised, not a wildcard.
+    if (filters.cuisine !== 'Any' && r.cuisine !== filters.cuisine) return false;
     // meal type filter
     if (filters.mealType !== 'Any' && r.mealType !== filters.mealType) return false;
+    // cooking time filter
+    if (filters.time !== 'Any') {
+      const mins = minutesOf(r.time);
+      const withinLimit = TIME_LIMITS[filters.time];
+      if (mins === null || !withinLimit || !withinLimit(mins)) return false;
+    }
+    // difficulty filter
+    if (filters.difficulty !== 'Any' && r.difficulty !== filters.difficulty) return false;
+    // dietary tags — matched against the recipe's keyword blob
+    if (filters.dietary.length > 0) {
+      const blob = blobOf(r);
+      if (!filters.dietary.every((tag) => blob.includes(tag.toLowerCase()))) return false;
+    }
     return true;
   });
 }
@@ -431,8 +491,20 @@ export default function RecipesPageClient() {
   filters.dietary.length].
   reduce((a, b) => a + b, 0);
 
-  const isSearchActive = searchQuery.trim().length > 0 || filters.cuisine !== 'Any' || filters.mealType !== 'Any';
-  const searchResults = isSearchActive ? filterRecipes(allRecipes, searchQuery, filters) : [];
+  const isSearchActive =
+    searchQuery.trim().length > 0 || activeCategory !== '' || activeFilterCount > 0;
+  const searchResults = isSearchActive
+    ? filterRecipes(allRecipes, searchQuery, filters, activeCategory)
+    : [];
+
+  // Names what the count is scoped to, e.g. "30 recipes found in Dinner".
+  const scopeLabel = activeCategory
+    ? ` in ${activeCategory}`
+    : filters.mealType !== 'Any'
+    ? ` in ${filters.mealType}`
+    : filters.cuisine !== 'Any'
+    ? ` in ${filters.cuisine}`
+    : '';
 
   const handleSearch = () => {
     setSearchQuery(inputValue);
@@ -518,8 +590,8 @@ export default function RecipesPageClient() {
               <div>
                 <h2 id="search-results-heading" className="text-2xl font-extrabold text-foreground">
                   {searchResults.length > 0
-                    ? `${searchResults.length} recipe${searchResults.length !== 1 ? 's' : ''} found`
-                    : 'No recipes found'}
+                    ? `${searchResults.length} recipe${searchResults.length !== 1 ? 's' : ''} found${scopeLabel}`
+                    : `No recipes found${scopeLabel}`}
                 </h2>
                 {searchQuery.trim() && (
                   <p className="text-muted-foreground text-sm mt-1">
@@ -528,7 +600,7 @@ export default function RecipesPageClient() {
                 )}
               </div>
               <button
-                onClick={() => { setSearchQuery(''); setInputValue(''); setFilters({ cuisine: 'Any', mealType: 'Any', time: 'Any', difficulty: 'Any', dietary: [] }); }}
+                onClick={() => { setSearchQuery(''); setInputValue(''); setActiveCategory(''); setFilters({ cuisine: 'Any', mealType: 'Any', time: 'Any', difficulty: 'Any', dietary: [] }); }}
                 className="text-primary text-sm font-semibold hover:underline shrink-0">
                 Clear search
               </button>

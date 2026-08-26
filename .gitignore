@@ -1,3 +1,8 @@
+# Local secrets — never commit. Use .env.example for the key names.
+.env
+.env.*
+!.env.example
+
 # Node modules
 node_modules/
 package-lock.json

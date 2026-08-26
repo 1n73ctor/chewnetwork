@@ -14,6 +14,9 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   display: 'swap',
 });
 
+// Runs before first paint so the page never flashes the wrong theme.
+const themeScript = `(function(){try{var t=localStorage.getItem('chew-theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}if(t==='dark'){document.documentElement.classList.add('dark');}}catch(e){}})();`;
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -37,7 +40,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={plusJakartaSans.variable}>
+    <html lang="en" className={plusJakartaSans.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className={plusJakartaSans.className}>
         <GoogleAnalytics />
         <ThemeProvider>

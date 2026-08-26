@@ -1,10 +1,27 @@
-
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { investorService, type Investor } from '@/lib/services/investorService';
+import { isAdminUser } from '@/lib/authRedirect';
 
-const AuthContext = createContext<any>({});
+interface AuthContextType {
+  user: any;
+  session: any;
+  loading: boolean;
+  /** Investor record for the signed-in user, or null for public/non-investor accounts. */
+  investorProfile: Investor | null;
+  isAdmin: boolean;
+  signUp: (email: string, password: string, metadata?: Record<string, unknown>) => Promise<any>;
+  signIn: (email: string, password: string) => Promise<any>;
+  signOut: () => Promise<void>;
+  getCurrentUser: () => Promise<any>;
+  isEmailVerified: () => boolean;
+  getUserProfile: () => Promise<any>;
+  refreshInvestorProfile: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -18,27 +35,58 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any>(null);
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [investorProfile, setInvestorProfile] = useState<Investor | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const supabase = createClient();
+
+  const loadInvestorProfile = async () => {
+    try {
+      setInvestorProfile(await investorService.getMyInvestorProfile());
+    } catch {
+      setInvestorProfile(null);
+    }
+  };
+
+  const applySession = (session: any) => {
+    setSession(session);
+    setUser(session?.user ?? null);
+    if (session?.user) {
+      setIsAdmin(isAdminUser(session.user));
+      loadInvestorProfile();
+    } else {
+      setInvestorProfile(null);
+      setIsAdmin(false);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    supabase.auth.getSession().then(({ data: { session } }) => applySession(session));
 
     // Listen for auth changes
     const {
       data: { subscription }
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    } = supabase.auth.onAuthStateChange((_event, session) => applySession(session));
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Real-time subscription: refresh investor profile when the investor row changes
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('auth-investor-profile')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'investors', filter: `user_id=eq.${user.id}` },
+        () => { loadInvestorProfile(); }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [user?.id]);
 
   // Email/Password Sign Up
   const signUp = async (email: string, password: string, metadata: Record<string, unknown> = {}) => {
@@ -106,16 +154,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return data;
   };
 
-  const value = {
+  const refreshInvestorProfile = async () => {
+    await loadInvestorProfile();
+  };
+
+  const value: AuthContextType = {
     user,
     session,
     loading,
+    investorProfile,
+    isAdmin,
     signUp,
     signIn,
     signOut,
     getCurrentUser,
     isEmailVerified,
-    getUserProfile
+    getUserProfile,
+    refreshInvestorProfile
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

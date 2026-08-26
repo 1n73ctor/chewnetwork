@@ -23,7 +23,7 @@ const navLinks = [
 // Pages where the mobile sticky "Ask Chef Pepe" bar should appear
 const MARKETING_PATHS = ['/', '/chef-pepe', '/see-it-cook-it', '/recipes', '/community', '/creators', '/restaurants', '/about', '/creator-academy'];
 
-function ThemeToggle({ scrolled, inMobile = false }: { scrolled: boolean; inMobile?: boolean }) {
+function ThemeToggle({ solid, inMobile = false }: { solid: boolean; inMobile?: boolean }) {
   const { theme, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -50,7 +50,7 @@ function ThemeToggle({ scrolled, inMobile = false }: { scrolled: boolean; inMobi
       onClick={toggleTheme}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       className={`p-2 rounded-full transition-all duration-200 ${
-        scrolled
+        solid
           ? 'text-foreground hover:bg-muted'
           : 'text-white/90 hover:bg-white/10'
       }`}
@@ -68,11 +68,22 @@ function ThemeToggle({ scrolled, inMobile = false }: { scrolled: boolean; inMobi
   );
 }
 
+/**
+ * Routes whose hero is dark by design and sits directly behind the fixed header.
+ * Only these get the transparent/white-text treatment at the top of the page;
+ * every other route (including any new one) renders the solid, readable header,
+ * which is the safe default on the site's light theme.
+ */
+const DARK_HERO_PATHS = ['/', '/about', '/creators', '/restaurants', '/see-it-cook-it'];
+
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user } = useAuth();
   const pathname = usePathname();
+
+  // White nav text is only legible while floating over a dark hero.
+  const onDark = DARK_HERO_PATHS.includes(pathname ?? '') && !scrolled;
 
   const showStickyBar = MARKETING_PATHS?.some(p => pathname === p || (p !== '/' && pathname?.startsWith(p + '?')));
 
@@ -95,7 +106,7 @@ export default function Header() {
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled ? 'nav-solid' : 'nav-transparent'
+          onDark ? 'nav-transparent' : 'nav-solid'
         }`}
         role="banner"
       >
@@ -106,7 +117,7 @@ export default function Header() {
               <AppLogo size={36} />
               <span
                 className={`font-extrabold text-lg tracking-tight transition-colors duration-300 ${
-                  scrolled ? 'text-foreground' : 'text-white'
+                  onDark ? 'text-white' : 'text-foreground'
                 }`}
               >
                 ChewNetwork
@@ -121,7 +132,7 @@ export default function Header() {
                   href={link?.href}
                   onClick={() => Analytics?.navLinkClick(link?.label)}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-white/10 ${
-                    scrolled ? 'text-foreground hover:bg-muted' : 'text-white/90 hover:text-white'
+                    onDark ? 'text-white/90 hover:text-white' : 'text-foreground hover:bg-muted'
                   }`}
                 >
                   {link?.label}
@@ -131,13 +142,13 @@ export default function Header() {
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center gap-3">
-              {user && <NotificationBell scrolled={scrolled} />}
-              <ThemeToggle scrolled={scrolled} />
+              {user && <NotificationBell scrolled={!onDark} />}
+              <ThemeToggle solid={!onDark} />
               <Link
                 href="/login"
                 onClick={() => Analytics?.signInClick('header')}
                 className={`text-sm font-medium px-4 py-2 rounded-full transition-all duration-200 ${
-                  scrolled ? 'text-foreground hover:bg-muted' : 'text-white/90 hover:bg-white/10'
+                  onDark ? 'text-white/90 hover:bg-white/10' : 'text-foreground hover:bg-muted'
                 }`}
               >
                 Sign In
@@ -153,10 +164,10 @@ export default function Header() {
 
             {/* Mobile Menu Button */}
             <div className="lg:hidden flex items-center gap-2">
-              <ThemeToggle scrolled={scrolled} />
+              <ThemeToggle solid={!onDark} />
               <button
                 className={`p-2 rounded-lg transition-colors ${
-                  scrolled ? 'text-foreground' : 'text-white'
+                  onDark ? 'text-white' : 'text-foreground'
                 }`}
                 onClick={() => setMobileOpen(!mobileOpen)}
                 aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
@@ -188,7 +199,7 @@ export default function Header() {
                   {link?.label}
                 </Link>
               ))}
-              <ThemeToggle scrolled={false} inMobile />
+              <ThemeToggle solid inMobile />
             </nav>
             <div className="flex flex-col gap-3 mt-6">
               <Link

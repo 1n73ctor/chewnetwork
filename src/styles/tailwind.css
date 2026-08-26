@@ -401,3 +401,167 @@
     display: none !important;
   }
 }
+/* ---------------------------------------------------------------------------
+   Investor portal surface.
+
+   The portal was built as a standalone dark app (navy #0D0D1B / orange #F97316)
+   and its markup assumes that palette plus a set of component classes. Both are
+   scoped to `.portal-scope` so the public site keeps its own light/dark theme.
+   Values are RGB channel triplets to match the `rgb(var(--x) / <alpha-value>)`
+   wrapping in tailwind.config.js.
+--------------------------------------------------------------------------- */
+.portal-scope {
+  --background: 13 13 27;          /* #0D0D1B */
+  --foreground: 255 255 255;
+  --primary: 249 115 22;           /* #F97316 */
+  --primary-foreground: 255 255 255;
+  --secondary: 26 26 42;           /* #1A1A2A */
+  --secondary-foreground: 156 163 175;
+  --accent: 249 115 22;
+  --accent-foreground: 255 255 255;
+  --muted: 31 31 46;               /* #1F1F2E */
+  --muted-foreground: 156 163 175; /* #9CA3AF */
+  --card: 19 19 31;                /* #13131F */
+  --card-foreground: 255 255 255;
+  --border: 31 31 46;              /* #1F1F2E */
+  --input: 26 26 42;
+  --ring: 249 115 22;
+  --radius: 10px;
+  --sidebar-width: 220px;
+
+  background-color: rgb(var(--background));
+  color: rgb(var(--foreground));
+  min-height: 100vh;
+}
+
+.portal-scope .font-tabular { font-variant-numeric: tabular-nums; }
+
+.portal-scope .sidebar-width {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+}
+
+.portal-scope .card-surface {
+  background-color: rgb(var(--card));
+  border: 1px solid rgb(var(--border));
+  border-radius: var(--radius);
+}
+
+.portal-scope .card-surface-alt {
+  background-color: #1A1A2A;
+  border: 1px solid rgb(var(--border));
+  border-radius: var(--radius);
+}
+
+.portal-scope .text-orange { color: rgb(var(--primary)); }
+.portal-scope .bg-orange { background-color: rgb(var(--primary)); }
+.portal-scope .border-orange { border-color: rgb(var(--primary)); }
+
+.portal-scope .gradient-orange-text {
+  background: linear-gradient(135deg, #F97316, #FFAA55);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.portal-scope .hero-banner {
+  background: linear-gradient(135deg, #1A1A2A 0%, #0D0D1B 50%, #1A1208 100%);
+  border: 1px solid #2A2A1A;
+}
+
+.portal-scope .timeline-line {
+  background: linear-gradient(90deg, rgb(var(--primary)) 0%, rgb(var(--primary)) 50%, #2A2A2A 50%, #2A2A2A 100%);
+}
+
+.portal-scope .badge-orange {
+  background-color: rgb(var(--primary));
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 9999px;
+  min-width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+}
+
+.portal-scope .badge-green {
+  background-color: #0D3B2B;
+  color: #10B981;
+  border: 1px solid #10B981;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 2px 10px;
+}
+
+.portal-scope .badge-gray {
+  background-color: #2A2A3A;
+  color: #9CA3AF;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 3px 10px;
+  letter-spacing: 0.04em;
+}
+
+.portal-scope .quick-access-card {
+  background-color: #1A1A2A;
+  border: 1px solid #1F1F2E;
+  border-radius: 10px;
+  transition: all 200ms ease;
+  cursor: pointer;
+}
+.portal-scope .quick-access-card:hover {
+  border-color: rgb(var(--primary));
+  background-color: #1F1A10;
+}
+
+.portal-scope .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #9CA3AF;
+  cursor: pointer;
+  transition: all 150ms ease;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.portal-scope .nav-item:hover {
+  background-color: #1A1A2A;
+  color: #FFFFFF;
+}
+.portal-scope .nav-item-active {
+  background-color: rgb(var(--primary));
+  color: #FFFFFF;
+}
+.portal-scope .nav-item-active:hover {
+  background-color: #EA6C10;
+  color: #FFFFFF;
+}
+
+.portal-scope .stat-card {
+  background-color: rgb(var(--card));
+  border: 1px solid rgb(var(--border));
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.portal-scope .overview-table-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid #1F1F2E;
+  font-size: 13.5px;
+}
+.portal-scope .overview-table-row:last-child { border-bottom: none; }

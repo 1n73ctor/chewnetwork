@@ -1,0 +1,62 @@
+import React from 'react';
+import { ChartBarIcon } from '@heroicons/react/24/outline';
+import StakesOverviewChart from './StakesOverviewChart';
+
+const tableRows = [
+  { id: 'row-original', label: 'Original Stakes Purchased', value: '50,000' },
+  { id: 'row-current', label: 'Current Stakes Owned', value: '50,000' },
+  { id: 'row-sold', label: 'Stakes Sold / Transferred', value: '0' },
+  { id: 'row-repurchased', label: 'Stakes Repurchased (Company)', value: '0' },
+  { id: 'row-ownership', label: 'Current Ownership %', value: '0.0003125%' },
+];
+
+const detailRows = [
+  { id: 'detail-purchase', label: 'Purchase Date', value: 'May 20, 2025' },
+  { id: 'detail-investment', label: 'Original Investment', value: '$500.00' },
+  { id: 'detail-cert', label: 'Certificate Number', value: 'CERT-CN-000184' },
+];
+
+export default function StakesOverviewCard() {
+  return (
+    <div className="card-surface p-5">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-4">
+        <ChartBarIcon className="w-5 h-5 text-primary" />
+        <h2 className="text-white font-semibold text-base">My Ecosystem Stakes Overview</h2>
+      </div>
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        {/* Left table */}
+        <div className="flex-1 min-w-0">
+          {tableRows?.map((row) => (
+            <div key={row?.id} className="overview-table-row">
+              <span className="text-muted-foreground text-[13px]">{row?.label}</span>
+              <span className="text-white font-semibold text-[13px] font-tabular">{row?.value}</span>
+            </div>
+          ))}
+          <button className="mt-4 px-4 py-2 rounded-lg border border-primary text-primary text-sm font-semibold hover:bg-primary hover:text-white transition-all duration-150 active:scale-95">
+            View Full Ownership History
+          </button>
+        </div>
+
+        {/* Center donut */}
+        <div className="flex items-center justify-center flex-shrink-0">
+          <StakesOverviewChart />
+        </div>
+
+        {/* Right details */}
+        <div className="flex-shrink-0 min-w-[180px]">
+          {detailRows?.map((row) => (
+            <div key={row?.id} className="mb-4">
+              <p className="text-muted-foreground text-xs mb-0.5">{row?.label}</p>
+              <p className="text-white text-sm font-semibold font-tabular">{row?.value}</p>
+            </div>
+          ))}
+          <div>
+            <p className="text-muted-foreground text-xs mb-1">Status</p>
+            <span className="badge-green">Active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
