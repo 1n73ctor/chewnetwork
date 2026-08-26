@@ -2,15 +2,29 @@ import { createBrowserClient } from '@supabase/ssr';
 
 const PFX = 'sb_';
 
+/**
+ * `Secure` cookies are only accepted over HTTPS (localhost excepted), so on a
+ * plain-HTTP origin — a LAN IP like http://192.168.0.5:4028 during development —
+ * every auth cookie would be silently dropped and the server would never see the
+ * session. Use SameSite=None/Secure/Partitioned only where it actually works
+ * (HTTPS, needed for embedded preview contexts) and fall back to Lax otherwise.
+ */
+const isSecureOrigin = () =>
+  typeof window !== 'undefined' &&
+  (window.location.protocol === 'https:' || window.location.hostname === 'localhost');
+
+const cookieAttrs = () =>
+  isSecureOrigin() ? 'SameSite=None; Secure; Partitioned' : 'SameSite=Lax';
+
 const canUseCookies = (() => {
   let cache: boolean | null = null;
   return () => {
     if (typeof document === 'undefined') return false;
     if (cache !== null) return cache;
     const k = '__sb_test__';
-    document.cookie = `${k}=1; Path=/; SameSite=None; Secure; Partitioned`;
+    document.cookie = `${k}=1; Path=/; ${cookieAttrs()}`;
     cache = document.cookie.includes(k);
-    document.cookie = `${k}=; Path=/; Max-Age=0; SameSite=None; Secure`;
+    document.cookie = `${k}=; Path=/; Max-Age=0; ${cookieAttrs()}`;
     return cache;
   };
 })();
@@ -33,7 +47,7 @@ const fromStorage = () => {
 };
 
 const setCookie = (name: string, value: string, options?: Record<string, unknown>) => {
-  let s = `${name}=${encodeURIComponent(value)}; Path=${(options?.path as string) || '/'}; SameSite=None; Secure; Partitioned`;
+  let s = `${name}=${encodeURIComponent(value)}; Path=${(options?.path as string) || '/'}; ${cookieAttrs()}`;
   if (options?.maxAge) s += `; Max-Age=${options.maxAge}`;
   if (options?.domain) s += `; Domain=${options.domain}`;
   if (options?.expires) s += `; Expires=${new Date(options.expires as string).toUTCString()}`;
@@ -48,6 +62,7 @@ const deleteCookie = (name: string) => {
     'Path=/; SameSite=Lax',
     'Path=/; SameSite=None; Secure',
     'Path=/; SameSite=None; Secure; Partitioned',
+    `Path=/; ${cookieAttrs()}`,
   ];
   variants.forEach((attrs) => {
     document.cookie = `${name}=; Max-Age=0; ${attrs}`;
@@ -69,7 +84,10 @@ if (typeof window !== 'undefined' && !(window as Record<string, unknown>).__sb_p
     const url = typeof input === 'string' ? input
       : input instanceof URL ? input.href
       : (input as Request).url;
-    if (token && (url.startsWith('/') || url.startsWith(window.location.origin))) {
+    const isLocal = url.startsWith('/') || url.startsWith(window.location.origin);
+    // Supabase auth endpoints must not carry the custom header - it breaks signInWithPassword.
+    const isAuthEndpoint = url.includes('/auth/v1/');
+    if (token && isLocal && !isAuthEndpoint) {
       init = { ...(init || {}), headers: { ...(init?.headers || {}), 'x-sb-token': token } };
     }
     return orig(input, init);

@@ -19,10 +19,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem('chew-theme') as Theme | null;
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initial: Theme = stored ?? (prefersDark ? 'dark' : 'light');
-    setTheme(initial);
+    // The inline script in the root layout has already applied the class before
+    // paint; adopt whatever it decided so the two never disagree.
+    setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
     setMounted(true);
   }, []);
 

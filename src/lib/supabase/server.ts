@@ -1,8 +1,15 @@
 import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 
 export async function createClient() {
   const cookieStore = await cookies();
+  const headerStore = await headers();
+
+  // `secure` cookies are dropped by the browser on a plain-HTTP origin (a LAN IP
+  // in development), which would leave the server blind to the session.
+  const proto = headerStore.get('x-forwarded-proto') ?? 'http';
+  const host = headerStore.get('host') ?? '';
+  const secureOrigin = proto === 'https' || host.startsWith('localhost');
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -17,8 +24,8 @@ export async function createClient() {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, {
                 ...options,
-                sameSite: 'none',
-                secure: true,
+                sameSite: secureOrigin ? 'none' : 'lax',
+                secure: secureOrigin,
               })
             );
           } catch {
