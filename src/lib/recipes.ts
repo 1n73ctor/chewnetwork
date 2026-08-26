@@ -1,4 +1,4 @@
-import { createPublicClient } from '@/lib/supabase/public';
+import { tryCreatePublicClient } from '@/lib/supabase/public';
 
 export interface Ingredient {
   amount: string;
@@ -77,7 +77,8 @@ function normalize(row: Record<string, unknown>): Recipe {
 }
 
 export async function getRecipeBySlug(slug: string): Promise<Recipe | null> {
-  const supabase = createPublicClient();
+  const supabase = tryCreatePublicClient();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('recipes')
     .select('*')
@@ -94,7 +95,8 @@ export async function getRecipeBySlug(slug: string): Promise<Recipe | null> {
  * sharing a tag, topped up with popular recipes so the row is never short.
  */
 export async function getRelatedRecipes(recipe: Recipe, limit = 3): Promise<RecipeCardData[]> {
-  const supabase = createPublicClient();
+  const supabase = tryCreatePublicClient();
+  if (!supabase) return [];
   const found = new Map<string, RecipeCardData>();
 
   const collect = (rows: RecipeCardData[] | null) => {
@@ -140,7 +142,8 @@ export async function getRelatedRecipes(recipe: Recipe, limit = 3): Promise<Reci
 }
 
 export async function getAllRecipeSlugs(): Promise<string[]> {
-  const supabase = createPublicClient();
+  const supabase = tryCreatePublicClient();
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from('recipes')
     .select('slug')
