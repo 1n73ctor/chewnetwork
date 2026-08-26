@@ -1,7 +1,7 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { getClient } from '@/lib/supabase/client';
 import { investorService, type Investor } from '@/lib/services/investorService';
 import { isAdminUser } from '@/lib/authRedirect';
 
@@ -37,7 +37,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [investorProfile, setInvestorProfile] = useState<Investor | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const supabase = createClient();
+  // Lazy: building the client in the render body also ran it during
+  // prerendering, where NEXT_PUBLIC_* may be missing, which failed the build.
+  const clientRef = useRef<ReturnType<typeof getClient> | null>(null);
+  const getSupabase = () => (clientRef.current ??= getClient());
 
   const loadInvestorProfile = async () => {
     try {
@@ -62,12 +65,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => applySession(session));
+    getSupabase().auth.getSession().then(({ data: { session } }) => applySession(session));
 
     // Listen for auth changes
     const {
       data: { subscription }
-    } = supabase.auth.onAuthStateChange((_event, session) => applySession(session));
+    } = getSupabase().auth.onAuthStateChange((_event, session) => applySession(session));
 
     return () => subscription.unsubscribe();
   }, []);
@@ -76,7 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!user) return;
 
-    const channel = supabase
+    const channel = getSupabase()
       .channel('auth-investor-profile')
       .on(
         'postgres_changes',
@@ -85,12 +88,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       )
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => { getSupabase().removeChannel(channel); };
   }, [user?.id]);
 
   // Email/Password Sign Up
   const signUp = async (email: string, password: string, metadata: Record<string, unknown> = {}) => {
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await getSupabase().auth.signUp({
       email,
       password,
       options: {
@@ -116,7 +119,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Email/Password Sign In
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await getSupabase().auth.signInWithPassword({
       email,
       password
     });
@@ -126,13 +129,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Sign Out
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await getSupabase().auth.signOut();
     if (error) throw error;
   };
 
   // Get Current User
   const getCurrentUser = async () => {
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const { data: { user }, error } = await getSupabase().auth.getUser();
     if (error) throw error;
     return user;
   };
@@ -145,7 +148,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Get User Profile from Database
   const getUserProfile = async () => {
     if (!user) return null;
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('user_profiles')
       .select('*')
       .eq('id', user.id)
