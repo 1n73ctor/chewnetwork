@@ -45,7 +45,8 @@ export default function AdminDashboardPage() {
   if (!isAdmin) return null;
 
   const totalStakes = investors.reduce((sum, inv) => sum + (inv.currentStakesOwned || 0), 0);
-  const totalInvestment = investors.reduce((sum, inv) => sum + (inv.originalInvestment || 0), 0);
+  // Total raised across all purchases, not just opening amounts.
+  const totalInvestment = investors.reduce((sum, inv) => sum + (inv.totalInvestment || 0), 0);
   const activeInvestors = investors.filter((inv) => inv.accountStatus === 'active').length;
 
   const formatCurrency = (val: number) =>

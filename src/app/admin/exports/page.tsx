@@ -28,16 +28,18 @@ export default function AdminExportsPage() {
 
   const getHeaders = () => [
     'Investor ID', 'First Name', 'Last Name', 'Email', 'Phone', 'Round',
-    'Original Investment', 'Stake Price', 'Original Stakes', 'Additional Stakes',
-    'Transfers In', 'Transfers Out', 'Company Repurchases', 'Current Stakes',
+    'Original Investment', 'Total Investment', 'Stake Price', 'Original Stakes', 'Additional Stakes',
+    'Transfers In', 'Transfers Out', 'Redeemed / Sold', 'Company Repurchases', 'Current Stakes',
     'Ownership %', 'Join Date', 'Certificate Number', 'Account Status',
   ];
 
   const getRows = () => investors.map((inv) => [
     inv.investorId, inv.firstName, inv.lastName, inv.email, inv.phone || '',
-    inv.round, inv.originalInvestment, inv.originalStakePrice,
+    inv.round, inv.originalInvestment, inv.totalInvestment, inv.originalStakePrice,
     inv.originalStakesPurchased, inv.additionalStakesPurchased,
-    0, inv.stakesSold, inv.stakesRepurchased, inv.currentStakesOwned,
+    // stakesTransferred is transfers out; stakesSold is redemptions. They were
+    // previously the same value, so this column reported the wrong one.
+    0, inv.stakesTransferred, inv.stakesSold, inv.stakesRepurchased, inv.currentStakesOwned,
     inv.ownershipPercentage?.toFixed(10), inv.joinDate,
     inv.certificateNumber, inv.accountStatus,
   ]);
@@ -82,7 +84,7 @@ export default function AdminExportsPage() {
     const rows = getRows();
     const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     const totalStakes = investors.reduce((s, i) => s + (i.currentStakesOwned || 0), 0);
-    const totalInvestment = investors.reduce((s, i) => s + (i.originalInvestment || 0), 0);
+    const totalInvestment = investors.reduce((s, i) => s + (i.totalInvestment || 0), 0);
 
     let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
     <title>Chew Network Master Ledger</title>
@@ -171,7 +173,7 @@ export default function AdminExportsPage() {
           {[
             { label: 'Total Investors', value: investors.length.toString() },
             { label: 'Total Stakes Issued', value: formatStakes(investors.reduce((s, i) => s + (i.currentStakesOwned || 0), 0)) },
-            { label: 'Total Investment', value: formatCurrency(investors.reduce((s, i) => s + (i.originalInvestment || 0), 0)) },
+            { label: 'Total Investment', value: formatCurrency(investors.reduce((s, i) => s + (i.totalInvestment || 0), 0)) },
             { label: 'Total Ownership Issued', value: `${investors.reduce((s, i) => s + (i.ownershipPercentage || 0), 0).toFixed(7)}%` },
           ].map((stat, i) => (
             <div key={i} className="stat-card">
@@ -194,7 +196,7 @@ export default function AdminExportsPage() {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-border bg-background/30">
-                    {['Investor ID', 'Name', 'Email', 'Round', 'Investment', 'Stake Price', 'Orig Stakes', 'Add Stakes', 'Sold/Trans', 'Repurchased', 'Current Stakes', 'Ownership %', 'Join Date', 'Cert #', 'Status'].map((h) => (
+                    {['Investor ID', 'Name', 'Email', 'Round', 'Total Invested', 'Stake Price', 'Orig Stakes', 'Add Stakes', 'Transferred', 'Redeemed', 'Repurchased', 'Current Stakes', 'Ownership %', 'Join Date', 'Cert #', 'Status'].map((h) => (
                       <th key={h} className="text-left px-3 py-2 text-muted-foreground font-semibold whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
@@ -206,10 +208,11 @@ export default function AdminExportsPage() {
                       <td className="px-3 py-2 text-white whitespace-nowrap">{inv.firstName} {inv.lastName}</td>
                       <td className="px-3 py-2 text-muted-foreground">{inv.email}</td>
                       <td className="px-3 py-2 text-muted-foreground">{inv.round}</td>
-                      <td className="px-3 py-2 text-white">{formatCurrency(inv.originalInvestment)}</td>
+                      <td className="px-3 py-2 text-white">{formatCurrency(inv.totalInvestment)}</td>
                       <td className="px-3 py-2 text-white">${inv.originalStakePrice?.toFixed(4)}</td>
                       <td className="px-3 py-2 text-white">{formatStakes(inv.originalStakesPurchased)}</td>
                       <td className="px-3 py-2 text-white">{formatStakes(inv.additionalStakesPurchased)}</td>
+                      <td className="px-3 py-2 text-white">{formatStakes(inv.stakesTransferred)}</td>
                       <td className="px-3 py-2 text-white">{formatStakes(inv.stakesSold)}</td>
                       <td className="px-3 py-2 text-white">{formatStakes(inv.stakesRepurchased)}</td>
                       <td className="px-3 py-2 text-primary font-bold">{formatStakes(inv.currentStakesOwned)}</td>
