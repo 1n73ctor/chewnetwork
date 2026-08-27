@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { adminService, type Investor } from '@/lib/services/investorService';
+import { formatDate } from '@/lib/format';
 import { AdminLayout } from '../certificates/page';
 import { PlusIcon, MagnifyingGlassIcon, XMarkIcon, CheckIcon, PencilIcon, NoSymbolIcon, KeyIcon } from '@heroicons/react/24/outline';
 
@@ -272,7 +273,7 @@ export default function AdminInvestorsPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border">
-                      {['Investor ID', 'Name', 'Email', 'Stakes', 'Ownership %', 'Investment', 'Round', 'Status'].map((h) => (
+                      {['Investor ID', 'Name', 'Email', 'Stakes', 'Ownership %', 'Total Invested', 'Round', 'Login', 'Status'].map((h) => (
                         <th key={h} className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
@@ -285,8 +286,19 @@ export default function AdminInvestorsPage() {
                         <td className="px-4 py-3 text-muted-foreground text-xs">{inv.email}</td>
                         <td className="px-4 py-3 text-white">{formatStakes(inv.currentStakesOwned)}</td>
                         <td className="px-4 py-3 text-white text-xs">{(inv.ownershipPercentage || 0).toFixed(7)}%</td>
-                        <td className="px-4 py-3 text-white text-xs">{formatCurrency(inv.originalInvestment)}</td>
+                        {/* Total, not the opening amount: originalInvestment
+                            never grows when more stakes are bought. */}
+                        <td className="px-4 py-3 text-white text-xs">{formatCurrency(inv.totalInvestment)}</td>
                         <td className="px-4 py-3 text-muted-foreground text-xs">{inv.round}</td>
+                        <td className="px-4 py-3">
+                          {inv.userId ? (
+                            <span className="text-xs text-muted-foreground">Linked</span>
+                          ) : (
+                            <span className="text-xs px-2 py-0.5 rounded-full font-semibold bg-orange-500/15 text-orange-400" title="No account — this investor cannot sign in">
+                              No login
+                            </span>
+                          )}
+                        </td>
                         <td className="px-4 py-3">
                           <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${inv.accountStatus === 'active' ? 'badge-green' : 'bg-gray-500/20 text-gray-400'}`}>
                             {inv.accountStatus?.toUpperCase()}
@@ -410,13 +422,18 @@ export default function AdminInvestorsPage() {
                     { label: 'Certificate #', value: selectedInvestor.certificateNumber },
                     { label: 'Email', value: selectedInvestor.email },
                     { label: 'Phone', value: selectedInvestor.phone || '—' },
-                    { label: 'Join Date', value: selectedInvestor.joinDate },
+                    { label: 'Join Date', value: formatDate(selectedInvestor.joinDate) },
+                    { label: 'Round', value: selectedInvestor.round || '—' },
+                    { label: 'Status', value: selectedInvestor.accountStatus || '—' },
+                    { label: 'Login', value: selectedInvestor.userId ? 'Linked' : 'No account — cannot sign in' },
                     { label: 'Original Investment', value: formatCurrency(selectedInvestor.originalInvestment) },
+                    { label: 'Total Investment', value: formatCurrency(selectedInvestor.totalInvestment) },
                     { label: 'Stake Price', value: `$${selectedInvestor.originalStakePrice?.toFixed(4)}` },
                     { label: 'Original Stakes', value: formatStakes(selectedInvestor.originalStakesPurchased) },
                     { label: 'Additional Stakes', value: formatStakes(selectedInvestor.additionalStakesPurchased) },
                     { label: 'Current Stakes', value: formatStakes(selectedInvestor.currentStakesOwned) },
                     { label: 'Stakes Sold', value: formatStakes(selectedInvestor.stakesSold) },
+                    { label: 'Stakes Transferred', value: formatStakes(selectedInvestor.stakesTransferred) },
                     { label: 'Repurchased', value: formatStakes(selectedInvestor.stakesRepurchased) },
                     { label: 'Ownership %', value: `${(selectedInvestor.ownershipPercentage || 0).toFixed(7)}%` },
                     { label: 'Beneficiary', value: selectedInvestor.beneficiaryName || '—' },

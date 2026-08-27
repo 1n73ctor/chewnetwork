@@ -17,6 +17,8 @@ export interface Investor {
   joinDate: string;
   round: string;
   originalInvestment: number;
+  /** Opening purchase plus every additional purchase. */
+  totalInvestment: number;
   originalStakePrice: number;
   originalStakesPurchased: number;
   additionalStakesPurchased: number;
@@ -117,6 +119,8 @@ function mapInvestor(row: any): Investor {
     joinDate: row.join_date,
     round: row.round,
     originalInvestment: Number(row.original_investment),
+    // Falls back while the column is still being populated by the migration.
+    totalInvestment: Number(row.total_investment ?? row.original_investment ?? 0),
     originalStakePrice: Number(row.original_stake_price),
     originalStakesPurchased: Number(row.original_stakes_purchased),
     additionalStakesPurchased: Number(row.additional_stakes_purchased),
@@ -175,9 +179,23 @@ export const investorService = {
 
   async getMyTransactions(): Promise<StakeTransaction[]> {
     const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    // Scoped explicitly rather than leaning on RLS alone: the policy also
+    // grants admins every row, so an admin opening the investor portal would
+    // otherwise see the whole company's transaction history as their own.
+    const { data: investor } = await supabase
+      .from('investors')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (!investor) return [];
+
     const { data, error } = await supabase
       .from('stake_transactions')
       .select('*')
+      .eq('investor_id', investor.id)
       .order('transaction_date', { ascending: false });
     if (error) { console.error('getMyTransactions error:', error.message); return []; }
     return (data || []).map(mapTransaction);
@@ -378,6 +396,29 @@ export const adminService = {
       .select()
       .single();
     if (error) { console.error('createInvestor error:', error.message); return null; }
+
+    // Record the opening position in the ledger. recalculate_ownership derives
+    // every stake figure from stake_transactions, so an investor without this
+    // row would have their opening stakes zeroed by the first transaction added
+    // against them.
+    const openingStakes = investorData.originalStakesPurchased || 0;
+    if (openingStakes > 0) {
+      const pricePerStake = investorData.originalStakePrice || 0.01;
+      const { error: txError } = await supabase.from('stake_transactions').insert({
+        investor_id: data.id,
+        transaction_type: 'purchase',
+        number_of_stakes: openingStakes,
+        price_per_stake: pricePerStake,
+        gross_amount: investorData.originalInvestment || openingStakes * pricePerStake,
+        transaction_date: data.join_date || new Date().toISOString().split('T')[0],
+        round: data.round || 'Phase 1',
+        notes: 'Opening position',
+      });
+      // The investor row is already correct on its own; a failed ledger write
+      // is worth surfacing but not worth discarding the created investor.
+      if (txError) console.error('createInvestor opening transaction error:', txError.message);
+    }
+
     return mapInvestor(data);
   },
 

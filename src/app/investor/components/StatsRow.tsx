@@ -62,7 +62,9 @@ export default function StatsRow() {
       id: 'stat-investment',
       icon: <CurrencyDollarIcon className="w-5 h-5 text-primary" />,
       label: 'Total Investment',
-      value: loading ? '...' : formatCurrency(investorProfile?.originalInvestment || 0),
+      // Opening purchase plus any additional ones — originalInvestment is the
+      // opening amount alone and never grew when more stakes were bought.
+      value: loading ? '...' : formatCurrency(investorProfile?.totalInvestment || 0),
       sub: 'USD',
       subColor: 'text-muted-foreground',
     },

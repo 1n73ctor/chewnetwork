@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import AppLayout from '@/components/portal/AppLayout';
 import { useAuth } from '@/contexts/AuthContext';
+import { formatCurrency, formatDate, formatOwnership, formatStakes } from '@/lib/format';
 import { investorService, type StakeTransaction } from '@/lib/services/investorService';
 import { ArrowTrendingUpIcon, ArrowTrendingDownIcon, ClockIcon } from '@heroicons/react/24/outline';
 
@@ -28,14 +29,6 @@ export default function MyEcosystemStakesPage() {
     });
   }, []);
 
-  const formatOwnership = (pct: number) => {
-    if (!pct) return '0%';
-    return pct.toFixed(7).replace(/\.?0+$/, '') + '%';
-  };
-
-  const formatStakes = (val: number) => new Intl.NumberFormat('en-US').format(val || 0);
-  const formatCurrency = (val: number) =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val || 0);
 
   const ownershipPct = investorProfile?.ownershipPercentage || 0;
   const donutPct = Math.min((ownershipPct / 5) * 100, 100);
@@ -66,11 +59,25 @@ export default function MyEcosystemStakesPage() {
             { label: 'Original Stakes', value: formatStakes(investorProfile?.originalStakesPurchased || 0) },
             { label: 'Additional Stakes', value: formatStakes(investorProfile?.additionalStakesPurchased || 0) },
             { label: 'Current Stakes Owned', value: formatStakes(investorProfile?.currentStakesOwned || 0), highlight: true },
-            { label: 'Stakes Sold / Transferred', value: formatStakes(investorProfile?.stakesSold || 0) },
+            {
+              label: 'Stakes Sold / Transferred',
+              // Two distinct columns since the recalculation fix: sold is
+              // redemptions, transferred is transfers out.
+              value: formatStakes(
+                (investorProfile?.stakesSold || 0) + (investorProfile?.stakesTransferred || 0)
+              ),
+            },
             { label: 'Company Repurchases', value: formatStakes(investorProfile?.stakesRepurchased || 0) },
             { label: 'Original Stake Price', value: `$${(investorProfile?.originalStakePrice || 0.01).toFixed(2)}` },
             { label: 'Original Investment', value: formatCurrency(investorProfile?.originalInvestment || 0) },
-            { label: 'Purchase Date', value: investorProfile?.joinDate || '—' },
+            {
+              label: 'Total Investment',
+              // Opening purchase plus every additional one. Original Investment
+              // above is the opening amount alone and never grows.
+              value: formatCurrency(investorProfile?.totalInvestment || 0),
+              highlight: true,
+            },
+            { label: 'Purchase Date', value: formatDate(investorProfile?.joinDate) },
             { label: 'Round', value: investorProfile?.round || 'Phase 1' },
             { label: 'Certificate #', value: investorProfile?.certificateNumber || '—' },
           ].map((s, i) => (

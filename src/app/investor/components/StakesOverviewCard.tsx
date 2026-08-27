@@ -1,22 +1,77 @@
+'use client';
+
 import React from 'react';
+import Link from 'next/link';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '@/contexts/AuthContext';
+import { formatCurrency, formatDate, formatOwnership, formatStakes } from '@/lib/format';
 import StakesOverviewChart from './StakesOverviewChart';
 
-const tableRows = [
-  { id: 'row-original', label: 'Original Stakes Purchased', value: '50,000' },
-  { id: 'row-current', label: 'Current Stakes Owned', value: '50,000' },
-  { id: 'row-sold', label: 'Stakes Sold / Transferred', value: '0' },
-  { id: 'row-repurchased', label: 'Stakes Repurchased (Company)', value: '0' },
-  { id: 'row-ownership', label: 'Current Ownership %', value: '0.0003125%' },
-];
-
-const detailRows = [
-  { id: 'detail-purchase', label: 'Purchase Date', value: 'May 20, 2025' },
-  { id: 'detail-investment', label: 'Original Investment', value: '$500.00' },
-  { id: 'detail-cert', label: 'Certificate Number', value: 'CERT-CN-000184' },
-];
-
 export default function StakesOverviewCard() {
+  const { investorProfile, loading } = useAuth();
+
+  const placeholder = '—';
+  const show = (value: string) => (loading ? '…' : investorProfile ? value : placeholder);
+
+  // Sold and transferred are separate columns but read as one line here, the
+  // way the certificate presents them.
+  const stakesOut =
+    (investorProfile?.stakesSold || 0) + (investorProfile?.stakesTransferred || 0);
+
+  const tableRows = [
+    {
+      id: 'row-original',
+      label: 'Original Stakes Purchased',
+      value: show(formatStakes(investorProfile?.originalStakesPurchased)),
+    },
+    {
+      id: 'row-additional',
+      label: 'Additional Stakes Purchased',
+      value: show(formatStakes(investorProfile?.additionalStakesPurchased)),
+    },
+    {
+      id: 'row-current',
+      label: 'Current Stakes Owned',
+      value: show(formatStakes(investorProfile?.currentStakesOwned)),
+    },
+    {
+      id: 'row-sold',
+      label: 'Stakes Sold / Transferred',
+      value: show(formatStakes(stakesOut)),
+    },
+    {
+      id: 'row-repurchased',
+      label: 'Stakes Repurchased (Company)',
+      value: show(formatStakes(investorProfile?.stakesRepurchased)),
+    },
+    {
+      id: 'row-ownership',
+      label: 'Current Ownership %',
+      value: show(formatOwnership(investorProfile?.ownershipPercentage)),
+    },
+  ];
+
+  const detailRows = [
+    {
+      id: 'detail-purchase',
+      label: 'Purchase Date',
+      value: show(formatDate(investorProfile?.joinDate)),
+    },
+    {
+      id: 'detail-investment',
+      label: 'Original Investment',
+      value: show(formatCurrency(investorProfile?.originalInvestment)),
+    },
+    {
+      id: 'detail-cert',
+      label: 'Certificate Number',
+      value: show(investorProfile?.certificateNumber || placeholder),
+    },
+  ];
+
+  const status = investorProfile?.accountStatus || '';
+  const isActive = status.toLowerCase() === 'active';
+
   return (
     <div className="card-surface p-5">
       {/* Header */}
@@ -33,14 +88,17 @@ export default function StakesOverviewCard() {
               <span className="text-white font-semibold text-[13px] font-tabular">{row?.value}</span>
             </div>
           ))}
-          <button className="mt-4 px-4 py-2 rounded-lg border border-primary text-primary text-sm font-semibold hover:bg-primary hover:text-white transition-all duration-150 active:scale-95">
+          <Link
+            href="/investor/ecosystem-stakes"
+            className="inline-block mt-4 px-4 py-2 rounded-lg border border-primary text-primary text-sm font-semibold hover:bg-primary hover:text-white transition-all duration-150 active:scale-95"
+          >
             View Full Ownership History
-          </button>
+          </Link>
         </div>
 
         {/* Center donut */}
         <div className="flex items-center justify-center flex-shrink-0">
-          <StakesOverviewChart />
+          <StakesOverviewChart ownershipPercentage={investorProfile?.ownershipPercentage || 0} />
         </div>
 
         {/* Right details */}
@@ -53,7 +111,13 @@ export default function StakesOverviewCard() {
           ))}
           <div>
             <p className="text-muted-foreground text-xs mb-1">Status</p>
-            <span className="badge-green">Active</span>
+            {loading ? (
+              <span className="text-muted-foreground text-sm">…</span>
+            ) : (
+              <span className={isActive ? 'badge-green' : 'badge-orange'}>
+                {status ? status.charAt(0).toUpperCase() + status.slice(1) : placeholder}
+              </span>
+            )}
           </div>
         </div>
       </div>
