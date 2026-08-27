@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import AppLogo from '@/components/ui/AppLogo';
@@ -27,8 +27,15 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  // Set by the auto-logout in AuthContext, so an unexpected sign-out is explained.
+  const [signedOutReason, setSignedOutReason] = useState<'idle' | 'max-session' | null>(null);
   const { signIn } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    const reason = new URLSearchParams(window.location.search).get('reason');
+    if (reason === 'idle' || reason === 'max-session') setSignedOutReason(reason);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,6 +80,16 @@ export default function LoginPage() {
         <div className="bg-[#13131F] border border-[#1F1F2E] rounded-2xl p-8 shadow-2xl">
           <h2 className="text-white text-xl font-bold mb-1">Welcome Back</h2>
           <p className="text-[#9CA3AF] text-sm mb-6">Sign in to your investor portal</p>
+
+          {signedOutReason && (
+            <div className="bg-[#F97316]/10 border border-[#F97316]/30 rounded-xl px-4 py-3 mb-5">
+              <p className="text-[#F97316] text-sm">
+                {signedOutReason === 'idle'
+                  ? 'You were signed out after 30 minutes of inactivity. Please sign in again.'
+                  : 'Your session reached its 24-hour limit. Please sign in again.'}
+              </p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}

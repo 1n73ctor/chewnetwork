@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { getClient } from '@/lib/supabase/client';
 import { investorService, type Investor } from '@/lib/services/investorService';
 import { isAdminUser } from '@/lib/authRedirect';
+import { useAutoLogout, clearAutoLogoutStamps } from '@/lib/hooks/useAutoLogout';
 
 interface AuthContextType {
   user: any;
@@ -129,9 +130,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Sign Out
   const signOut = async () => {
+    // Cleared first so a failed sign-out can't leave a stale clock behind that
+    // would expire the next session early.
+    clearAutoLogoutStamps();
     const { error } = await getSupabase().auth.signOut();
     if (error) throw error;
   };
+
+  // Idle and absolute session limits. Sends the user to the login page with a
+  // note about why, rather than dropping them somewhere with no explanation.
+  useAutoLogout(Boolean(user), (reason) => {
+    clearAutoLogoutStamps();
+    getSupabase()
+      .auth.signOut()
+      .finally(() => {
+        if (typeof window !== 'undefined') {
+          window.location.href = `/login?reason=${reason}`;
+        }
+      });
+  });
 
   // Get Current User
   const getCurrentUser = async () => {

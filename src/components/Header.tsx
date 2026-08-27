@@ -6,8 +6,8 @@ import { usePathname } from 'next/navigation';
 import AppLogo from '@/components/ui/AppLogo';
 import Icon from '@/components/ui/AppIcon';
 import { Analytics } from '@/lib/analytics';
-import NotificationBell from '@/components/NotificationBell';
 import { useAuth } from '@/contexts/AuthContext';
+import { resolveLandingPath } from '@/lib/authRedirect';
 import { useTheme } from '@/contexts/ThemeContext';
 
 const navLinks = [
@@ -79,8 +79,15 @@ const DARK_HERO_PATHS = ['/', '/about', '/creators', '/restaurants', '/see-it-co
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, isAdmin, investorProfile } = useAuth();
   const pathname = usePathname();
+
+  // Signed-in visitors get a way back to their own area — admins to /admin,
+  // investors to /investor, everyone else to /profile.
+  const dashboardPath = resolveLandingPath({
+    isAdmin,
+    hasInvestorProfile: Boolean(investorProfile),
+  });
 
   // White nav text is only legible while floating over a dark hero.
   const onDark = DARK_HERO_PATHS.includes(pathname ?? '') && !scrolled;
@@ -142,24 +149,31 @@ export default function Header() {
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center gap-3">
-              {user && <NotificationBell scrolled={!onDark} />}
               <ThemeToggle solid={!onDark} />
-              <Link
-                href="/login"
-                onClick={() => Analytics?.signInClick('header')}
-                className={`text-sm font-medium px-4 py-2 rounded-full transition-all duration-200 ${
-                  onDark ? 'text-white/90 hover:bg-white/10' : 'text-foreground hover:bg-muted'
-                }`}
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/join"
-                onClick={() => Analytics?.joinChewClick('header')}
-                className="btn-primary text-sm px-5 py-2.5"
-              >
-                Join Chew
-              </Link>
+              {user ? (
+                <Link href={dashboardPath} className="btn-primary text-sm px-5 py-2.5">
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => Analytics?.signInClick('header')}
+                    className={`text-sm font-medium px-4 py-2 rounded-full transition-all duration-200 ${
+                      onDark ? 'text-white/90 hover:bg-white/10' : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/join"
+                    onClick={() => Analytics?.joinChewClick('header')}
+                    className="btn-primary text-sm px-5 py-2.5"
+                  >
+                    Join Chew
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -202,20 +216,32 @@ export default function Header() {
               <ThemeToggle solid inMobile />
             </nav>
             <div className="flex flex-col gap-3 mt-6">
-              <Link
-                href="/login"
-                onClick={() => { setMobileOpen(false); Analytics?.signInClick('mobile_menu'); }}
-                className="btn-secondary w-full justify-center border-white/30 text-white hover:bg-white hover:text-[#1a1f1b]"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/join"
-                onClick={() => { setMobileOpen(false); Analytics?.joinChewClick('mobile_menu'); }}
-                className="btn-primary w-full justify-center"
-              >
-                Join Chew
-              </Link>
+              {user ? (
+                <Link
+                  href={dashboardPath}
+                  onClick={() => setMobileOpen(false)}
+                  className="btn-primary w-full justify-center"
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => { setMobileOpen(false); Analytics?.signInClick('mobile_menu'); }}
+                    className="btn-secondary w-full justify-center border-white/30 text-white hover:bg-white hover:text-[#1a1f1b]"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/join"
+                    onClick={() => { setMobileOpen(false); Analytics?.joinChewClick('mobile_menu'); }}
+                    className="btn-primary w-full justify-center"
+                  >
+                    Join Chew
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
