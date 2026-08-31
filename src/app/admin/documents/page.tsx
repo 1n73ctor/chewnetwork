@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { uploadDocumentFile, resolveDocumentUrl, isExternalUrl } from '@/lib/documentStorage';
 import { adminService, type Investor, type InvestorDocument } from '@/lib/services/investorService';
 import { AdminLayout } from '../certificates/page';
 import { PlusIcon, XMarkIcon, CheckIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
@@ -27,6 +28,11 @@ export default function AdminDocumentsPage() {
   const [successMsg, setSuccessMsg] = useState('');
   const [filterInvestorId, setFilterInvestorId] = useState('');
   const [form, setForm] = useState({ investorId: '', documentType: 'signed_agreement', documentTitle: '', fileUrl: '', isGlobal: false });
+  const [file, setFile] = useState<File | null>(null);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [opening, setOpening] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState<InvestorDocument | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => { if (!loading && !isAdmin) router.push('/'); }, [isAdmin, loading]);
   useEffect(() => {
@@ -59,22 +65,72 @@ export default function AdminDocumentsPage() {
   };
 
   const handleAdd = async () => {
+    setErrorMsg('');
+    if (!form.documentTitle.trim()) { setErrorMsg('Give the document a title.'); return; }
+    if (!file && !form.fileUrl.trim()) { setErrorMsg('Choose a file to upload, or paste a link.'); return; }
+
     setSaving(true);
+
+    // A chosen file wins over a pasted link. Global documents go to the shared
+    // folder; everything else lands under the investor it belongs to.
+    let storedRef = form.fileUrl.trim();
+    if (file) {
+      const upload = await uploadDocumentFile(file, form.isGlobal ? null : form.investorId || null);
+      if (!upload.ok) {
+        setErrorMsg(`Upload failed: ${upload.error}`);
+        setSaving(false);
+        return;
+      }
+      storedRef = upload.path;
+    }
+
     const ok = await adminService.uploadDocument({
       investorId: form.investorId || undefined,
       documentType: form.documentType,
       documentTitle: form.documentTitle,
-      fileUrl: form.fileUrl,
+      fileUrl: storedRef,
       isGlobal: form.isGlobal,
     });
     if (ok) {
       await adminService.createAuditLog('Document Uploaded', form.investorId || undefined, undefined, { title: form.documentTitle, type: form.documentType });
       await loadDocuments();
       setShowForm(false);
+      setFile(null);
+      setForm({ investorId: '', documentType: 'signed_agreement', documentTitle: '', fileUrl: '', isGlobal: false });
       setSuccessMsg('Document uploaded successfully.');
       setTimeout(() => setSuccessMsg(''), 4000);
     }
     setSaving(false);
+  };
+
+  // Stored files live in a private bucket, so a path has to be exchanged for a
+  // signed link before it can be opened. External links open directly.
+  const handleView = async (fileUrl: string) => {
+    if (isExternalUrl(fileUrl)) { window.open(fileUrl, '_blank', 'noopener,noreferrer'); return; }
+    setOpening(fileUrl);
+    const url = await resolveDocumentUrl(fileUrl);
+    setOpening('');
+    if (url) window.open(url, '_blank', 'noopener,noreferrer');
+    else setErrorMsg('That file could not be opened. It may have been removed from storage.');
+  };
+
+  const handleDelete = async () => {
+    if (!confirmDelete) return;
+    setDeleting(true);
+    const ok = await adminService.deleteDocument(confirmDelete.id, confirmDelete.fileUrl);
+    if (ok) {
+      await adminService.createAuditLog(
+        'Document Deleted', confirmDelete.investorId || undefined,
+        { title: confirmDelete.documentTitle, type: confirmDelete.documentType }, undefined
+      );
+      await loadDocuments();
+      setSuccessMsg('Document deleted.');
+      setTimeout(() => setSuccessMsg(''), 4000);
+    } else {
+      setErrorMsg('Could not delete that document.');
+    }
+    setConfirmDelete(null);
+    setDeleting(false);
   };
 
   const getInvestorName = (investorId: string | null) => {
@@ -127,10 +183,27 @@ export default function AdminDocumentsPage() {
                     className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary transition-colors" />
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground font-medium mb-1.5 block">File URL</label>
-                  <input type="url" value={form.fileUrl} onChange={(e) => setForm({ ...form, fileUrl: e.target.value })} placeholder="https://..."
-                    className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary transition-colors" />
+                  <label className="text-xs text-muted-foreground font-medium mb-1.5 block">File</label>
+                  <input
+                    type="file"
+                    accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-white text-sm file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-primary file:text-white file:text-xs file:font-semibold hover:file:bg-primary/90 file:cursor-pointer"
+                  />
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    {file ? `${file.name} — ${(file.size / 1024 / 1024).toFixed(2)} MB` : 'PDF, image or Word document, up to 50 MB. Stored privately and served through an expiring link.'}
+                  </p>
                 </div>
+                <div>
+                  <label className="text-xs text-muted-foreground font-medium mb-1.5 block">Or link to an existing file</label>
+                  <input type="url" value={form.fileUrl} onChange={(e) => setForm({ ...form, fileUrl: e.target.value })} placeholder="https://..." disabled={!!file}
+                    className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary transition-colors disabled:opacity-40" />
+                </div>
+                {errorMsg && (
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-2.5">
+                    <p className="text-red-400 text-xs">{errorMsg}</p>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <input type="checkbox" id="isGlobal" checked={form.isGlobal} onChange={(e) => setForm({ ...form, isGlobal: e.target.checked })} className="w-4 h-4 accent-primary" />
                   <label htmlFor="isGlobal" className="text-sm text-muted-foreground cursor-pointer">Visible to all investors</label>
@@ -182,8 +255,8 @@ export default function AdminDocumentsPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border">
-                      {['Title', 'Type', 'Investor', 'Upload Date', 'Visibility', 'Link'].map((h) => (
-                        <th key={h} className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold whitespace-nowrap">{h}</th>
+                      {['Title', 'Type', 'Investor', 'Upload Date', 'Visibility', 'Link', ''].map((h) => (
+                        <th key={h || "actions"} className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -213,12 +286,25 @@ export default function AdminDocumentsPage() {
                         </td>
                         <td className="px-4 py-3">
                           {doc.fileUrl ? (
-                            <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
-                              View
-                            </a>
+                            <button
+                              onClick={() => handleView(doc.fileUrl)}
+                              disabled={opening === doc.fileUrl}
+                              className="text-xs text-primary hover:underline disabled:opacity-50"
+                            >
+                              {opening === doc.fileUrl ? 'Opening…' : 'View'}
+                            </button>
                           ) : (
                             <span className="text-xs text-muted-foreground">—</span>
                           )}
+                        </td>
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => setConfirmDelete(doc)}
+                            className="text-xs text-red-400 hover:text-red-300 hover:underline"
+                            aria-label={`Delete ${doc.documentTitle}`}
+                          >
+                            Delete
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -227,6 +313,40 @@ export default function AdminDocumentsPage() {
               </div>
             )}
           </div>
+
+          {/* Delete confirmation — naming the document so the wrong one is not
+              removed on a mis-click. Deletion cannot be undone. */}
+          {confirmDelete && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true">
+              <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md">
+                <h3 className="text-white font-bold text-lg">Delete this document?</h3>
+                <p className="text-muted-foreground text-sm mt-2">
+                  <span className="text-white font-medium">{confirmDelete.documentTitle}</span>
+                  {confirmDelete.isGlobal
+                    ? ' is shared with every investor.'
+                    : ` belongs to ${getInvestorName(confirmDelete.investorId) || 'an investor'}.`}
+                </p>
+                <p className="text-muted-foreground text-xs mt-2">
+                  The record and its stored file are removed permanently. This cannot be undone.
+                </p>
+                <div className="flex gap-3 mt-5">
+                  <button
+                    onClick={() => setConfirmDelete(null)}
+                    className="flex-1 bg-background border border-border text-white py-2.5 rounded-xl text-sm font-medium"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    className="flex-1 bg-red-500 hover:bg-red-500/90 disabled:opacity-50 text-white py-2.5 rounded-xl text-sm font-bold"
+                  >
+                    {deleting ? 'Deleting…' : 'Delete'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
     </AdminLayout>
   );

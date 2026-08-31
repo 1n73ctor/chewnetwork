@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { resolveDocumentUrl, isExternalUrl } from '@/lib/documentStorage';
 import AppLayout from '@/components/portal/AppLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { investorService, type InvestorDocument } from '@/lib/services/investorService';
@@ -34,6 +35,26 @@ export default function MyDocumentsPage() {
   const { investorProfile } = useAuth();
   const [documents, setDocuments] = useState<InvestorDocument[]>([]);
   const [loading, setLoading] = useState(true);
+  const [opening, setOpening] = useState('');
+  const [openError, setOpenError] = useState('');
+
+  // Documents sit in a private bucket; a path is exchanged for a short-lived
+  // signed link at the moment it is opened.
+  const openDocument = async (fileUrl: string) => {
+    setOpenError('');
+    if (isExternalUrl(fileUrl)) { window.open(fileUrl, '_blank', 'noopener,noreferrer'); return; }
+    setOpening(fileUrl);
+    const url = await resolveDocumentUrl(fileUrl);
+    setOpening('');
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    // Failing silently here left the button looking broken. This happens when
+    // the file is missing from storage, or the viewer is not permitted to read
+    // it — neither of which the investor can do anything about themselves.
+    setOpenError('That document could not be opened. Please contact Chew Network so we can restore it.');
+  };
 
   useEffect(() => {
     investorService.getMyDocuments().then((data) => {
@@ -58,6 +79,12 @@ export default function MyDocumentsPage() {
             Private document vault — {investorProfile?.investorId || ''}
           </p>
         </div>
+
+        {openError && (
+          <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
+            <p className="text-red-400 text-sm">{openError}</p>
+          </div>
+        )}
 
         {loading ? (
           <div className="space-y-3">
@@ -90,22 +117,22 @@ export default function MyDocumentsPage() {
                       </div>
                       {doc.fileUrl ? (
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <a
-                            href={doc.fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 bg-background border border-border hover:border-primary/50 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+                          <button
+                            onClick={() => openDocument(doc.fileUrl)}
+                            disabled={opening === doc.fileUrl}
+                            className="flex items-center gap-1.5 bg-background border border-border hover:border-primary/50 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all disabled:opacity-50"
                           >
                             <EyeIcon className="w-3.5 h-3.5" />
-                            View
-                          </a>
-                          <a
-                            href={doc.fileUrl}
-                            download
-                            className="flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
+                            {opening === doc.fileUrl ? 'Opening…' : 'View'}
+                          </button>
+                          <button
+                            onClick={() => openDocument(doc.fileUrl)}
+                            disabled={opening === doc.fileUrl}
+                            aria-label={`Download ${doc.documentTitle}`}
+                            className="flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all disabled:opacity-50"
                           >
                             <DocumentArrowDownIcon className="w-3.5 h-3.5" />
-                          </a>
+                          </button>
                         </div>
                       ) : (
                         <span className="text-xs text-muted-foreground">Pending</span>

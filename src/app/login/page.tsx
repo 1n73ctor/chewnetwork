@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import AppLogo from '@/components/ui/AppLogo';
 import { resolveLandingPathForUser } from '@/lib/authRedirect';
-import { EyeIcon, EyeSlashIcon, LockClosedIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, EyeSlashIcon, LockClosedIcon, EnvelopeIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 /**
  * The investor back-office sign-in, carried over from the portal app. It is dark
@@ -149,7 +150,19 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center text-xs text-[#9CA3AF] mt-6">
+        {/* The portal is a dead end otherwise — its own header is not rendered
+            here, so there is no other way back to the public site. */}
+        <div className="text-center mt-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm text-[#9CA3AF] hover:text-white transition-colors"
+          >
+            <ArrowLeftIcon className="w-4 h-4" />
+            Back to main website
+          </Link>
+        </div>
+
+        <p className="text-center text-xs text-[#9CA3AF] mt-4">
           This portal is exclusively for authorized Chew Network investors.
         </p>
       </div>
