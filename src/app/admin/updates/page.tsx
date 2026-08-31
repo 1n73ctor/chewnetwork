@@ -24,6 +24,9 @@ export default function AdminUpdatesPage() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<InvestorUpdate | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [form, setForm] = useState({
     title: '', shortDescription: '', fullContent: '', category: 'general',
     publishDate: new Date().toISOString().split('T')[0], audience: 'all_investors',
@@ -62,17 +65,62 @@ export default function AdminUpdatesPage() {
     return () => { supabase.removeChannel(channel); };
   }, [isAdmin, fetchUpdates]);
 
+  const blankForm = {
+    title: '', shortDescription: '', fullContent: '', category: 'general',
+    publishDate: new Date().toISOString().split('T')[0], audience: 'all_investors',
+    sendSms: false, thumbnailUrl: '',
+  };
+
+  const openCreate = () => { setEditingId(null); setForm(blankForm); setShowForm(true); };
+
+  const openEdit = (u: InvestorUpdate) => {
+    setEditingId(u.id);
+    setForm({
+      title: u.title || '',
+      shortDescription: u.shortDescription || '',
+      fullContent: u.fullContent || '',
+      category: u.category || 'general',
+      publishDate: u.publishDate || new Date().toISOString().split('T')[0],
+      audience: u.audience || 'all_investors',
+      sendSms: false, // never re-notify on an edit
+      thumbnailUrl: u.thumbnailUrl || '',
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async () => {
+    if (!confirmDelete) return;
+    setDeleting(true);
+    const ok = await adminService.deleteUpdate(confirmDelete.id);
+    if (ok) {
+      await adminService.createAuditLog('Investor Update Deleted', undefined, { title: confirmDelete.title }, undefined);
+      await fetchUpdates();
+      setSuccessMsg('Update deleted.');
+      setTimeout(() => setSuccessMsg(''), 4000);
+    }
+    setConfirmDelete(null);
+    setDeleting(false);
+  };
+
   const handleAdd = async () => {
     setSaving(true);
-    const ok = await adminService.createUpdate(form);
+    // Editing writes only the content fields; sendSms is intentionally not
+    // reapplied, so correcting a typo cannot re-notify every investor.
+    const ok = editingId
+      ? await adminService.editUpdate(editingId, form)
+      : await adminService.createUpdate(form);
     if (ok) {
-      await adminService.createAuditLog('Investor Update Published', undefined, undefined, { title: form.title, sendSms: form.sendSms });
+      await adminService.createAuditLog(
+        editingId ? 'Investor Update Edited' : 'Investor Update Published',
+        undefined, undefined, { title: form.title, sendSms: !editingId && form.sendSms });
       if (form.sendSms) {
         // SMS notification would be sent via Twilio edge function
         // supabase.functions.invoke('send-sms', { body: { to: '+1...', message: `Chew Network Investor Update: ${form.title}` } });
       }
+      await fetchUpdates();
       setShowForm(false);
-      setSuccessMsg('Update published successfully.');
+      setSuccessMsg(editingId ? 'Update saved.' : 'Update published successfully.');
+      setEditingId(null);
       setTimeout(() => setSuccessMsg(''), 4000);
     }
     setSaving(false);
@@ -86,7 +134,7 @@ export default function AdminUpdatesPage() {
       <div className="p-4 lg:p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div><h1 className="text-white text-2xl font-bold">Investor Updates</h1><p className="text-muted-foreground text-sm mt-1">Publish updates to the investor newsfeed</p></div>
-            <button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all">
+            <button onClick={openCreate} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all">
               <PlusIcon className="w-4 h-4" />Publish Update
             </button>
           </div>
@@ -95,7 +143,7 @@ export default function AdminUpdatesPage() {
 
           {showForm && (
             <div className="bg-card border border-border rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4"><h3 className="text-white font-bold">Publish Investor Update</h3><button onClick={() => setShowForm(false)} className="text-muted-foreground hover:text-white"><XMarkIcon className="w-5 h-5" /></button></div>
+              <div className="flex items-center justify-between mb-4"><h3 className="text-white font-bold">{editingId ? 'Edit Investor Update' : 'Publish Investor Update'}</h3><button onClick={() => { setShowForm(false); setEditingId(null); }} className="text-muted-foreground hover:text-white"><XMarkIcon className="w-5 h-5" /></button></div>
               <div className="space-y-4 mb-4">
                 <div>
                   <label className="text-xs text-muted-foreground font-medium mb-1.5 block">Title</label>
@@ -143,8 +191,8 @@ export default function AdminUpdatesPage() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <button onClick={() => setShowForm(false)} className="flex-1 bg-background border border-border text-white py-2.5 rounded-xl text-sm font-medium">Cancel</button>
-                <button onClick={handleAdd} disabled={saving} className="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white py-2.5 rounded-xl text-sm font-bold">{saving ? 'Publishing...' : 'Publish Update'}</button>
+                <button onClick={() => { setShowForm(false); setEditingId(null); }} className="flex-1 bg-background border border-border text-white py-2.5 rounded-xl text-sm font-medium">Cancel</button>
+                <button onClick={handleAdd} disabled={saving} className="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white py-2.5 rounded-xl text-sm font-bold">{saving ? 'Saving…' : editingId ? 'Save Changes' : 'Publish Update'}</button>
               </div>
             </div>
           )}
@@ -153,7 +201,7 @@ export default function AdminUpdatesPage() {
             {dataLoading ? <div className="p-4 space-y-3">{[1,2,3].map((i) => <div key={i} className="animate-pulse h-12 bg-border/30 rounded" />)}</div> : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead><tr className="border-b border-border">{['Title', 'Category', 'Audience', 'Published', 'Status'].map((h) => <th key={h} className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">{h}</th>)}</tr></thead>
+                  <thead><tr className="border-b border-border">{['Title', 'Category', 'Audience', 'Published', 'Status', ''].map((h) => <th key={h || 'actions'} className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">{h}</th>)}</tr></thead>
                   <tbody>
                     {updates.map((u) => (
                       <tr key={u.id} className="border-b border-border/50 hover:bg-primary/5">
@@ -162,14 +210,36 @@ export default function AdminUpdatesPage() {
                         <td className="px-4 py-3 text-muted-foreground text-xs">{u.audience}</td>
                         <td className="px-4 py-3 text-muted-foreground text-xs">{u.publishDate}</td>
                         <td className="px-4 py-3"><span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${u.isPublished ? 'badge-green' : 'bg-gray-500/20 text-gray-400'}`}>{u.isPublished ? 'PUBLISHED' : 'DRAFT'}</span></td>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <button onClick={() => openEdit(u)} className="text-xs text-primary hover:underline mr-3">Edit</button>
+                          <button onClick={() => setConfirmDelete(u)} className="text-xs text-red-400 hover:text-red-300 hover:underline">Delete</button>
+                        </td>
                       </tr>
                     ))}
-                    {updates.length === 0 && <tr><td colSpan={5} className="px-4 py-8 text-center text-muted-foreground text-sm">No updates yet.</td></tr>}
+                    {updates.length === 0 && <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground text-sm">No updates yet.</td></tr>}
                   </tbody>
                 </table>
               </div>
             )}
           </div>
+
+          {confirmDelete && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true">
+              <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md">
+                <h3 className="text-white font-bold text-lg">Delete this update?</h3>
+                <p className="text-muted-foreground text-sm mt-2">
+                  <span className="text-white font-medium">{confirmDelete.title}</span> will be removed from the
+                  investor newsfeed for everyone. This cannot be undone.
+                </p>
+                <div className="flex gap-3 mt-5">
+                  <button onClick={() => setConfirmDelete(null)} className="flex-1 bg-background border border-border text-white py-2.5 rounded-xl text-sm font-medium">Cancel</button>
+                  <button onClick={handleDelete} disabled={deleting} className="flex-1 bg-red-500 hover:bg-red-500/90 disabled:opacity-50 text-white py-2.5 rounded-xl text-sm font-bold">
+                    {deleting ? 'Deleting…' : 'Delete'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
     </AdminLayout>
   );
