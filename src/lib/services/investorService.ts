@@ -589,6 +589,40 @@ export const adminService = {
     return true;
   },
 
+  /** Edits an existing update. Only the fields passed are written. */
+  async editUpdate(id: string, update: Partial<{
+    title: string;
+    shortDescription: string;
+    fullContent: string;
+    category: string;
+    publishDate: string;
+    audience: string;
+    thumbnailUrl: string;
+    isPublished: boolean;
+  }>): Promise<boolean> {
+    const supabase = createClient();
+    const patch: Record<string, unknown> = {};
+    if (update.title !== undefined) patch.title = update.title;
+    if (update.shortDescription !== undefined) patch.short_description = update.shortDescription;
+    if (update.fullContent !== undefined) patch.full_content = update.fullContent;
+    if (update.category !== undefined) patch.category = update.category;
+    if (update.publishDate !== undefined) patch.publish_date = update.publishDate;
+    if (update.audience !== undefined) patch.audience = update.audience;
+    if (update.thumbnailUrl !== undefined) patch.thumbnail_url = update.thumbnailUrl || null;
+    if (update.isPublished !== undefined) patch.is_published = update.isPublished;
+
+    const { error } = await supabase.from('investor_updates').update(patch).eq('id', id);
+    if (error) { console.error('editUpdate error:', error.message); return false; }
+    return true;
+  },
+
+  async deleteUpdate(id: string): Promise<boolean> {
+    const supabase = createClient();
+    const { error } = await supabase.from('investor_updates').delete().eq('id', id);
+    if (error) { console.error('deleteUpdate error:', error.message); return false; }
+    return true;
+  },
+
   async updateHotlineSettings(phoneNumber: string, hours: string): Promise<boolean> {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
