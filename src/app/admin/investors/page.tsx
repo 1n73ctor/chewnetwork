@@ -269,8 +269,8 @@ export default function AdminInvestorsPage() {
             {dataLoading ? (
               <div className="p-4 space-y-3">{[1,2,3].map((i) => <div key={i} className="animate-pulse h-12 bg-border/30 rounded" />)}</div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+              <div className="overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+                <table className="min-w-full w-max text-sm">
                   <thead>
                     <tr className="border-b border-border">
                       {['Investor ID', 'Name', 'Email', 'Stakes', 'Ownership %', 'Total Invested', 'Round', 'Login', 'Status'].map((h) => (

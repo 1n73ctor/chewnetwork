@@ -211,8 +211,8 @@ export default function AdminTransactionsPage() {
               transactions.length === 0 ? (
                 <p className="text-muted-foreground text-sm">No transactions for this investor.</p>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                <div className="overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+                  <table className="min-w-full w-max text-sm">
                     <thead>
                       <tr className="border-b border-border">
                         {['Type', 'Stakes', 'Price/Stake', 'Gross Amount', 'Date', 'Round', 'Notes'].map((h) => (

@@ -251,8 +251,8 @@ export default function AdminDocumentsPage() {
                 <p className="text-muted-foreground text-sm">No documents found.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+              <div className="overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+                <table className="min-w-full w-max text-sm">
                   <thead>
                     <tr className="border-b border-border">
                       {['Title', 'Type', 'Investor', 'Upload Date', 'Visibility', 'Link', ''].map((h) => (
