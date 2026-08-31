@@ -170,8 +170,8 @@ export default function AdminAuditPage() {
               )}
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+              <table className="min-w-full w-max text-sm">
                 <thead>
                   <tr className="border-b border-border">
                     {['Action', 'Investor ID', 'Details', 'Date/Time'].map((h) => (

@@ -184,27 +184,44 @@ export default function AdminExportsPage() {
         </div>
 
         {/* Full ledger table */}
-        <div className="bg-card border border-border rounded-xl overflow-hidden">
-          <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+        <div className="bg-card border border-border rounded-xl">
+          <div className="px-4 py-3 border-b border-border flex items-center justify-between gap-3">
             <h3 className="text-white font-bold text-sm">Complete Ownership Ledger</h3>
-            <span className="text-xs text-muted-foreground">{investors.length} records</span>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-muted-foreground hidden sm:inline lg:hidden">Swipe to see more →</span>
+              <span className="text-xs text-muted-foreground">{investors.length} records</span>
+            </div>
           </div>
+          {/* 16 columns cannot fit a phone. w-full made the table shrink to the
+              container and squash instead of overflowing, so nothing scrolled;
+              min-w-full + w-max lets it exceed the viewport and scroll. */}
           {dataLoading ? (
             <div className="p-4 space-y-3">{[1,2,3].map((i) => <div key={i} className="animate-pulse h-10 bg-border/30 rounded" />)}</div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs">
+            <div className="overflow-x-auto overscroll-x-contain rounded-b-xl [-webkit-overflow-scrolling:touch]">
+              <table className="min-w-full w-max text-xs">
                 <thead>
                   <tr className="border-b border-border bg-background/30">
-                    {['Investor ID', 'Name', 'Email', 'Round', 'Total Invested', 'Stake Price', 'Orig Stakes', 'Add Stakes', 'Transferred', 'Redeemed', 'Repurchased', 'Current Stakes', 'Ownership %', 'Join Date', 'Cert #', 'Status'].map((h) => (
-                      <th key={h} className="text-left px-3 py-2 text-muted-foreground font-semibold whitespace-nowrap">{h}</th>
+                    {['Investor ID', 'Name', 'Email', 'Round', 'Total Invested', 'Stake Price', 'Orig Stakes', 'Add Stakes', 'Transferred', 'Redeemed', 'Repurchased', 'Current Stakes', 'Ownership %', 'Join Date', 'Cert #', 'Status'].map((h, i) => (
+                      <th
+                        key={h}
+                        className={`text-left px-3 py-2 text-muted-foreground font-semibold whitespace-nowrap ${
+                          i === 0 ? 'sticky left-0 z-10 bg-card' : ''
+                        }`}
+                      >
+                        {h}
+                      </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {investors.map((inv) => (
-                    <tr key={inv.id} className="border-b border-border/30 hover:bg-primary/5 transition-colors">
-                      <td className="px-3 py-2 text-primary font-bold">{inv.investorId}</td>
+                    <tr key={inv.id} className="border-b border-border/30 hover:bg-primary/5 transition-colors group">
+                      {/* Anchored so the row stays identifiable once the other
+                          fifteen columns have scrolled past. */}
+                      <td className="px-3 py-2 text-primary font-bold sticky left-0 z-10 bg-card group-hover:bg-card whitespace-nowrap">
+                        {inv.investorId}
+                      </td>
                       <td className="px-3 py-2 text-white whitespace-nowrap">{inv.firstName} {inv.lastName}</td>
                       <td className="px-3 py-2 text-muted-foreground">{inv.email}</td>
                       <td className="px-3 py-2 text-muted-foreground">{inv.round}</td>
