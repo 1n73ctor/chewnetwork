@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/client';
 
 import { normalizeEmail } from '@/lib/email';
+import { deleteDocumentFile } from '@/lib/documentStorage';
 
 export { normalizeEmail };
 
@@ -520,6 +521,20 @@ export const adminService = {
       is_global: doc.isGlobal || false,
     });
     if (error) { console.error('uploadDocument error:', error.message); return false; }
+    return true;
+  },
+
+  /**
+   * Removes a document and, when the file lives in our bucket, the file too.
+   *
+   * The row goes first: an orphaned object in storage is harmless, whereas a
+   * row pointing at a file that no longer exists is a broken download.
+   */
+  async deleteDocument(id: string, fileUrl?: string | null): Promise<boolean> {
+    const supabase = createClient();
+    const { error } = await supabase.from('investor_documents').delete().eq('id', id);
+    if (error) { console.error('deleteDocument error:', error.message); return false; }
+    await deleteDocumentFile(fileUrl);
     return true;
   },
 

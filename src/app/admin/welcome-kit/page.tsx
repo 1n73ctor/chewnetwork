@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { uploadDocumentFile } from '@/lib/documentStorage';
 import { adminService, investorService } from '@/lib/services/investorService';
 import { AdminLayout } from '../certificates/page';
 import { CheckIcon } from '@heroicons/react/24/outline';
@@ -12,6 +13,8 @@ export default function AdminWelcomeKitPage() {
   const { isAdmin, loading } = useAuth();
   const router = useRouter();
   const [fileUrl, setFileUrl] = useState('');
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadError, setUploadError] = useState('');
   const [title, setTitle] = useState("Founder's Welcome Kit");
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -29,7 +32,16 @@ export default function AdminWelcomeKitPage() {
   const handleSave = async () => {
     setSaving(true);
     setError('');
-    const ok = await adminService?.updateWelcomeKit(fileUrl, title);
+    setUploadError('');
+    // The kit is shared with every investor, so it goes to the global folder.
+    let storedRef = fileUrl;
+    if (file) {
+      const upload = await uploadDocumentFile(file, null);
+      if (!upload.ok) { setUploadError(`Upload failed: ${upload.error}`); return; }
+      storedRef = upload.path;
+      setFileUrl(storedRef);
+    }
+    const ok = await adminService?.updateWelcomeKit(storedRef, title);
     if (ok) {
       await adminService?.createAuditLog('Welcome Kit Updated', undefined, undefined, { title, fileUrl });
       setSuccess(true);
@@ -59,7 +71,15 @@ export default function AdminWelcomeKitPage() {
             </div>
             <div>
               <label className="text-xs text-muted-foreground font-medium mb-1.5 block">PDF URL</label>
-              <input type="url" value={fileUrl} onChange={(e) => setFileUrl(e?.target?.value)} placeholder="https://chewnetwork.com/welcome-kit.pdf"
+              <input
+                type="file"
+                accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-white text-sm mb-2 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-primary file:text-white file:text-xs file:font-semibold hover:file:bg-primary/90 file:cursor-pointer"
+              />
+              {file && <p className="text-[11px] text-muted-foreground mb-2">{file.name} — {(file.size / 1024 / 1024).toFixed(2)} MB</p>}
+              {uploadError && <p className="text-red-400 text-xs mb-2">{uploadError}</p>}
+              <input type="url" value={fileUrl} onChange={(e) => setFileUrl(e?.target?.value)} disabled={!!file} placeholder="Or paste a link to an existing file"
                 className="w-full bg-background border border-border rounded-xl px-4 py-3 text-white text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary transition-colors" />
               <p className="text-xs text-muted-foreground mt-1">Upload your PDF to a hosting service and paste the URL here.</p>
             </div>
