@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import AppLogo from '@/components/ui/AppLogo';
 import { resolveLandingPathForUser } from '@/lib/authRedirect';
+import { BLOCKED_MESSAGE, BLOCKED_REASON } from '@/lib/accountStatus';
 import { EyeIcon, EyeSlashIcon, LockClosedIcon, EnvelopeIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 /**
@@ -29,13 +30,15 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   // Set by the auto-logout in AuthContext, so an unexpected sign-out is explained.
-  const [signedOutReason, setSignedOutReason] = useState<'idle' | 'max-session' | null>(null);
+  const [signedOutReason, setSignedOutReason] = useState<'idle' | 'max-session' | 'deactivated' | null>(null);
   const { signIn } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     const reason = new URLSearchParams(window.location.search).get('reason');
     if (reason === 'idle' || reason === 'max-session') setSignedOutReason(reason);
+    // Set by the middleware or AuthContext when an admin deactivates the account.
+    if (reason === BLOCKED_REASON) setSignedOutReason('deactivated');
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -83,11 +86,19 @@ export default function LoginPage() {
           <p className="text-[#9CA3AF] text-sm mb-6">Sign in to your investor portal</p>
 
           {signedOutReason && (
-            <div className="bg-[#F97316]/10 border border-[#F97316]/30 rounded-xl px-4 py-3 mb-5">
-              <p className="text-[#F97316] text-sm">
+            // A blocked account is a refusal, not a timeout, so it reads red
+            // rather than sharing the amber "sign in again" treatment.
+            <div className={`rounded-xl px-4 py-3 mb-5 border ${
+              signedOutReason === 'deactivated'
+                ? 'bg-red-500/10 border-red-500/30'
+                : 'bg-[#F97316]/10 border-[#F97316]/30'
+            }`}>
+              <p className={`text-sm ${signedOutReason === 'deactivated' ? 'text-red-400' : 'text-[#F97316]'}`}>
                 {signedOutReason === 'idle'
                   ? 'You were signed out after 30 minutes of inactivity. Please sign in again.'
-                  : 'Your session reached its 24-hour limit. Please sign in again.'}
+                  : signedOutReason === 'deactivated'
+                    ? BLOCKED_MESSAGE
+                    : 'Your session reached its 24-hour limit. Please sign in again.'}
               </p>
             </div>
           )}

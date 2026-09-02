@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { adminService, type Investor } from '@/lib/services/investorService';
 import AppLogo from '@/components/ui/AppLogo';
-import { HomeIcon, UsersIcon, CircleStackIcon, FolderIcon, DocumentChartBarIcon, NewspaperIcon, PhoneIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon, ArrowRightOnRectangleIcon, GiftIcon, DocumentTextIcon, UserGroupIcon, BuildingStorefrontIcon, EnvelopeIcon, MagnifyingGlassIcon, ArrowPathIcon, Cog6ToothIcon, UserCircleIcon,  } from '@heroicons/react/24/outline';
+import { HomeIcon, UsersIcon, CircleStackIcon, FolderIcon, DocumentChartBarIcon, NewspaperIcon, PhoneIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon, ArrowRightOnRectangleIcon, GiftIcon, DocumentTextIcon, UserGroupIcon, BuildingStorefrontIcon, EnvelopeIcon, MagnifyingGlassIcon, ArrowPathIcon, Cog6ToothIcon, UserCircleIcon, FingerPrintIcon,  } from '@heroicons/react/24/outline';
 
 export const adminNavItems = [
   { id: 'dashboard', label: 'Dashboard', href: '/admin', icon: <HomeIcon className="w-4 h-4" /> },
@@ -21,6 +21,7 @@ export const adminNavItems = [
   { id: 'email-sms', label: 'Email / SMS', href: '/admin/email-sms', icon: <EnvelopeIcon className="w-4 h-4" /> },
   { id: 'hotline', label: 'Hotline Settings', href: '/admin/hotline', icon: <PhoneIcon className="w-4 h-4" /> },
   { id: 'welcome', label: 'Welcome Kit', href: '/admin/welcome-kit', icon: <GiftIcon className="w-4 h-4" /> },
+  { id: 'login-logs', label: 'Login Logs', href: '/admin/login-logs', icon: <FingerPrintIcon className="w-4 h-4" /> },
   { id: 'audit', label: 'Audit Logs', href: '/admin/audit', icon: <ClipboardDocumentListIcon className="w-4 h-4" /> },
   { id: 'exports', label: 'Master Ledger Export', href: '/admin/exports', icon: <ArrowDownTrayIcon className="w-4 h-4" /> },
   { id: 'admin-users', label: 'Admin Users', href: '/admin/admin-users', icon: <UserCircleIcon className="w-4 h-4" /> },
@@ -59,7 +60,11 @@ export function AdminLayout({ children, activeId }: { children: React.ReactNode;
           </div>
         </nav>
       </aside>
-      <main className="flex-1 lg:ml-64 min-h-screen">{children}</main>
+      {/* min-w-0: as a flex child this defaults to min-width:auto, so a wide
+          table (the master ledger's sixteen columns) stretches it instead of
+          scrolling inside its own overflow-x container, and the whole page ends
+          up scrolling sideways. The portal's AppLayout does the same. */}
+      <main className="flex-1 min-w-0 lg:ml-64 min-h-screen">{children}</main>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { adminService, type Investor } from '@/lib/services/investorService';
@@ -13,6 +13,13 @@ export default function AdminExportsPage() {
   const [investors, setInvestors] = useState<Investor[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
+  // The hint used to be guessed from a breakpoint (hidden below sm, hidden
+  // again from lg up), which meant it was absent on a phone and absent on a
+  // desktop — the two places the sixteen columns most obviously run off the
+  // edge. Measure the real overflow instead, and hide it once you've scrolled.
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [overflow, setOverflow] = useState({ can: false, atStart: true });
+
   useEffect(() => {
     if (!loading && !isAdmin) router.push('/');
   }, [isAdmin, loading]);
@@ -22,6 +29,25 @@ export default function AdminExportsPage() {
       adminService.getAllInvestors().then((data) => { setInvestors(data); setDataLoading(false); });
     }
   }, [isAdmin]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const measure = () => setOverflow({
+      can: el.scrollWidth > el.clientWidth + 1,
+      atStart: el.scrollLeft < 8,
+    });
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    el.addEventListener('scroll', measure, { passive: true });
+    return () => {
+      observer.disconnect();
+      el.removeEventListener('scroll', measure);
+    };
+  }, [dataLoading, investors.length]);
 
   const formatStakes = (val: number) => new Intl.NumberFormat('en-US').format(val || 0);
   const formatCurrency = (val: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val || 0);
@@ -188,17 +214,28 @@ export default function AdminExportsPage() {
           <div className="px-4 py-3 border-b border-border flex items-center justify-between gap-3">
             <h3 className="text-white font-bold text-sm">Complete Ownership Ledger</h3>
             <div className="flex items-center gap-3">
-              <span className="text-xs text-muted-foreground hidden sm:inline lg:hidden">Swipe to see more →</span>
-              <span className="text-xs text-muted-foreground">{investors.length} records</span>
+              {overflow.can && overflow.atStart && (
+                <span className="text-xs text-primary font-semibold whitespace-nowrap">Scroll for more columns →</span>
+              )}
+              <span className="text-xs text-muted-foreground whitespace-nowrap">{investors.length} records</span>
             </div>
           </div>
-          {/* 16 columns cannot fit a phone. w-full made the table shrink to the
-              container and squash instead of overflowing, so nothing scrolled;
-              min-w-full + w-max lets it exceed the viewport and scroll. */}
+          {/* 16 columns cannot fit any screen. min-w-full + w-max lets the
+              table exceed its container so the wrapper below scrolls; w-full
+              would shrink it to fit and squash the columns instead. */}
           {dataLoading ? (
             <div className="p-4 space-y-3">{[1,2,3].map((i) => <div key={i} className="animate-pulse h-10 bg-border/30 rounded" />)}</div>
           ) : (
-            <div className="overflow-x-auto overscroll-x-contain rounded-b-xl [-webkit-overflow-scrolling:touch]">
+            <div className="relative">
+              {/* Fades the cut-off column rather than letting it end mid-glyph,
+                  which is what made the table read as broken instead of wide. */}
+              {overflow.can && (
+                <div className="pointer-events-none absolute right-0 top-0 bottom-2.5 w-12 z-20 bg-gradient-to-l from-card to-transparent" />
+              )}
+              <div
+                ref={scrollRef}
+                className="overflow-x-auto overscroll-x-contain scrollbar-visible rounded-b-xl [-webkit-overflow-scrolling:touch]"
+              >
               <table className="min-w-full w-max text-xs">
                 <thead>
                   <tr className="border-b border-border bg-background/30">
@@ -245,6 +282,7 @@ export default function AdminExportsPage() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
         </div>

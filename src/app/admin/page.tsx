@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { adminService, type Investor } from '@/lib/services/investorService';
 import { createClient } from '@/lib/supabase/client';
 import { AdminLayout } from './certificates/page';
-import { PlusIcon, CircleStackIcon, NewspaperIcon, DocumentChartBarIcon, FolderIcon, PhoneIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, CircleStackIcon, NewspaperIcon, DocumentChartBarIcon, FolderIcon, PhoneIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon, FingerPrintIcon } from '@heroicons/react/24/outline';
 
 export default function AdminDashboardPage() {
   const { user, isAdmin, loading } = useAuth();
@@ -89,6 +89,7 @@ export default function AdminDashboardPage() {
               { label: 'Upload Report', href: '/admin/reports?action=add', icon: <DocumentChartBarIcon className="w-5 h-5" /> },
               { label: 'Upload Document', href: '/admin/documents?action=add', icon: <FolderIcon className="w-5 h-5" /> },
               { label: 'Hotline Settings', href: '/admin/hotline', icon: <PhoneIcon className="w-5 h-5" /> },
+              { label: 'Login Logs', href: '/admin/login-logs', icon: <FingerPrintIcon className="w-5 h-5" /> },
               { label: 'Audit Logs', href: '/admin/audit', icon: <ClipboardDocumentListIcon className="w-5 h-5" /> },
               { label: 'Export Ledger', href: '/admin/exports', icon: <ArrowDownTrayIcon className="w-5 h-5" /> },
             ].map((action, i) => (
