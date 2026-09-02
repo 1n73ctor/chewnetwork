@@ -1,14 +1,20 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { adminService, type Investor } from '@/lib/services/investorService';
 import AppLogo from '@/components/ui/AppLogo';
-import { HomeIcon, UsersIcon, CircleStackIcon, FolderIcon, DocumentChartBarIcon, NewspaperIcon, PhoneIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon, ArrowRightOnRectangleIcon, GiftIcon, DocumentTextIcon, UserGroupIcon, BuildingStorefrontIcon, EnvelopeIcon, MagnifyingGlassIcon, ArrowPathIcon, Cog6ToothIcon, UserCircleIcon, FingerPrintIcon,  } from '@heroicons/react/24/outline';
+import { HomeIcon, UsersIcon, CircleStackIcon, FolderIcon, DocumentChartBarIcon, NewspaperIcon, PhoneIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon, ArrowRightOnRectangleIcon, GiftIcon, DocumentTextIcon, UserGroupIcon, BuildingStorefrontIcon, EnvelopeIcon, MagnifyingGlassIcon, ArrowPathIcon, Cog6ToothIcon, UserCircleIcon, FingerPrintIcon, ChevronDownIcon,  } from '@heroicons/react/24/outline';
 
-export const adminNavItems = [
+type AdminNavLeaf = { id: string; label: string; href: string; icon: React.ReactNode };
+type AdminNavGroup = { id: string; label: string; icon: React.ReactNode; children: AdminNavLeaf[] };
+type AdminNavEntry = AdminNavLeaf | AdminNavGroup;
+
+const isGroup = (entry: AdminNavEntry): entry is AdminNavGroup => 'children' in entry;
+
+export const adminNavItems: AdminNavEntry[] = [
   { id: 'dashboard', label: 'Dashboard', href: '/admin', icon: <HomeIcon className="w-4 h-4" /> },
   { id: 'investors', label: 'Investors', href: '/admin/investors', icon: <UsersIcon className="w-4 h-4" /> },
   { id: 'transactions', label: 'Stake Transactions', href: '/admin/transactions', icon: <CircleStackIcon className="w-4 h-4" /> },
@@ -21,12 +27,64 @@ export const adminNavItems = [
   { id: 'email-sms', label: 'Email / SMS', href: '/admin/email-sms', icon: <EnvelopeIcon className="w-4 h-4" /> },
   { id: 'hotline', label: 'Hotline Settings', href: '/admin/hotline', icon: <PhoneIcon className="w-4 h-4" /> },
   { id: 'welcome', label: 'Welcome Kit', href: '/admin/welcome-kit', icon: <GiftIcon className="w-4 h-4" /> },
-  { id: 'login-logs', label: 'Login Logs', href: '/admin/login-logs', icon: <FingerPrintIcon className="w-4 h-4" /> },
-  { id: 'audit', label: 'Audit Logs', href: '/admin/audit', icon: <ClipboardDocumentListIcon className="w-4 h-4" /> },
+  {
+    id: 'logs',
+    label: 'Logs',
+    icon: <ClipboardDocumentListIcon className="w-4 h-4" />,
+    children: [
+      { id: 'login-logs', label: 'Login Logs', href: '/admin/login-logs', icon: <FingerPrintIcon className="w-4 h-4" /> },
+      { id: 'audit', label: 'Audit Logs', href: '/admin/audit', icon: <ClipboardDocumentListIcon className="w-4 h-4" /> },
+    ],
+  },
   { id: 'exports', label: 'Master Ledger Export', href: '/admin/exports', icon: <ArrowDownTrayIcon className="w-4 h-4" /> },
   { id: 'admin-users', label: 'Admin Users', href: '/admin/admin-users', icon: <UserCircleIcon className="w-4 h-4" /> },
   { id: 'settings', label: 'Settings', href: '/admin/settings', icon: <Cog6ToothIcon className="w-4 h-4" /> },
 ];
+
+/**
+ * A collapsible sidebar group. Opens itself when the page you are on lives
+ * inside it, so the current location is never hidden behind a closed menu.
+ */
+function AdminNavGroupItem({ group, activeId }: { group: AdminNavGroup; activeId: string }) {
+  const holdsActive = useMemo(
+    () => group.children.some((child) => child.id === activeId),
+    [group, activeId]
+  );
+  const [open, setOpen] = useState(holdsActive);
+
+  // Navigating into the group from outside it should reveal the group.
+  useEffect(() => { if (holdsActive) setOpen(true); }, [holdsActive]);
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className={`nav-item w-full text-left ${holdsActive && !open ? 'nav-item-active' : ''}`}
+      >
+        {group.icon}
+        <span className="flex-1 truncate text-xs">{group.label}</span>
+        <ChevronDownIcon className={`w-3.5 h-3.5 flex-shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="mt-0.5 space-y-0.5 pl-3 border-l border-border ml-4">
+          {group.children.map((child) => (
+            <Link
+              key={child.id}
+              href={child.href}
+              className={`nav-item ${activeId === child.id ? 'nav-item-active' : ''}`}
+            >
+              {child.icon}
+              <span className="flex-1 truncate text-xs">{child.label}</span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function AdminLayout({ children, activeId }: { children: React.ReactNode; activeId: string }) {
   const { signOut } = useAuth();
@@ -47,10 +105,14 @@ export function AdminLayout({ children, activeId }: { children: React.ReactNode;
         </div>
         <nav className="flex-1 px-3 py-3 space-y-0.5">
           {adminNavItems.map((item) => (
-            <Link key={item.id} href={item.href} className={`nav-item ${activeId === item.id ? 'nav-item-active' : ''}`}>
-              {item.icon}
-              <span className="flex-1 truncate text-xs">{item.label}</span>
-            </Link>
+            isGroup(item)
+              ? <AdminNavGroupItem key={item.id} group={item} activeId={activeId} />
+              : (
+                <Link key={item.id} href={item.href} className={`nav-item ${activeId === item.id ? 'nav-item-active' : ''}`}>
+                  {item.icon}
+                  <span className="flex-1 truncate text-xs">{item.label}</span>
+                </Link>
+              )
           ))}
           <div className="pt-2 border-t border-border mt-2">
             <button onClick={handleLogout} className="nav-item w-full text-left text-red-400 hover:text-red-300 hover:bg-red-500/10">
