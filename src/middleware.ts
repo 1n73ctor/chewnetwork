@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { isAdminUser, resolveLandingPathForUser } from '@/lib/authRedirect';
+import { BLOCKED_REASON, isAccountActive } from '@/lib/accountStatus';
 
 function getProjectRef(): string {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -71,6 +72,38 @@ export async function middleware(request: NextRequest) {
 
   if (user) {
     const isAdmin = isAdminUser(user);
+
+    // A deactivated investor still holds a perfectly valid access token for up
+    // to an hour, so status is re-checked on every gated request rather than
+    // trusted from sign-in time. Admins are exempt: they have no investors row.
+    if (!isAdmin) {
+      const { data: investor } = await supabase
+        .from('investors')
+        .select('account_status')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (investor && !isAccountActive(investor.account_status)) {
+        // Global scope, so every other device signed in as them drops too.
+        try {
+          await supabase.auth.signOut({ scope: 'global' });
+        } catch {
+          // Already-invalid tokens are fine; the redirect below still applies.
+        }
+        // Already on the login page being told why — don't bounce in a loop.
+        if (isLoginPage && request.nextUrl.searchParams.get('reason') === BLOCKED_REASON) {
+          return supabaseResponse;
+        }
+        const url = request.nextUrl.clone();
+        url.pathname = '/login';
+        url.search = `?reason=${BLOCKED_REASON}`;
+        const response = NextResponse.redirect(url);
+        // signOut() wrote its cookie clearing onto supabaseResponse, which we
+        // are not returning — carry it across or the session survives.
+        supabaseResponse.cookies.getAll().forEach((cookie) => response.cookies.set(cookie));
+        return response;
+      }
+    }
 
     if (isLoginPage) {
       return redirectTo(await resolveLandingPathForUser(supabase, user));

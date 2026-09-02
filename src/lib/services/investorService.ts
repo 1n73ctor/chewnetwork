@@ -178,6 +178,24 @@ export const investorService = {
     return data ? mapInvestor(data) : null;
   },
 
+  /**
+   * Just the account status for the signed-in user — used on the sign-in path,
+   * where pulling the whole investor record would be wasted work. Returns null
+   * for accounts with no investors row (admins, public members).
+   */
+  async getMyAccountStatus(): Promise<string | null> {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+    const { data, error } = await supabase
+      .from('investors')
+      .select('account_status')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (error) { console.error('getMyAccountStatus error:', error.message); return null; }
+    return data?.account_status ?? null;
+  },
+
   async getMyTransactions(): Promise<StakeTransaction[]> {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();

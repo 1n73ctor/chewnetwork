@@ -20,6 +20,7 @@ export default function AdminInvestorsPage() {
   const [editMode, setEditMode] = useState(false);
   const [saving, setSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const [confirmDeactivate, setConfirmDeactivate] = useState<Investor | null>(null);
 
   const [resetBusy, setResetBusy] = useState('');
@@ -146,20 +147,37 @@ export default function AdminInvestorsPage() {
   const handleDeactivate = async (inv: Investor) => {
     setSaving(true);
     const newStatus = inv.accountStatus === 'active' ? 'inactive' : 'active';
-    const ok = await adminService.updateInvestor(inv.id, { accountStatus: newStatus });
-    if (ok) {
-      await adminService.createAuditLog(
-        newStatus === 'inactive' ? 'Investor Deactivated' : 'Investor Activated',
-        inv.id, { accountStatus: inv.accountStatus }, { accountStatus: newStatus }
-      );
-      const updated = await adminService.getAllInvestors();
-      setInvestors(updated);
-      const refreshed = updated.find(i => i.id === inv.id) || null;
-      setSelectedInvestor(refreshed);
-      setConfirmDeactivate(null);
-      setSuccessMsg(`Investor ${newStatus === 'inactive' ? 'deactivated' : 'activated'} successfully.`);
-      setTimeout(() => setSuccessMsg(''), 4000);
+    // Routed through the server rather than updating the row directly: only the
+    // server holds the service-role key needed to revoke the investor's live
+    // sessions, so the lockout takes effect now instead of at token expiry.
+    const res = await fetch('/api/admin/investors/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ investorRowId: inv.id, status: newStatus }),
+    });
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      setSaving(false);
+      setErrorMsg(result?.error || 'Failed to update the account status. Please try again.');
+      setTimeout(() => setErrorMsg(''), 6000);
+      return;
     }
+
+    await adminService.createAuditLog(
+      newStatus === 'inactive' ? 'Investor Deactivated' : 'Investor Activated',
+      inv.id, { accountStatus: inv.accountStatus }, { accountStatus: newStatus }
+    );
+    const updated = await adminService.getAllInvestors();
+    setInvestors(updated);
+    const refreshed = updated.find(i => i.id === inv.id) || null;
+    setSelectedInvestor(refreshed);
+    setConfirmDeactivate(null);
+    setSuccessMsg(
+      newStatus === 'inactive'
+        ? `Investor deactivated${result?.sessionsRevoked ? ' and signed out of all devices' : ''}.`
+        : 'Investor activated successfully.'
+    );
+    setTimeout(() => setSuccessMsg(''), 4000);
     setSaving(false);
   };
 
@@ -190,6 +208,12 @@ export default function AdminInvestorsPage() {
             <div className="bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 flex items-center gap-2">
               <CheckIcon className="w-4 h-4 text-green-400" />
               <p className="text-green-400 text-sm">{successMsg}</p>
+            </div>
+          )}
+
+          {errorMsg && (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
+              <p className="text-red-400 text-sm">{errorMsg}</p>
             </div>
           )}
 
@@ -363,7 +387,7 @@ export default function AdminInvestorsPage() {
                     {confirmDeactivate.accountStatus === 'active' ? 'Deactivate' : 'Activate'} {confirmDeactivate.firstName} {confirmDeactivate.lastName}?
                   </p>
                   <p className="text-muted-foreground text-xs mb-3">
-                    {confirmDeactivate.accountStatus === 'active' ?'This will prevent the investor from logging in. Their data and stakes will be preserved.' :'This will restore the investor\'s access to the portal.'}
+                    {confirmDeactivate.accountStatus === 'active' ?'They will be signed out of every device straight away and cannot log in again until reactivated. Their data and stakes are preserved.' :'This will restore the investor\'s access to the portal.'}
                   </p>
                   <div className="flex gap-2">
                     <button onClick={() => setConfirmDeactivate(null)} className="flex-1 bg-background border border-border text-white py-2 rounded-xl text-xs font-medium">Cancel</button>

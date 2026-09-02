@@ -5,6 +5,7 @@ import { getClient } from '@/lib/supabase/client';
 import { investorService, type Investor } from '@/lib/services/investorService';
 import { isAdminUser } from '@/lib/authRedirect';
 import { useAutoLogout, clearAutoLogoutStamps } from '@/lib/hooks/useAutoLogout';
+import { BLOCKED_MESSAGE, BLOCKED_REASON, isAccountActive } from '@/lib/accountStatus';
 
 interface AuthContextType {
   user: any;
@@ -43,9 +44,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const clientRef = useRef<ReturnType<typeof getClient> | null>(null);
   const getSupabase = () => (clientRef.current ??= getClient());
 
+  // Guards against a second sign-out firing while the first is still in flight
+  // — the realtime handler and the initial load can both notice at once.
+  const signingOutRef = useRef(false);
+
+  /** Drops the session everywhere and lands on the login page with the reason. */
+  const forceSignOut = (reason: string) => {
+    if (signingOutRef.current) return;
+    signingOutRef.current = true;
+    clearAutoLogoutStamps();
+    getSupabase()
+      .auth.signOut({ scope: 'global' })
+      .catch(() => {})
+      .finally(() => {
+        if (typeof window === 'undefined') return;
+        // Already on /login (a blocked sign-in attempt) — the form shows the
+        // message itself, so navigating would only wipe it.
+        if (window.location.pathname === '/login') {
+          signingOutRef.current = false;
+          return;
+        }
+        window.location.href = `/login?reason=${reason}`;
+      });
+  };
+
   const loadInvestorProfile = async () => {
     try {
-      setInvestorProfile(await investorService.getMyInvestorProfile());
+      const profile = await investorService.getMyInvestorProfile();
+      setInvestorProfile(profile);
+      // An admin deactivating someone has to reach the tab they already have
+      // open, not just their next sign-in. This runs on load and again on every
+      // realtime change to their investors row.
+      if (profile && !isAccountActive(profile.accountStatus)) forceSignOut(BLOCKED_REASON);
     } catch {
       setInvestorProfile(null);
     }
@@ -92,6 +122,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => { getSupabase().removeChannel(channel); };
   }, [user?.id]);
 
+  // Fallback for the tab that just sits there. The middleware re-checks status
+  // on every portal navigation and realtime covers the rest, but a page left
+  // open navigates nowhere and realtime can drop its socket — so poll, and
+  // check again whenever the tab is brought back to the front.
+  useEffect(() => {
+    if (!user || isAdmin) return;
+
+    const check = async () => {
+      if (document.visibilityState === 'hidden' || signingOutRef.current) return;
+      const status = await investorService.getMyAccountStatus();
+      if (status !== null && !isAccountActive(status)) forceSignOut(BLOCKED_REASON);
+    };
+
+    const interval = setInterval(check, 60_000);
+    document.addEventListener('visibilitychange', check);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', check);
+    };
+  }, [user?.id, isAdmin]);
+
   // Email/Password Sign Up
   const signUp = async (email: string, password: string, metadata: Record<string, unknown> = {}) => {
     const { data, error } = await getSupabase().auth.signUp({
@@ -125,6 +176,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       password
     });
     if (error) throw error;
+
+    // The password is still correct for a deactivated investor — Supabase has
+    // no opinion on account_status — so the block is enforced here, before the
+    // session is handed back to the caller to route on.
+    if (!isAdminUser(data?.user)) {
+      const status = await investorService.getMyAccountStatus();
+      if (status !== null && !isAccountActive(status)) {
+        await getSupabase().auth.signOut({ scope: 'global' }).catch(() => {});
+        throw new Error(BLOCKED_MESSAGE);
+      }
+    }
     return data;
   };
 
