@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { AdminLayout } from '../certificates/page';
 import { createClient } from '@/lib/supabase/client';
-import { adminService } from '@/lib/services/investorService';
+import { adminService, investorService } from '@/lib/services/investorService';
 import { Cog6ToothIcon, CheckIcon, XMarkIcon, ShieldCheckIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
 
 export default function AdminSettingsPage() {
@@ -18,15 +18,40 @@ export default function AdminSettingsPage() {
 
   const [passwordForm, setPasswordForm] = useState({ newPassword: '', confirmPassword: '' });
   const [portalForm, setPortalForm] = useState({
-    portalName: 'Chew Network Investor Back Office',
-    supportEmail: 'investors@chewnetwork.com',
+    portalName: '',
+    supportEmail: '',
     maintenanceMode: false,
+    maintenanceMessage: '',
     allowNewRegistrations: false,
   });
+  const [portalLoading, setPortalLoading] = useState(true);
+  const [portalError, setPortalError] = useState('');
 
   useEffect(() => {
     if (!loading && !isAdmin) router.push('/');
   }, [isAdmin, loading]);
+
+  // These used to be hardcoded defaults in state, so the form showed values
+  // that had nothing to do with what the portal was actually doing.
+  useEffect(() => {
+    if (!isAdmin) return;
+    investorService.getPortalSettings().then((data) => {
+      if (data) {
+        setPortalForm({
+          portalName: data.portalName,
+          supportEmail: data.supportEmail,
+          maintenanceMode: data.maintenanceMode,
+          maintenanceMessage: data.maintenanceMessage,
+          allowNewRegistrations: data.allowNewRegistrations,
+        });
+      } else {
+        // Better than a silently blank form, which would look editable and
+        // then save nothing.
+        setPortalError('Portal settings could not be loaded. Check that the portal_settings migration has been applied.');
+      }
+      setPortalLoading(false);
+    });
+  }, [isAdmin]);
 
   const handleChangePassword = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
@@ -55,9 +80,19 @@ export default function AdminSettingsPage() {
   const handleSavePortalSettings = async () => {
     setSaving(true);
     setError('');
+    const ok = await adminService.updatePortalSettings(portalForm);
+    if (!ok) {
+      setError('Could not save portal settings. Please try again.');
+      setSaving(false);
+      return;
+    }
     await adminService.createAuditLog('PORTAL_SETTINGS_UPDATED', undefined, undefined, { settings: portalForm });
-    setSuccess('Portal settings saved successfully.');
-    setTimeout(() => setSuccess(''), 3000);
+    setSuccess(
+      portalForm.maintenanceMode
+        ? 'Settings saved. The portal is now in maintenance mode — investors are being shown the maintenance page.'
+        : 'Portal settings saved successfully.'
+    );
+    setTimeout(() => setSuccess(''), 5000);
     setSaving(false);
   };
 
@@ -189,6 +224,23 @@ export default function AdminSettingsPage() {
         {activeTab === 'portal' && (
           <div className="bg-card border border-border rounded-xl p-5 space-y-4">
             <h2 className="text-white font-bold text-sm">Portal Configuration</h2>
+
+            {portalError && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
+                <p className="text-red-400 text-sm">{portalError}</p>
+              </div>
+            )}
+
+            {portalForm.maintenanceMode && (
+              <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3">
+                <p className="text-amber-300 text-sm font-semibold mb-0.5">Maintenance mode is on</p>
+                <p className="text-amber-300/80 text-xs leading-relaxed">
+                  Investors are shown the maintenance page and cannot sign in. Admins are unaffected,
+                  so you can always come back here to switch it off.
+                </p>
+              </div>
+            )}
+
             <div className="space-y-4">
               <div>
                 <label className="text-xs text-muted-foreground font-medium mb-1.5 block">Portal Name</label>
@@ -227,14 +279,29 @@ export default function AdminSettingsPage() {
                     </button>
                   </div>
                 ))}
+
+                {portalForm.maintenanceMode && (
+                  <div>
+                    <label className="text-xs text-muted-foreground font-medium mb-1.5 block">
+                      Message shown to investors
+                    </label>
+                    <textarea
+                      value={portalForm.maintenanceMessage}
+                      onChange={(e) => setPortalForm({ ...portalForm, maintenanceMessage: e.target.value })}
+                      rows={3}
+                      placeholder="The investor portal is temporarily unavailable while we carry out scheduled maintenance. Please check back shortly."
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-white text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary transition-colors resize-y"
+                    />
+                  </div>
+                )}
               </div>
             </div>
             <button
               onClick={handleSavePortalSettings}
-              disabled={saving}
+              disabled={saving || portalLoading || Boolean(portalError)}
               className="bg-primary hover:bg-primary/90 disabled:opacity-50 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
             >
-              {saving ? 'Saving...' : 'Save Settings'}
+              {portalLoading ? 'Loading...' : saving ? 'Saving...' : 'Save Settings'}
             </button>
           </div>
         )}

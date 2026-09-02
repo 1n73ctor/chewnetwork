@@ -99,6 +99,16 @@ export interface HotlineSettings {
   hours: string;
 }
 
+export interface PortalSettings {
+  id: string;
+  portalName: string;
+  supportEmail: string;
+  maintenanceMode: boolean;
+  maintenanceMessage: string;
+  allowNewRegistrations: boolean;
+  updatedAt: string;
+}
+
 export interface WelcomeKit {
   id: string;
   fileUrl: string;
@@ -183,6 +193,42 @@ export const investorService = {
    * where pulling the whole investor record would be wasted work. Returns null
    * for accounts with no investors row (admins, public members).
    */
+  /**
+   * Portal-wide settings, including whether maintenance mode is on. Readable
+   * without a session, because the maintenance page has to render for someone
+   * who never got as far as signing in.
+   */
+  async getPortalSettings(): Promise<PortalSettings | null> {
+    const supabase = createClient();
+    // Never rejects. Callers include the middleware gate and the maintenance
+    // page itself, and every one of them treats null as "carry on as normal" —
+    // a settings read that fails must not take the portal down, and must not
+    // leave a page spinning forever on a promise nobody caught.
+    let data: any = null;
+    try {
+      const res = await supabase
+        .from('portal_settings')
+        .select('*')
+        .limit(1)
+        .maybeSingle();
+      if (res.error) { console.error('getPortalSettings error:', res.error.message); return null; }
+      data = res.data;
+    } catch (err) {
+      console.error('getPortalSettings failed:', err);
+      return null;
+    }
+    if (!data) return null;
+    return {
+      id: data.id,
+      portalName: data.portal_name,
+      supportEmail: data.support_email,
+      maintenanceMode: Boolean(data.maintenance_mode),
+      maintenanceMessage: data.maintenance_message,
+      allowNewRegistrations: Boolean(data.allow_new_registrations),
+      updatedAt: data.updated_at,
+    };
+  },
+
   async getMyAccountStatus(): Promise<string | null> {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -508,6 +554,54 @@ export const adminService = {
       old_value: oldValue ? JSON.stringify(oldValue) : null,
       new_value: newValue ? JSON.stringify(newValue) : null,
     });
+  },
+
+  /**
+   * Sign-in history — successes and refusals — newest first.
+   *
+   * These share the audit_logs table with admin actions rather than living in
+   * their own, because they are the same kind of record and the same admin-only
+   * RLS applies. Filtering by action is what separates the two views.
+   */
+  async updatePortalSettings(settings: {
+    portalName: string;
+    supportEmail: string;
+    maintenanceMode: boolean;
+    maintenanceMessage: string;
+    allowNewRegistrations: boolean;
+  }): Promise<boolean> {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    const { data: existing } = await supabase.from('portal_settings').select('id').limit(1).maybeSingle();
+    if (!existing) { console.error('updatePortalSettings: no settings row'); return false; }
+
+    const { error } = await supabase
+      .from('portal_settings')
+      .update({
+        portal_name: settings.portalName,
+        support_email: settings.supportEmail,
+        maintenance_mode: settings.maintenanceMode,
+        maintenance_message: settings.maintenanceMessage,
+        allow_new_registrations: settings.allowNewRegistrations,
+        updated_by: user?.id ?? null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', existing.id);
+
+    if (error) { console.error('updatePortalSettings error:', error.message); return false; }
+    return true;
+  },
+
+  async getLoginLogs(limit = 300): Promise<any[]> {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('audit_logs')
+      .select('*')
+      .in('action', ['Investor Login', 'Admin Login', 'Login Failed'])
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    if (error) { console.error('getLoginLogs error:', error.message); return []; }
+    return data || [];
   },
 
   async getAuditLogs(): Promise<any[]> {

@@ -23,3 +23,7 @@ export const BLOCKED_MESSAGE =
 
 export const isAccountActive = (status?: string | null): boolean =>
   (status ?? '').trim().toLowerCase() === 'active';
+
+/** Shown when an investor tries to sign in while the portal is closed. */
+export const MAINTENANCE_MESSAGE =
+  'The investor portal is temporarily offline for maintenance. Please try again shortly.';

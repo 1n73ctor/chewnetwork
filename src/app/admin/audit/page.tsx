@@ -9,6 +9,7 @@ import { MagnifyingGlassIcon, FunnelIcon, XMarkIcon } from '@heroicons/react/24/
 
 const ACTION_OPTIONS = [
   'All Actions',
+  'Investor Login', 'Admin Login', 'Login Failed',
   'Investor Created', 'Investor Updated', 'Investor Deactivated', 'Investor Activated',
   'Beneficiary Updated', 'Document Uploaded', 'CERTIFICATE_REGENERATED',
   'LEDGER_EXPORTED', 'ADMIN_PASSWORD_CHANGED', 'ADMIN_USER_INVITED',
@@ -54,7 +55,8 @@ export default function AdminAuditPage() {
       const q = filterInvestorId.toLowerCase();
       const invId = (log.investor_id || '').toLowerCase();
       const details = JSON.stringify(log.new_value || {}).toLowerCase();
-      if (!invId.includes(q) && !details.includes(q)) return false;
+      const ip = (log.ip_address || '').toLowerCase();
+      if (!invId.includes(q) && !details.includes(q) && !ip.includes(q)) return false;
     }
     if (filterDateFrom) {
       const logDate = new Date(log.created_at);
@@ -78,7 +80,7 @@ export default function AdminAuditPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-white text-2xl font-bold">Audit Logs</h1>
-            <p className="text-muted-foreground text-sm mt-1">Complete record of all admin actions</p>
+            <p className="text-muted-foreground text-sm mt-1">Complete record of sign-ins and admin actions</p>
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
@@ -123,7 +125,7 @@ export default function AdminAuditPage() {
                     type="text"
                     value={filterInvestorId}
                     onChange={(e) => setFilterInvestorId(e.target.value)}
-                    placeholder="Investor ID or keyword..."
+                    placeholder="Investor ID, IP or keyword..."
                     className="w-full bg-background border border-border rounded-xl pl-9 pr-3 py-2.5 text-white text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary transition-colors"
                   />
                 </div>
@@ -174,7 +176,7 @@ export default function AdminAuditPage() {
               <table className="min-w-full w-max text-sm">
                 <thead>
                   <tr className="border-b border-border">
-                    {['Action', 'Investor ID', 'Details', 'Date/Time'].map((h) => (
+                    {['Action', 'Investor ID', 'IP Address', 'Details', 'Date/Time'].map((h) => (
                       <th key={h} className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
@@ -182,8 +184,21 @@ export default function AdminAuditPage() {
                 <tbody>
                   {filteredLogs.map((log) => (
                     <tr key={log.id} className="border-b border-border/50 hover:bg-primary/5 transition-colors">
-                      <td className="px-4 py-3 text-primary font-semibold text-xs">{log.action}</td>
+                      {/* A refused attempt should be findable by eye when
+                          scanning a page of otherwise routine entries. */}
+                      <td className={`px-4 py-3 font-semibold text-xs whitespace-nowrap ${
+                        log.action === 'Login Failed' ? 'text-red-400' : 'text-primary'
+                      }`}>
+                        {log.action}
+                      </td>
                       <td className="px-4 py-3 text-muted-foreground text-xs">{log.investor_id ? log.investor_id.slice(0, 8) + '...' : '—'}</td>
+                      {/* Rows written before sign-in logging existed have no IP,
+                          and admin actions taken through the panel still don't. */}
+                      <td className="px-4 py-3 text-xs font-mono whitespace-nowrap" title={log.session_info || ''}>
+                        {log.ip_address
+                          ? <span className="text-white">{log.ip_address}</span>
+                          : <span className="text-muted-foreground">—</span>}
+                      </td>
                       <td className="px-4 py-3 text-muted-foreground text-xs max-w-xs truncate">
                         {log.new_value ? JSON.stringify(log.new_value).slice(0, 80) : '—'}
                       </td>

@@ -5,7 +5,7 @@ import { getClient } from '@/lib/supabase/client';
 import { investorService, type Investor } from '@/lib/services/investorService';
 import { isAdminUser } from '@/lib/authRedirect';
 import { useAutoLogout, clearAutoLogoutStamps } from '@/lib/hooks/useAutoLogout';
-import { BLOCKED_MESSAGE, BLOCKED_REASON, isAccountActive } from '@/lib/accountStatus';
+import { BLOCKED_MESSAGE, BLOCKED_REASON, MAINTENANCE_MESSAGE, isAccountActive } from '@/lib/accountStatus';
 
 interface AuthContextType {
   user: any;
@@ -31,6 +31,33 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within AuthProvider');
   }
   return context;
+};
+
+/**
+ * Records the sign-in in the audit log. The route reads the client IP from the
+ * edge headers, which is the only place it can be learned honestly — the
+ * browser has no idea what its own public address is.
+ *
+ * Fire-and-forget on purpose: a failed audit write must never block a login.
+ */
+/**
+ * Records a rejected sign-in. Separate from the success path because there is
+ * no session to authenticate with — the attempt is the thing that failed — so
+ * the attempt is keyed on the email that was tried instead.
+ */
+const recordFailedLogin = (email: string, reason: string) => {
+  void fetch('/api/auth/login-failed', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, reason }),
+  }).catch(() => {});
+};
+
+const recordLoginEvent = (accessToken?: string) => {
+  void fetch('/api/auth/login-log', {
+    method: 'POST',
+    headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+  }).catch(() => {});
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -117,6 +144,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         { event: '*', schema: 'public', table: 'investors', filter: `user_id=eq.${user.id}` },
         () => { loadInvestorProfile(); }
       )
+      // Maintenance mode flipping should reach an open tab straight away, not
+      // at the next poll. Admins stay put — they are the ones toggling it.
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'portal_settings' },
+        (payload) => {
+          const on = (payload.new as { maintenance_mode?: boolean })?.maintenance_mode;
+          if (on && !isAdminUser(user) && window.location.pathname !== '/maintenance') {
+            window.location.href = '/maintenance';
+          }
+        }
+      )
       .subscribe();
 
     return () => { getSupabase().removeChannel(channel); };
@@ -131,6 +170,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const check = async () => {
       if (document.visibilityState === 'hidden' || signingOutRef.current) return;
+
+      // Maintenance switched on while they had the portal open. Their session
+      // stays valid — they are not in trouble, the portal is — so send them to
+      // the maintenance page rather than signing them out.
+      const settings = await investorService.getPortalSettings();
+      if (settings?.maintenanceMode && window.location.pathname !== '/maintenance') {
+        window.location.href = '/maintenance';
+        return;
+      }
+
       const status = await investorService.getMyAccountStatus();
       if (status !== null && !isAccountActive(status)) forceSignOut(BLOCKED_REASON);
     };
@@ -175,18 +224,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       email,
       password
     });
-    if (error) throw error;
+    if (error) {
+      recordFailedLogin(email, 'invalid_credentials');
+      throw error;
+    }
 
     // The password is still correct for a deactivated investor — Supabase has
     // no opinion on account_status — so the block is enforced here, before the
     // session is handed back to the caller to route on.
     if (!isAdminUser(data?.user)) {
+      // The portal being closed is checked first: it is the broader refusal,
+      // and it applies whatever the state of this particular account.
+      const settings = await investorService.getPortalSettings();
+      if (settings?.maintenanceMode) {
+        await getSupabase().auth.signOut({ scope: 'global' }).catch(() => {});
+        throw new Error(settings.maintenanceMessage || MAINTENANCE_MESSAGE);
+      }
+
       const status = await investorService.getMyAccountStatus();
       if (status !== null && !isAccountActive(status)) {
+        // Right credentials, refused account — worth logging as an attempt, and
+        // distinguishable from a wrong password by its reason.
+        recordFailedLogin(email, 'account_blocked');
         await getSupabase().auth.signOut({ scope: 'global' }).catch(() => {});
         throw new Error(BLOCKED_MESSAGE);
       }
     }
+
+    recordLoginEvent(data?.session?.access_token);
     return data;
   };
 

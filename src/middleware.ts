@@ -62,6 +62,28 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   };
 
+  // Maintenance mode, checked before anything about the user's own account.
+  //
+  // Admins are exempt without exception — locking them out would leave nobody
+  // able to switch it back off. That is also why an anonymous visitor to
+  // /login is let through: until they authenticate there is no way to know an
+  // admin from an investor, and turning the login form away would strand the
+  // one person who can end the maintenance window. A signed-in investor
+  // landing there is redirected, and the sign-in itself is refused in
+  // AuthContext, so the form being reachable gives an investor nothing.
+  const maintenanceApplies = isPortalPage || (isLoginPage && Boolean(user));
+  if (maintenanceApplies && !(user && isAdminUser(user))) {
+    const { data: settings } = await supabase
+      .from('portal_settings')
+      .select('maintenance_mode')
+      .limit(1)
+      .maybeSingle();
+
+    if (settings?.maintenance_mode) {
+      return redirectTo('/maintenance');
+    }
+  }
+
   if (!user && isPortalPage) {
     // Send them back to where they were headed once they sign in.
     const url = request.nextUrl.clone();
