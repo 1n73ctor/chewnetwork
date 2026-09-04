@@ -673,6 +673,35 @@ export const adminService = {
     return true;
   },
 
+  async editReport(id: string, report: Partial<{
+    title: string;
+    quarter: string;
+    year: number;
+    fileUrl: string;
+    datePublished: string;
+    audience: string;
+  }>): Promise<boolean> {
+    const supabase = createClient();
+    const patch: Record<string, unknown> = {};
+    if (report.title !== undefined) patch.title = report.title;
+    if (report.quarter !== undefined) patch.quarter = report.quarter;
+    if (report.year !== undefined) patch.year = report.year;
+    if (report.fileUrl !== undefined) patch.file_url = report.fileUrl;
+    if (report.datePublished !== undefined) patch.date_published = report.datePublished;
+    if (report.audience !== undefined) patch.audience = report.audience;
+
+    const { error } = await supabase.from('investor_reports').update(patch).eq('id', id);
+    if (error) { console.error('editReport error:', error.message); return false; }
+    return true;
+  },
+
+  async deleteReport(id: string): Promise<boolean> {
+    const supabase = createClient();
+    const { error } = await supabase.from('investor_reports').delete().eq('id', id);
+    if (error) { console.error('deleteReport error:', error.message); return false; }
+    return true;
+  },
+
   async createUpdate(update: {
     title: string;
     shortDescription: string;
