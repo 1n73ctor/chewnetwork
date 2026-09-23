@@ -4,15 +4,11 @@ import React, { useRef } from 'react';
 import AppLayout from '@/components/portal/AppLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { DocumentArrowDownIcon, PrinterIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
+import { formatOwnership } from '@/lib/format';
 
 export default function MyCertificatePage() {
   const { investorProfile, loading } = useAuth();
   const certRef = useRef<HTMLDivElement>(null);
-
-  const formatOwnership = (pct: number) => {
-    if (!pct) return '0%';
-    return pct.toFixed(7).replace(/\.?0+$/, '') + '%';
-  };
 
   const handlePrint = () => {
     window.print();

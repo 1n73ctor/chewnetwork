@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { adminService, type Investor } from '@/lib/services/investorService';
 import AppLogo from '@/components/ui/AppLogo';
 import { HomeIcon, UsersIcon, CircleStackIcon, FolderIcon, DocumentChartBarIcon, NewspaperIcon, PhoneIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon, ArrowRightOnRectangleIcon, GiftIcon, DocumentTextIcon, UserGroupIcon, BuildingStorefrontIcon, EnvelopeIcon, MagnifyingGlassIcon, ArrowPathIcon, Cog6ToothIcon, UserCircleIcon, FingerPrintIcon, ChevronDownIcon,  } from '@heroicons/react/24/outline';
+import { formatOwnership } from '@/lib/format';
 
 type AdminNavLeaf = { id: string; label: string; href: string; icon: React.ReactNode };
 type AdminNavGroup = { id: string; label: string; icon: React.ReactNode; children: AdminNavLeaf[] };
@@ -220,7 +221,7 @@ export default function AdminCertificatesPage() {
                       <td className="px-4 py-3 text-white text-sm">{inv.firstName} {inv.lastName}</td>
                       <td className="px-4 py-3 text-white text-xs font-mono">{inv.certificateNumber}</td>
                       <td className="px-4 py-3 text-white text-xs">{new Intl.NumberFormat('en-US').format(inv.currentStakesOwned)}</td>
-                      <td className="px-4 py-3 text-white text-xs">{(inv.ownershipPercentage || 0).toFixed(7)}%</td>
+                      <td className="px-4 py-3 text-white text-xs">{formatOwnership(inv.ownershipPercentage)}</td>
                       <td className="px-4 py-3">
                         <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${inv.accountStatus === 'active' ? 'badge-green' : 'bg-gray-500/20 text-gray-400'}`}>
                           {inv.accountStatus?.toUpperCase()}

@@ -1,13 +1,15 @@
 /** Display formatting for investor figures, shared across the portal. */
 
+import { OWNERSHIP_DECIMALS } from '@/lib/stakes';
+
 /**
  * Ownership runs to very small fractions of a percent, so a fixed 2dp would
- * render most holdings as "0.00%". Seven places carry the smallest real stake,
- * with trailing zeroes trimmed so round numbers stay readable.
+ * render most holdings as "0.00%". The precision comes from the size of the
+ * stake pool, with trailing zeroes trimmed so round numbers stay readable.
  */
 export const formatOwnership = (pct: number | null | undefined): string => {
   if (!pct) return '0%';
-  return pct.toFixed(7).replace(/\.?0+$/, '') + '%';
+  return pct.toFixed(OWNERSHIP_DECIMALS).replace(/\.?0+$/, '') + '%';
 };
 
 export const formatCurrency = (value: number | null | undefined): string =>

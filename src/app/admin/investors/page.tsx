@@ -8,6 +8,8 @@ import { adminService, type Investor } from '@/lib/services/investorService';
 import { formatDate } from '@/lib/format';
 import { AdminLayout } from '../certificates/page';
 import { PlusIcon, MagnifyingGlassIcon, XMarkIcon, CheckIcon, PencilIcon, NoSymbolIcon, KeyIcon } from '@heroicons/react/24/outline';
+import { ownershipPercent } from '@/lib/stakes';
+import { formatOwnership } from '@/lib/format';
 
 export default function AdminInvestorsPage() {
   const { isAdmin, loading } = useAuth();
@@ -262,7 +264,7 @@ export default function AdminInvestorsPage() {
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Ownership:{' '}
                     <span className="text-primary font-bold">
-                      {((Math.floor(parseFloat(addForm.originalInvestment) / parseFloat(addForm.originalStakePrice)) / 800000000) * 5).toFixed(7)}%
+                      {formatOwnership(ownershipPercent(Math.floor(parseFloat(addForm.originalInvestment) / parseFloat(addForm.originalStakePrice))))}
                     </span>
                   </p>
                 </div>
@@ -309,7 +311,7 @@ export default function AdminInvestorsPage() {
                         <td className="px-4 py-3 text-white whitespace-nowrap">{inv.firstName} {inv.lastName}</td>
                         <td className="px-4 py-3 text-muted-foreground text-xs">{inv.email}</td>
                         <td className="px-4 py-3 text-white">{formatStakes(inv.currentStakesOwned)}</td>
-                        <td className="px-4 py-3 text-white text-xs">{(inv.ownershipPercentage || 0).toFixed(7)}%</td>
+                        <td className="px-4 py-3 text-white text-xs">{formatOwnership(inv.ownershipPercentage)}</td>
                         {/* Total, not the opening amount: originalInvestment
                             never grows when more stakes are bought. */}
                         <td className="px-4 py-3 text-white text-xs">{formatCurrency(inv.totalInvestment)}</td>
@@ -459,7 +461,7 @@ export default function AdminInvestorsPage() {
                     { label: 'Stakes Sold', value: formatStakes(selectedInvestor.stakesSold) },
                     { label: 'Stakes Transferred', value: formatStakes(selectedInvestor.stakesTransferred) },
                     { label: 'Repurchased', value: formatStakes(selectedInvestor.stakesRepurchased) },
-                    { label: 'Ownership %', value: `${(selectedInvestor.ownershipPercentage || 0).toFixed(7)}%` },
+                    { label: 'Ownership %', value: formatOwnership(selectedInvestor.ownershipPercentage) },
                     { label: 'Beneficiary', value: selectedInvestor.beneficiaryName || '—' },
                     { label: 'Creator Program', value: selectedInvestor.creatorProgramStatus ? 'Active' : 'Not Active' },
                   ].map((field, i) => (

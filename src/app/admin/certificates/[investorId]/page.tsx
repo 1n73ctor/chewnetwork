@@ -7,6 +7,7 @@ import { adminService, type Investor } from '@/lib/services/investorService';
 import { AdminLayout } from '../../certificates/page';
 import { ArrowLeftIcon, ArrowPathIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { formatOwnership } from '@/lib/format';
 
 export default function AdminCertificateViewPage() {
   const { isAdmin, loading } = useAuth();
@@ -154,7 +155,7 @@ export default function AdminCertificateViewPage() {
                 <p className="text-white text-5xl font-extrabold tracking-tight">{formatStakes(investor.currentStakesOwned)}</p>
                 <p className="text-primary text-base font-semibold mt-1">Ecosystem Stakes</p>
                 <p className="text-muted-foreground text-xs mt-1">
-                  representing <span className="text-white font-semibold">{(investor.ownershipPercentage || 0).toFixed(7)}%</span> of Chew Network
+                  representing <span className="text-white font-semibold">{formatOwnership(investor.ownershipPercentage)}</span> of Chew Network
                 </p>
               </div>
 

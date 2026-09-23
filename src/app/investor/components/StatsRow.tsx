@@ -10,14 +10,10 @@ import {
   CurrencyDollarIcon,
   FlagIcon,
 } from '@heroicons/react/24/outline';
+import { formatOwnership } from '@/lib/format';
 
 export default function StatsRow() {
   const { investorProfile, loading } = useAuth();
-
-  const formatOwnership = (pct: number) => {
-    if (!pct) return '0%';
-    return pct.toFixed(7).replace(/\.?0+$/, '') + '%';
-  };
 
   const formatCurrency = (val: number) =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val || 0);
