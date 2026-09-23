@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { adminService, type Investor } from '@/lib/services/investorService';
 import { AdminLayout } from '../certificates/page';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { formatOwnership } from '@/lib/format';
 
 export default function AdminExportsPage() {
   const { isAdmin, loading } = useAuth();
@@ -200,7 +201,7 @@ export default function AdminExportsPage() {
             { label: 'Total Investors', value: investors.length.toString() },
             { label: 'Total Stakes Issued', value: formatStakes(investors.reduce((s, i) => s + (i.currentStakesOwned || 0), 0)) },
             { label: 'Total Investment', value: formatCurrency(investors.reduce((s, i) => s + (i.totalInvestment || 0), 0)) },
-            { label: 'Total Ownership Issued', value: `${investors.reduce((s, i) => s + (i.ownershipPercentage || 0), 0).toFixed(7)}%` },
+            { label: 'Total Ownership Issued', value: formatOwnership(investors.reduce((s, i) => s + (i.ownershipPercentage || 0), 0)) },
           ].map((stat, i) => (
             <div key={i} className="stat-card">
               <p className="text-xs text-muted-foreground mb-1">{stat.label}</p>
@@ -270,7 +271,7 @@ export default function AdminExportsPage() {
                       <td className="px-3 py-2 text-white">{formatStakes(inv.stakesSold)}</td>
                       <td className="px-3 py-2 text-white">{formatStakes(inv.stakesRepurchased)}</td>
                       <td className="px-3 py-2 text-primary font-bold">{formatStakes(inv.currentStakesOwned)}</td>
-                      <td className="px-3 py-2 text-white">{(inv.ownershipPercentage || 0).toFixed(7)}%</td>
+                      <td className="px-3 py-2 text-white">{formatOwnership(inv.ownershipPercentage)}</td>
                       <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">{inv.joinDate}</td>
                       <td className="px-3 py-2 text-muted-foreground">{inv.certificateNumber}</td>
                       <td className="px-3 py-2">

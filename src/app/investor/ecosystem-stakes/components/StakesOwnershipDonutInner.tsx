@@ -2,10 +2,13 @@
 
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { FULL_ECOSYSTEM_POOL } from '@/lib/stakes';
+
+const SAMPLE_STAKES = 50000;
 
 const data = [
-  { name: 'Your Stakes', value: 50000 },
-  { name: 'Available Pool', value: 16000000000 - 50000 },
+  { name: 'Your Stakes', value: SAMPLE_STAKES },
+  { name: 'Available Pool', value: FULL_ECOSYSTEM_POOL - SAMPLE_STAKES },
 ];
 
 const COLORS = ['#F97316', '#1F1F2E'];

@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import AppLayout from '@/components/portal/AppLayout';
 import { ChevronDownIcon, ChevronUpIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
+import { ECOSYSTEM_SHARE_PERCENT, formatTotalStakes, ownershipPercent } from '@/lib/stakes';
+import { formatOwnership } from '@/lib/format';
 
 interface FAQ {
   question: string;
@@ -14,12 +16,12 @@ const faqs: FAQ[] = [
   {
     category: 'Ecosystem Stakes',
     question: 'What are Ecosystem Stakes?',
-    answer: 'Ecosystem Stakes represent your ownership interest in Chew Network. Each stake corresponds to a fractional share of 5% of the total Chew Network ecosystem, which is divided into 800,000,000 total Ecosystem Stakes.',
+    answer: `Ecosystem Stakes represent your ownership interest in Chew Network. Each stake corresponds to a fractional share of ${ECOSYSTEM_SHARE_PERCENT}% of the total Chew Network ecosystem, which is divided into ${formatTotalStakes()} total Ecosystem Stakes.`,
   },
   {
     category: 'Ecosystem Stakes',
     question: 'How is my ownership percentage calculated?',
-    answer: 'Your ownership percentage is calculated as: (Your Current Stakes Owned ÷ 800,000,000) × 5. For example, if you own 50,000 stakes, your ownership is (50,000 ÷ 800,000,000) × 5 = 0.0003125% of Chew Network.',
+    answer: `Your ownership percentage is calculated as: (Your Current Stakes Owned ÷ ${formatTotalStakes()}) × ${ECOSYSTEM_SHARE_PERCENT}. For example, if you own 50,000 stakes, your ownership is (50,000 ÷ ${formatTotalStakes()}) × ${ECOSYSTEM_SHARE_PERCENT} = ${formatOwnership(ownershipPercent(50000))} of Chew Network.`,
   },
   {
     category: 'Ecosystem Stakes',

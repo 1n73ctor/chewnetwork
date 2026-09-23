@@ -5,6 +5,7 @@ import AppLayout from '@/components/portal/AppLayout';
 import { useAuth } from '@/contexts/AuthContext';
 
 import { BuildingStorefrontIcon, CheckCircleIcon, XCircleIcon, ArrowTopRightOnSquareIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
+import { formatOwnership } from '@/lib/format';
 
 export default function BuildWithChewPage() {
   const { investorProfile, loading } = useAuth();
@@ -70,7 +71,7 @@ export default function BuildWithChewPage() {
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Ownership</span>
-                  <span className="text-primary font-semibold">{ownership.toFixed(7)}%</span>
+                  <span className="text-primary font-semibold">{formatOwnership(ownership)}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Investor ID</span>

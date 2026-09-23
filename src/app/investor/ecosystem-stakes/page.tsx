@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { formatCurrency, formatDate, formatOwnership, formatStakes } from '@/lib/format';
 import { investorService, type StakeTransaction } from '@/lib/services/investorService';
 import { ArrowTrendingUpIcon, ArrowTrendingDownIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { ECOSYSTEM_SHARE_PERCENT, formatTotalStakes } from '@/lib/stakes';
 
 const txTypeLabels: Record<string, { label: string; color: string }> = {
   purchase: { label: 'PURCHASE', color: 'text-green-400' },
@@ -113,7 +114,7 @@ export default function MyEcosystemStakesPage() {
               </div>
               <p className="text-muted-foreground text-xs text-center mt-3">OF CHEW NETWORK</p>
               <p className="text-xs text-muted-foreground/60 text-center mt-1">
-                Based on 800,000,000 total stakes = 5%
+                Based on {formatTotalStakes()} total stakes = {ECOSYSTEM_SHARE_PERCENT}%
               </p>
             </div>
           </div>

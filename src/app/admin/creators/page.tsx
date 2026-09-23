@@ -7,6 +7,7 @@ import { adminService, type Investor } from '@/lib/services/investorService';
 import { AdminLayout } from '../certificates/page';
 import { BuildingStorefrontIcon, MagnifyingGlassIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { createClient } from '@/lib/supabase/client';
+import { formatOwnership } from '@/lib/format';
 
 export default function AdminCreatorsPage() {
   const { isAdmin, loading } = useAuth();
@@ -175,7 +176,7 @@ export default function AdminCreatorsPage() {
                   { label: 'Original Stakes', value: new Intl.NumberFormat('en-US').format(selectedInvestor.originalStakesPurchased) },
                   { label: 'Additional Stakes', value: new Intl.NumberFormat('en-US').format(selectedInvestor.additionalStakesPurchased) },
                   { label: 'Current Stakes', value: new Intl.NumberFormat('en-US').format(selectedInvestor.currentStakesOwned) },
-                  { label: 'Ownership %', value: `${(selectedInvestor.ownershipPercentage || 0).toFixed(7)}%` },
+                  { label: 'Ownership %', value: formatOwnership(selectedInvestor.ownershipPercentage) },
                 ].map((item, i) => (
                   <div key={i} className="flex justify-between text-xs">
                     <span className="text-muted-foreground">{item.label}</span>

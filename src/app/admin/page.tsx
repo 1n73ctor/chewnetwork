@@ -8,6 +8,7 @@ import { adminService, type Investor } from '@/lib/services/investorService';
 import { createClient } from '@/lib/supabase/client';
 import { AdminLayout } from './certificates/page';
 import { PlusIcon, CircleStackIcon, NewspaperIcon, DocumentChartBarIcon, FolderIcon, PhoneIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon, FingerPrintIcon } from '@heroicons/react/24/outline';
+import { formatOwnership } from '@/lib/format';
 
 export default function AdminDashboardPage() {
   const { user, isAdmin, loading } = useAuth();
@@ -139,7 +140,7 @@ export default function AdminDashboardPage() {
                         <td className="px-4 py-3 text-primary font-bold text-xs">{inv.investorId}</td>
                         <td className="px-4 py-3 text-white">{inv.firstName} {inv.lastName}</td>
                         <td className="px-4 py-3 text-white">{new Intl.NumberFormat('en-US').format(inv.currentStakesOwned)}</td>
-                        <td className="px-4 py-3 text-white text-xs">{(inv.ownershipPercentage || 0).toFixed(7)}%</td>
+                        <td className="px-4 py-3 text-white text-xs">{formatOwnership(inv.ownershipPercentage)}</td>
                         <td className="px-4 py-3">
                           <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${inv.accountStatus === 'active' ? 'badge-green' : 'bg-gray-500/20 text-gray-400'}`}>
                             {inv.accountStatus?.toUpperCase()}
