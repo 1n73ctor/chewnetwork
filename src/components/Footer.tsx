@@ -32,7 +32,7 @@ const footerLinks: Record<FooterGroup, FooterLink[]> = {
     { label: 'Restaurant Partners', href: '/restaurants#partners' },
     { label: 'Partnerships', href: '/contact?topic=partnership' },
     { label: 'Advertise', href: '/contact?topic=partnership' },
-    { label: 'Become Affiliate', href: 'https://chewnetworkaffiliate.com/', file: true },
+    { label: 'Affiliate Program', href: 'https://chewnetworkaffiliate.com/', file: true },
   ],
   company: [
     { label: 'About', href: '/about' },
