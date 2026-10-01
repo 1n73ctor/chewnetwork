@@ -102,9 +102,22 @@ export default function Footer() {
               <ul className="space-y-2">
                 {footerLinks?.forBusiness?.map((l) => (
                   <li key={l?.href}>
-                    <Link href={l?.href} onClick={() => Analytics?.footerLinkClick(l?.label)} className="text-white/70 hover:text-white text-sm transition-colors font-medium">
-                      {l?.label}
-                    </Link>
+                    {l?.file ? (
+                      <a
+                        href={l?.href}
+                        onClick={() => Analytics?.footerLinkClick(l?.label)}
+                        className="text-white/70 hover:text-white text-sm transition-colors font-medium"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${l?.label} (opens in a new tab)`}
+                      >
+                        {l?.label}
+                      </a>
+                    ) : (
+                      <Link href={l?.href} onClick={() => Analytics?.footerLinkClick(l?.label)} className="text-white/70 hover:text-white text-sm transition-colors font-medium">
+                        {l?.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
