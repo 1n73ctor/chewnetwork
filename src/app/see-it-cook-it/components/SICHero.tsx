@@ -45,9 +45,20 @@ export default function SICHero() {
             <span className="h-px w-8 bg-accent" />
             <span className="text-accent text-xs font-bold uppercase tracking-widest">The Front Door to Chew Network</span>
           </div>
-          <h1 className="font-extrabold text-white mb-6 animate-slide-up opacity-0 delay-200">
-            <span className="block text-hero-xl">See it.</span>
-            <span className="block text-hero-xl text-primary">Cook it.</span>
+          {/* The wordmark is the heading. It stays inside the h1 so the page keeps
+              a single top-level heading, and the alt text carries the words for
+              search engines and screen readers now that they are not in the DOM.
+              A plain img rather than AppImage: next/image refuses SVG unless
+              dangerouslyAllowSVG is turned on, which is not worth enabling for
+              one local asset. */}
+          <h1 className="mb-6 animate-slide-up opacity-0 delay-200">
+            <img
+              src="/assets/images/see-it-cook-it-wordmark.svg"
+              alt="See it. Cook it."
+              width={1254}
+              height={1254}
+              className="w-48 sm:w-56 lg:w-64 h-auto"
+            />
           </h1>
           <p className="text-white/80 text-lg leading-relaxed mb-8 max-w-lg font-medium animate-slide-up opacity-0 delay-300">
             Show Chef Pepe a meal, a group of ingredients, or a recipe. He will help you understand what you are looking at and turn it into a cooking plan.
@@ -57,10 +68,16 @@ export default function SICHero() {
               <Icon name="CameraIcon" size={20} />
               Upload a Meal
             </Link>
-            <Link href="/chef-pepe#voice-demo" className="inline-flex items-center gap-2 border border-white/30 text-white px-7 py-4 rounded-full font-semibold text-base hover:bg-white/10 transition-all duration-300">
-              <Icon name="MicrophoneIcon" size={20} />
-              Hear a Demo
-            </Link>
+            {/* Leaves the site, so a plain anchor with the usual new-tab guards
+                rather than a next/link client navigation. */}
+            <a
+              href="https://www.youtube.com/watch?v=6PkrJ_ZnmrM"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 border border-white/30 text-white px-7 py-4 rounded-full font-semibold text-base hover:bg-white/10 transition-all duration-300">
+              <Icon name="PlayCircleIcon" size={20} />
+              Watch Video
+            </a>
           </div>
 
           {/* Scan status indicator */}

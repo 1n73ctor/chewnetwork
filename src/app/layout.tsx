@@ -27,7 +27,13 @@ export const metadata: Metadata = {
   title: 'ChewNetwork — The Future Home of Food',
   description: 'Discover what to cook, learn with Chef Pepe, share recipes, find restaurants, and build a food brand — all inside one connected network.',
   icons: {
-    icon: [{ url: '/favicon.ico', type: 'image/x-icon' }],
+    // The .ico packs 16/32/48 so each browser picks its own size instead of
+    // upscaling a single 16px bitmap, which is what it did before.
+    icon: [
+      { url: '/favicon.ico', sizes: '16x16 32x32 48x48', type: 'image/x-icon' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
   },
   openGraph: {
     title: 'ChewNetwork — The Future Home of Food',

@@ -16,18 +16,24 @@ const timeOptions = ['Any', 'Under 15 min', 'Under 30 min', 'Under 1 hour', '1+ 
 const difficultyOptions = ['Any', 'Easy', 'Medium', 'Hard'];
 const dietaryOptions = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Paleo', 'Nut-Free'];
 
+// The link below is built from `slug`, so the card cannot point somewhere the
+// card does not describe. It previously carried a hardcoded href to
+// "crispy-honey-garlic-salmon", which no recipe has ever used, so Today's pick
+// led to a 404. The rest of these fields mirror the recipes row for this slug;
+// they had drifted from it too (25 min vs 20, 3,241 cooks vs 2,025).
 const featuredRecipe = {
-  title: 'Crispy Honey Garlic Salmon',
+  slug: 'honey-garlic-salmon',
+  title: 'Honey Garlic Salmon',
   creator: 'Maria Chen',
   creatorHandle: '@mariachencooks',
-  time: '25 min',
+  time: '20 min',
   difficulty: 'Easy',
   rating: 4.9,
-  cooks: 3241,
-  description: 'A weeknight hero — flaky salmon glazed with sticky honey garlic sauce, ready in under 30 minutes and guaranteed to impress.',
+  cooks: 2025,
+  description: 'Salmon seared crisp then glazed in a sticky honey garlic pan sauce. Twenty minutes.',
   image: "https://img.rocket.new/generatedImages/rocket_gen_img_13581a46c-1772646980537.png",
-  alt: 'Golden crispy salmon fillet glazed with honey garlic sauce on a white plate with herbs',
-  tags: ['Seafood', 'Quick', 'Healthy']
+  alt: 'Glazed honey garlic salmon fillets with sesame seeds and green onions',
+  tags: ['Seafood', 'Quick', 'Date Night']
 };
 
 const trendingRecipes = [
@@ -629,7 +635,7 @@ export default function RecipesPageClient() {
               <h2 id="featured-heading" className="text-2xl font-extrabold text-foreground">Today&apos;s pick</h2>
             </div>
           </div>
-          <Link href="/recipes/crispy-honey-garlic-salmon" className="group block">
+          <Link href={`/recipes/${featuredRecipe.slug}`} className="group block">
             <div className="relative rounded-3xl overflow-hidden h-72 sm:h-96 lg:h-[480px]">
               <img src={featuredRecipe.image} alt={featuredRecipe.alt} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
