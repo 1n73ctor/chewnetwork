@@ -23,7 +23,7 @@ const footerLinks: Record<FooterGroup, FooterLink[]> = {
     { label: 'Challenges', href: '/community#challenges' },
   ],
   products: [
-    { label: 'See It. Cook It.', href: '/see-it-cook-it' },
+    { label: 'See It. Cook It.', href: 'https://seeitcookit.com/', file: true },
     { label: 'Chef Pepe', href: '/chef-pepe' },
     { label: 'Creator Academy', href: '/creator-academy' },
   ],
@@ -33,7 +33,6 @@ const footerLinks: Record<FooterGroup, FooterLink[]> = {
     { label: 'Partnerships', href: '/contact?topic=partnership' },
     { label: 'Advertise', href: '/contact?topic=partnership' },
     { label: 'Affiliate Program', href: 'https://chewnetworkaffiliate.com/', file: true },
-    { label: 'Seeitcookit', href: 'https://seeitcookit.com/', file: true },
   ],
   company: [
     { label: 'About', href: '/about' },
