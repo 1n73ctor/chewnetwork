@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import AppImage from '@/components/ui/AppImage';
 import Icon from '@/components/ui/AppIcon';
 
@@ -64,10 +63,17 @@ export default function SICHero() {
             Show Chef Pepe a meal, a group of ingredients, or a recipe. He will help you understand what you are looking at and turn it into a cooking plan.
           </p>
           <div className="flex flex-wrap gap-4 mb-8 animate-slide-up opacity-0 delay-400">
-            <Link href="/see-it-cook-it?mode=meal" className="btn-primary px-7 py-4 text-base">
+            {/* Goes to the See it Cook it site, so a plain anchor with the
+                usual new-tab guards rather than a next/link navigation. */}
+            <a
+              href="https://seeitcookit.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Try See It. Cook It. (opens in a new tab)"
+              className="btn-primary px-7 py-4 text-base">
               <Icon name="CameraIcon" size={20} />
-              Upload a Meal
-            </Link>
+              Try See It. Cook It.
+            </a>
             {/* Leaves the site, so a plain anchor with the usual new-tab guards
                 rather than a next/link client navigation. */}
             <a

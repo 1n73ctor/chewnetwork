@@ -77,7 +77,7 @@ export default function Footer() {
               <p className="text-white/40 text-xs uppercase tracking-widest mb-3 font-semibold">Explore</p>
               <ul className="space-y-2">
                 {footerLinks?.explore?.map((l) => (
-                  <li key={l?.href}>
+                  <li key={l?.label}>
                     <Link href={l?.href} onClick={() => Analytics?.footerLinkClick(l?.label)} className="text-white/70 hover:text-white text-sm transition-colors font-medium">
                       {l?.label}
                     </Link>
@@ -89,7 +89,7 @@ export default function Footer() {
               <p className="text-white/40 text-xs uppercase tracking-widest mb-3 font-semibold">Products</p>
               <ul className="space-y-2">
                 {footerLinks?.products?.map((l) => (
-                  <li key={l?.href}>
+                  <li key={l?.label}>
                     <Link href={l?.href} onClick={() => Analytics?.footerLinkClick(l?.label)} className="text-white/70 hover:text-white text-sm transition-colors font-medium">
                       {l?.label}
                     </Link>
@@ -101,7 +101,7 @@ export default function Footer() {
               <p className="text-white/40 text-xs uppercase tracking-widest mb-3 font-semibold">Business</p>
               <ul className="space-y-2">
                 {footerLinks?.forBusiness?.map((l) => (
-                  <li key={l?.href}>
+                  <li key={l?.label}>
                     {l?.file ? (
                       <a
                         href={l?.href}
@@ -126,7 +126,7 @@ export default function Footer() {
               <p className="text-white/40 text-xs uppercase tracking-widest mb-3 font-semibold">Company</p>
               <ul className="space-y-2">
                 {footerLinks?.company?.map((l) => (
-                  <li key={l?.href}>
+                  <li key={l?.label}>
                     <Link href={l?.href} onClick={() => Analytics?.footerLinkClick(l?.label)} className="text-white/70 hover:text-white text-sm transition-colors font-medium">
                       {l?.label}
                     </Link>
@@ -138,7 +138,7 @@ export default function Footer() {
               <p className="text-white/40 text-xs uppercase tracking-widest mb-3 font-semibold">Support</p>
               <ul className="space-y-2">
                 {footerLinks?.support?.map((l) => (
-                  <li key={l?.href}>
+                  <li key={l?.label}>
                     <Link href={l?.href} onClick={() => Analytics?.footerLinkClick(l?.label)} className="text-white/70 hover:text-white text-sm transition-colors font-medium">
                       {l?.label}
                     </Link>
@@ -150,7 +150,7 @@ export default function Footer() {
               <p className="text-white/40 text-xs uppercase tracking-widest mb-3 font-semibold">Legal</p>
               <ul className="space-y-2">
                 {footerLinks?.legal?.map((l) => (
-                  <li key={l?.href}>
+                  <li key={l?.label}>
                     {l?.file ? (
                       <a
                         href={l?.href}
