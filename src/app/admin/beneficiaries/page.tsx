@@ -223,7 +223,7 @@ export default function AdminBeneficiariesPage() {
 
         <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
           <p className="text-amber-300/80 text-xs leading-relaxed">
-            <strong className="text-amber-300">Important:</strong> Beneficiary information is recorded for reference only. Legal ownership transfers are controlled by Chew Network&apos;s official documents and records. This portal does not automatically transfer ownership.
+            <strong className="text-amber-300">Important:</strong> Beneficiary information is recorded for reference only. Legal transfers of credits are controlled by Chew Network&apos;s official documents and records. This portal does not automatically transfer credits.
           </p>
         </div>
       </div>

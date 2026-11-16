@@ -29,7 +29,7 @@ export default function AdminInvestorsPage() {
 
   const [addForm, setAddForm] = useState({
     firstName: '', lastName: '', email: '', phone: '', password: '',
-    round: 'Phase 1', originalInvestment: '', originalStakePrice: '0.01',
+    round: 'Phase 1', originalInvestment: '', originalStakePrice: '0.05',
     joinDate: new Date().toISOString().split('T')[0],
   });
 
@@ -56,7 +56,7 @@ export default function AdminInvestorsPage() {
   const handleAddInvestor = async () => {
     setSaving(true);
     const investment = parseFloat(addForm.originalInvestment) || 0;
-    const stakePrice = parseFloat(addForm.originalStakePrice) || 0.01;
+    const stakePrice = parseFloat(addForm.originalStakePrice) || 0.05;
     const stakes = stakePrice > 0 ? Math.floor(investment / stakePrice) : 0;
     const inv = await adminService.createInvestor({
       firstName: addForm.firstName,
@@ -84,7 +84,7 @@ export default function AdminInvestorsPage() {
       setShowAddForm(false);
       setAddForm({
         firstName: '', lastName: '', email: '', phone: '', password: '',
-        round: 'Phase 1', originalInvestment: '', originalStakePrice: '0.01',
+        round: 'Phase 1', originalInvestment: '', originalStakePrice: '0.05',
         joinDate: new Date().toISOString().split('T')[0],
       });
       setSuccessMsg(
@@ -238,7 +238,7 @@ export default function AdminInvestorsPage() {
                   { key: 'round', label: 'Round', placeholder: 'Phase 1' },
                   { key: 'joinDate', label: 'Join Date', placeholder: '', type: 'date' },
                   { key: 'originalInvestment', label: 'Investment Amount ($)', placeholder: '500.00' },
-                  { key: 'originalStakePrice', label: 'Stake Price ($)', placeholder: '0.01' },
+                  { key: 'originalStakePrice', label: 'Credit Price ($)', placeholder: '0.05' },
                 ].map((field) => (
                   <div key={field.key}>
                     <label className="text-xs text-muted-foreground font-medium mb-1.5 block">{field.label}</label>
@@ -255,11 +255,11 @@ export default function AdminInvestorsPage() {
               {addForm.originalInvestment && addForm.originalStakePrice && (
                 <div className="bg-primary/5 border border-primary/20 rounded-lg px-4 py-3 mb-4">
                   <p className="text-sm text-muted-foreground">
-                    Calculated Stakes:{' '}
+                    Calculated Credits:{' '}
                     <span className="text-white font-bold">
                       {formatStakes(Math.floor(parseFloat(addForm.originalInvestment) / parseFloat(addForm.originalStakePrice)))}
                     </span>
-                    {' '}Ecosystem Stakes
+                    {' '}Ecosystem Credits
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Ownership:{' '}
@@ -299,7 +299,7 @@ export default function AdminInvestorsPage() {
                 <table className="min-w-full w-max text-sm">
                   <thead>
                     <tr className="border-b border-border">
-                      {['Investor ID', 'Name', 'Email', 'Stakes', 'Ownership %', 'Total Invested', 'Round', 'Login', 'Status'].map((h) => (
+                      {['Investor ID', 'Name', 'Email', 'Credits', 'Ownership %', 'Total Invested', 'Round', 'Login', 'Status'].map((h) => (
                         <th key={h} className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
@@ -389,7 +389,7 @@ export default function AdminInvestorsPage() {
                     {confirmDeactivate.accountStatus === 'active' ? 'Deactivate' : 'Activate'} {confirmDeactivate.firstName} {confirmDeactivate.lastName}?
                   </p>
                   <p className="text-muted-foreground text-xs mb-3">
-                    {confirmDeactivate.accountStatus === 'active' ?'They will be signed out of every device straight away and cannot log in again until reactivated. Their data and stakes are preserved.' :'This will restore the investor\'s access to the portal.'}
+                    {confirmDeactivate.accountStatus === 'active' ?'They will be signed out of every device straight away and cannot log in again until reactivated. Their data and credits are preserved.' :'This will restore the investor\'s access to the portal.'}
                   </p>
                   <div className="flex gap-2">
                     <button onClick={() => setConfirmDeactivate(null)} className="flex-1 bg-background border border-border text-white py-2 rounded-xl text-xs font-medium">Cancel</button>
@@ -454,12 +454,12 @@ export default function AdminInvestorsPage() {
                     { label: 'Login', value: selectedInvestor.userId ? 'Linked' : 'No account — cannot sign in' },
                     { label: 'Original Investment', value: formatCurrency(selectedInvestor.originalInvestment) },
                     { label: 'Total Investment', value: formatCurrency(selectedInvestor.totalInvestment) },
-                    { label: 'Stake Price', value: `$${selectedInvestor.originalStakePrice?.toFixed(4)}` },
-                    { label: 'Original Stakes', value: formatStakes(selectedInvestor.originalStakesPurchased) },
-                    { label: 'Additional Stakes', value: formatStakes(selectedInvestor.additionalStakesPurchased) },
-                    { label: 'Current Stakes', value: formatStakes(selectedInvestor.currentStakesOwned) },
-                    { label: 'Stakes Sold', value: formatStakes(selectedInvestor.stakesSold) },
-                    { label: 'Stakes Transferred', value: formatStakes(selectedInvestor.stakesTransferred) },
+                    { label: 'Credit Price', value: `$${selectedInvestor.originalStakePrice?.toFixed(4)}` },
+                    { label: 'Original Credits', value: formatStakes(selectedInvestor.originalStakesPurchased) },
+                    { label: 'Additional Credits', value: formatStakes(selectedInvestor.additionalStakesPurchased) },
+                    { label: 'Current Credits', value: formatStakes(selectedInvestor.currentStakesOwned) },
+                    { label: 'Credits Sold', value: formatStakes(selectedInvestor.stakesSold) },
+                    { label: 'Credits Transferred', value: formatStakes(selectedInvestor.stakesTransferred) },
                     { label: 'Repurchased', value: formatStakes(selectedInvestor.stakesRepurchased) },
                     { label: 'Ownership %', value: formatOwnership(selectedInvestor.ownershipPercentage) },
                     { label: 'Beneficiary', value: selectedInvestor.beneficiaryName || '—' },

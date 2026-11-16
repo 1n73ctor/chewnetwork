@@ -3,8 +3,7 @@
 import React, { useState } from 'react';
 import AppLayout from '@/components/portal/AppLayout';
 import { ChevronDownIcon, ChevronUpIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
-import { ECOSYSTEM_SHARE_PERCENT, formatTotalStakes, ownershipPercent } from '@/lib/stakes';
-import { formatOwnership } from '@/lib/format';
+import { formatTotalStakes } from '@/lib/stakes';
 
 interface FAQ {
   question: string;
@@ -14,54 +13,49 @@ interface FAQ {
 
 const faqs: FAQ[] = [
   {
-    category: 'Ecosystem Stakes',
-    question: 'What are Ecosystem Stakes?',
-    answer: `Ecosystem Stakes represent your ownership interest in Chew Network. Each stake corresponds to a fractional share of ${ECOSYSTEM_SHARE_PERCENT}% of the total Chew Network ecosystem, which is divided into ${formatTotalStakes()} total Ecosystem Stakes.`,
+    category: 'Ecosystem Credits',
+    question: 'What are Ecosystem Credits?',
+    answer: `Ecosystem Credits are the units recorded against your investor account in Chew Network. The Chew Network ecosystem is divided into ${formatTotalStakes()} total Ecosystem Credits.`,
   },
   {
-    category: 'Ecosystem Stakes',
-    question: 'How is my ownership percentage calculated?',
-    answer: `Your ownership percentage is calculated as: (Your Current Stakes Owned ÷ ${formatTotalStakes()}) × ${ECOSYSTEM_SHARE_PERCENT}. For example, if you own 50,000 stakes, your ownership is (50,000 ÷ ${formatTotalStakes()}) × ${ECOSYSTEM_SHARE_PERCENT} = ${formatOwnership(ownershipPercent(50000))} of Chew Network.`,
+    category: 'Ecosystem Credits',
+    question: 'Can I purchase additional Ecosystem Credits?',
+    answer: 'Additional credit purchases are subject to availability and the terms of the current offering round. Please contact the Investor Hotline or your Chew Network representative for information about additional purchase opportunities.',
   },
   {
-    category: 'Ecosystem Stakes',
-    question: 'Can I purchase additional Ecosystem Stakes?',
-    answer: 'Additional stake purchases are subject to availability and the terms of the current offering round. Please contact the Investor Hotline or your Chew Network representative for information about additional purchase opportunities.',
+    category: 'Ecosystem Credits',
+    question: 'What is the original credit price?',
+    answer: 'Phase 1 Ecosystem Credits were offered at $0.01 per credit. Pricing for future rounds will be determined under separate offering documents.',
   },
   {
-    category: 'Ecosystem Stakes',
-    question: 'What is the original stake price?',
-    answer: 'Phase 1 Ecosystem Stakes were offered at $0.01 per stake. Pricing for future rounds will be determined under separate offering documents.',
+    category: 'Credits & Certificates',
+    question: 'What is my Credit Certificate?',
+    answer: 'Your Official Ecosystem Credit Certificate is a formal document that records your investor ID, certificate number, number of credits held, and the round in which you invested. It serves as your official record of credits.',
   },
   {
-    category: 'Ownership & Certificates',
-    question: 'What is my Ownership Certificate?',
-    answer: 'Your Official Ecosystem Stake Ownership Certificate is a formal document that records your investor ID, certificate number, number of stakes owned, ownership percentage, and the round in which you invested. It serves as your official record of ownership.',
-  },
-  {
-    category: 'Ownership & Certificates',
+    category: 'Credits & Certificates',
     question: 'How do I download my certificate?',
-    answer: 'Navigate to "My Certificate" in the left sidebar. From there you can view, download as PDF, or print your official ownership certificate.',
+    answer: 'Navigate to "My Certificate" in the left sidebar. From there you can view, download as PDF, or print your official credit certificate.',
   },
   {
-    category: 'Ownership & Certificates',
+    category: 'Credits & Certificates',
     question: 'Can my certificate be reissued?',
     answer: 'Yes. If you need a reissued certificate (e.g., after a name correction or additional purchase), contact Chew Network administration. Certificates can be regenerated without affecting your transaction history.',
   },
   {
     category: 'Transactions & History',
-    question: 'How do I view my full ownership history?',
-    answer: 'Go to "My Ecosystem Stakes" in the left sidebar and click "View Full Ownership History." This shows every transaction including purchases, additional purchases, transfers, and company repurchases.',
+    question: 'How do I view my full credit purchase history?',
+    answer: 'Go to "My Ecosystem Credits" in the left sidebar and click "View Full Credit Purchase History." This shows every transaction including purchases, additional purchases, transfers, and company repurchases.',
   },
   {
     category: 'Transactions & History',
     question: 'Can transactions be deleted or modified?',
-    answer: 'No. All ownership transactions are permanent and immutable records. Historical transactions are never deleted or overwritten. Any corrections are recorded as new adjustment transactions with notes.',
+    answer: 'No. All credit transactions are permanent and immutable records. Historical transactions are never deleted or overwritten. Any corrections are recorded as new adjustment transactions with notes.',
   },
   {
     category: 'Transactions & History',
     question: 'What transaction types exist?',
-    answer: 'Transaction types include: PURCHASE (initial investment), ADDITIONAL PURCHASE (buying more stakes), TRANSFER IN (receiving stakes), TRANSFER OUT (sending stakes), COMPANY REPURCHASE (Chew Network buying back stakes), REDEMPTION, and ADJUSTMENT.',
+    answer: 'Transaction types include: PURCHASE (initial investment), ADDITIONAL PURCHASE (buying more credits), TRANSFER IN (receiving credits), TRANSFER OUT (sending credits), COMPANY REPURCHASE (Chew Network buying back credits), REDEMPTION, and ADJUSTMENT.',
   },
   {
     category: 'Documents & Records',
@@ -76,12 +70,12 @@ const faqs: FAQ[] = [
   {
     category: 'Beneficiary',
     question: 'What is beneficiary information?',
-    answer: 'Beneficiary information designates who should be considered in the event of your passing. This is recorded for reference purposes only. Actual legal ownership transfers are controlled by Chew Network\'s official documents and legal processes.',
+    answer: 'Beneficiary information designates who should be considered in the event of your passing. This is recorded for reference purposes only. Actual legal transfers of credits are controlled by Chew Network\'s official documents and legal processes.',
   },
   {
     category: 'Beneficiary',
-    question: 'Does recording a beneficiary automatically transfer my stakes?',
-    answer: 'No. Recording beneficiary information on this portal does not automatically transfer ownership. Legal ownership transfers remain controlled by Chew Network\'s official documents and records.',
+    question: 'Does recording a beneficiary automatically transfer my credits?',
+    answer: 'No. Recording beneficiary information on this portal does not automatically transfer your credits. Legal transfers of credits remain controlled by Chew Network\'s official documents and records.',
   },
   {
     category: 'Phase 2',
@@ -90,8 +84,8 @@ const faqs: FAQ[] = [
   },
   {
     category: 'Phase 2',
-    question: 'Will my Phase 1 stakes be affected by Phase 2?',
-    answer: 'Your Phase 1 Ecosystem Stakes remain unchanged regardless of future phases. Phase 2 will be a separate offering. Your current ownership records will never be altered by future phase activity.',
+    question: 'Will my Phase 1 credits be affected by Phase 2?',
+    answer: 'Your Phase 1 Ecosystem Credits remain unchanged regardless of future phases. Phase 2 will be a separate offering. Your current credit records will never be altered by future phase activity.',
   },
   {
     category: 'Account & Security',
@@ -133,7 +127,7 @@ export default function FAQsPage() {
           </div>
           <div>
             <h1 className="text-white text-2xl font-bold">Investor FAQs</h1>
-            <p className="text-muted-foreground text-sm mt-0.5">Frequently asked questions about your Ecosystem Stakes</p>
+            <p className="text-muted-foreground text-sm mt-0.5">Frequently asked questions about your Ecosystem Credits</p>
           </div>
         </div>
 

@@ -10,6 +10,19 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // The page was renamed from ecosystem-stakes when Stakes became Credits.
+  // Keeps older bookmarks and any links already emailed to investors working.
+  // 307 rather than 308 so browsers do not cache it permanently, which would
+  // be awkward to undo if the wording ever changes again.
+  async redirects() {
+    return [
+      {
+        source: '/investor/ecosystem-stakes',
+        destination: '/investor/ecosystem-credits',
+        permanent: false,
+      },
+    ];
+  },
   images: {
     remotePatterns: imageHosts,
     minimumCacheTTL: 60,

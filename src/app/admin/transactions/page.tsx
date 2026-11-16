@@ -28,7 +28,7 @@ export default function AdminTransactionsPage() {
 
   const [form, setForm] = useState({
     investorId: '', transactionType: 'purchase', numberOfStakes: '',
-    pricePerStake: '0.01', transactionDate: new Date().toISOString().split('T')[0],
+    pricePerStake: '0.05', transactionDate: new Date().toISOString().split('T')[0],
     round: 'Phase 1', notes: '',
   });
 
@@ -86,7 +86,7 @@ export default function AdminTransactionsPage() {
       notes: form.notes,
     });
     if (ok) {
-      await adminService.createAuditLog('Stake Transaction Added', form.investorId, null, { type: form.transactionType, stakes });
+      await adminService.createAuditLog('Credit Transaction Added', form.investorId, null, { type: form.transactionType, stakes });
       setSuccessMsg('Transaction recorded successfully.');
       setShowForm(false);
       setTimeout(() => setSuccessMsg(''), 4000);
@@ -105,8 +105,8 @@ export default function AdminTransactionsPage() {
       <div className="p-4 lg:p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-white text-2xl font-bold">Stake Transactions</h1>
-              <p className="text-muted-foreground text-sm mt-1">Record and view all ownership transactions</p>
+              <h1 className="text-white text-2xl font-bold">Credit Transactions</h1>
+              <p className="text-muted-foreground text-sm mt-1">Record and view all credit transactions</p>
             </div>
             <button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all">
               <PlusIcon className="w-4 h-4" />Add Transaction
@@ -122,7 +122,7 @@ export default function AdminTransactionsPage() {
           {showForm && (
             <div className="bg-card border border-border rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-white font-bold">Add Stake Transaction</h3>
+                <h3 className="text-white font-bold">Add Credit Transaction</h3>
                 <button onClick={() => setShowForm(false)} className="text-muted-foreground hover:text-white"><XMarkIcon className="w-5 h-5" /></button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -150,8 +150,8 @@ export default function AdminTransactionsPage() {
                   </select>
                 </div>
                 {[
-                  { key: 'numberOfStakes', label: 'Number of Stakes', placeholder: '50000' },
-                  { key: 'pricePerStake', label: 'Price Per Stake ($)', placeholder: '0.01' },
+                  { key: 'numberOfStakes', label: 'Number of Credits', placeholder: '50000' },
+                  { key: 'pricePerStake', label: 'Price Per Credit ($)', placeholder: '0.05' },
                   { key: 'transactionDate', label: 'Transaction Date', placeholder: '', type: 'date' },
                   { key: 'round', label: 'Round', placeholder: 'Phase 1' },
                 ].map((field) => (
@@ -215,7 +215,7 @@ export default function AdminTransactionsPage() {
                   <table className="min-w-full w-max text-sm">
                     <thead>
                       <tr className="border-b border-border">
-                        {['Type', 'Stakes', 'Price/Stake', 'Gross Amount', 'Date', 'Round', 'Notes'].map((h) => (
+                        {['Type', 'Credits', 'Price/Credit', 'Gross Amount', 'Date', 'Round', 'Notes'].map((h) => (
                           <th key={h} className="text-left px-3 py-2 text-xs text-muted-foreground font-semibold whitespace-nowrap">{h}</th>
                         ))}
                       </tr>

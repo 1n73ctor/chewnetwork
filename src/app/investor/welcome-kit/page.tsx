@@ -19,10 +19,10 @@ export default function WelcomeKitPage() {
   const contents = [
     'Welcome to Chew Network',
     'What Chew Network Is',
-    'What Ecosystem Stakes Are',
+    'What Ecosystem Credits Are',
     'See It. Cook It.',
     'Chef Pepe',
-    'How Ownership Is Recorded',
+    'How Credits Are Recorded',
     'Phase 1 Details',
     'Future Phase 2 Information',
     'Important Dates',
@@ -56,7 +56,7 @@ export default function WelcomeKitPage() {
             </div>
 
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-              Welcome to the Chew Network family. This kit contains everything you need to understand your investment, your Ecosystem Stakes, and the future of Chew Network.
+              Welcome to the Chew Network family. This kit contains everything you need to understand your investment, your Ecosystem Credits, and the future of Chew Network.
             </p>
 
             {/* Contents list */}

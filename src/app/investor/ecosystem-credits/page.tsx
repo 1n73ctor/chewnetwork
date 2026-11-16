@@ -3,10 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import AppLayout from '@/components/portal/AppLayout';
 import { useAuth } from '@/contexts/AuthContext';
-import { formatCurrency, formatDate, formatOwnership, formatStakes } from '@/lib/format';
+import { formatCurrency, formatDate, formatStakes } from '@/lib/format';
 import { investorService, type StakeTransaction } from '@/lib/services/investorService';
 import { ArrowTrendingUpIcon, ArrowTrendingDownIcon, ClockIcon } from '@heroicons/react/24/outline';
-import { ECOSYSTEM_SHARE_PERCENT, formatTotalStakes } from '@/lib/stakes';
 
 const txTypeLabels: Record<string, { label: string; color: string }> = {
   purchase: { label: 'PURCHASE', color: 'text-green-400' },
@@ -18,7 +17,7 @@ const txTypeLabels: Record<string, { label: string; color: string }> = {
   adjustment: { label: 'ADJUSTMENT', color: 'text-purple-400' },
 };
 
-export default function MyEcosystemStakesPage() {
+export default function MyEcosystemCreditsPage() {
   const { investorProfile, loading } = useAuth();
   const [transactions, setTransactions] = useState<StakeTransaction[]>([]);
   const [txLoading, setTxLoading] = useState(true);
@@ -31,18 +30,13 @@ export default function MyEcosystemStakesPage() {
   }, []);
 
 
-  const ownershipPct = investorProfile?.ownershipPercentage || 0;
-  const donutPct = Math.min((ownershipPct / 5) * 100, 100);
-  const circumference = 2 * Math.PI * 54;
-  const strokeDash = (donutPct / 100) * circumference;
-
   return (
     <AppLayout>
       <div className="p-4 lg:p-6 space-y-4 max-w-screen-2xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-white text-2xl font-bold">My Ecosystem Stakes</h1>
+            <h1 className="text-white text-2xl font-bold">My Ecosystem Credits</h1>
             <p className="text-muted-foreground text-sm mt-1">
               {loading ? '...' : `Investor ID: ${investorProfile?.investorId || '—'} — Founding Owner & Investor`}
             </p>
@@ -57,11 +51,11 @@ export default function MyEcosystemStakesPage() {
         {/* Stats grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           {[
-            { label: 'Original Stakes', value: formatStakes(investorProfile?.originalStakesPurchased || 0) },
-            { label: 'Additional Stakes', value: formatStakes(investorProfile?.additionalStakesPurchased || 0) },
-            { label: 'Current Stakes Owned', value: formatStakes(investorProfile?.currentStakesOwned || 0), highlight: true },
+            { label: 'Original Credits', value: formatStakes(investorProfile?.originalStakesPurchased || 0) },
+            { label: 'Additional Credits', value: formatStakes(investorProfile?.additionalStakesPurchased || 0) },
+            { label: 'Current Credits Owned', value: formatStakes(investorProfile?.currentStakesOwned || 0), highlight: true },
             {
-              label: 'Stakes Sold / Transferred',
+              label: 'Credits Sold / Transferred',
               // Two distinct columns since the recalculation fix: sold is
               // redemptions, transferred is transfers out.
               value: formatStakes(
@@ -69,7 +63,7 @@ export default function MyEcosystemStakesPage() {
               ),
             },
             { label: 'Company Repurchases', value: formatStakes(investorProfile?.stakesRepurchased || 0) },
-            { label: 'Original Stake Price', value: `$${(investorProfile?.originalStakePrice || 0.01).toFixed(2)}` },
+            { label: 'Original Credit Price', value: `$${(investorProfile?.originalStakePrice || 0.01).toFixed(2)}` },
             { label: 'Original Investment', value: formatCurrency(investorProfile?.originalInvestment || 0) },
             {
               label: 'Total Investment',
@@ -89,42 +83,14 @@ export default function MyEcosystemStakesPage() {
           ))}
         </div>
 
-        {/* Ownership chart + history */}
+        {/* Credit purchase history */}
         <div className="flex flex-col xl:flex-row gap-4">
-          {/* Ownership donut */}
-          <div className="xl:w-[280px] flex-shrink-0">
-            <div className="bg-card border border-border rounded-xl p-6 flex flex-col items-center">
-              <h3 className="text-white font-bold text-sm mb-4">Your Ownership</h3>
-              <div className="relative w-36 h-36">
-                <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
-                  <circle cx="60" cy="60" r="54" fill="none" stroke="#1e293b" strokeWidth="12" />
-                  <circle
-                    cx="60" cy="60" r="54" fill="none"
-                    stroke="#F97316" strokeWidth="12"
-                    strokeDasharray={`${strokeDash} ${circumference}`}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <p className="text-white font-extrabold text-sm leading-tight text-center">YOU OWN</p>
-                  <p className="text-primary font-extrabold text-xs leading-tight text-center">
-                    {loading ? '...' : formatOwnership(ownershipPct)}
-                  </p>
-                </div>
-              </div>
-              <p className="text-muted-foreground text-xs text-center mt-3">OF CHEW NETWORK</p>
-              <p className="text-xs text-muted-foreground/60 text-center mt-1">
-                Based on {formatTotalStakes()} total stakes = {ECOSYSTEM_SHARE_PERCENT}%
-              </p>
-            </div>
-          </div>
-
-          {/* Transaction history */}
+          {/* Credit purchase history */}
           <div className="flex-1 min-w-0">
             <div className="bg-card border border-border rounded-xl p-4">
               <div className="flex items-center gap-2 mb-4">
                 <ClockIcon className="w-4 h-4 text-primary" />
-                <h3 className="text-white font-bold text-sm">Ownership History</h3>
+                <h3 className="text-white font-bold text-sm">Credit Purchase History</h3>
               </div>
 
               {txLoading ? (
@@ -151,9 +117,9 @@ export default function MyEcosystemStakesPage() {
                               }
                               <span className={`text-xs font-bold tracking-wide ${txInfo.color}`}>{txInfo.label}</span>
                             </div>
-                            <p className="text-white font-bold text-base">{formatStakes(tx.numberOfStakes)} Stakes</p>
+                            <p className="text-white font-bold text-base">{formatStakes(tx.numberOfStakes)} Credits</p>
                             <p className="text-muted-foreground text-xs mt-0.5">
-                              ${tx.pricePerStake.toFixed(4)} per stake · {formatCurrency(tx.grossAmount)}
+                              ${tx.pricePerStake.toFixed(4)} per credit · {formatCurrency(tx.grossAmount)}
                             </p>
                             {tx.notes && <p className="text-muted-foreground/60 text-xs mt-1 italic">{tx.notes}</p>}
                           </div>

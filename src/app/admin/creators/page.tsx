@@ -83,7 +83,7 @@ export default function AdminCreatorsPage() {
       setInvestors(updated);
       const refreshed = updated.find(i => i.id === selectedInvestor.id);
       if (refreshed) setSelectedInvestor(refreshed);
-      setSuccessMsg('Creator program updated successfully. Ownership records unchanged.');
+      setSuccessMsg('Creator program updated successfully. Credit records unchanged.');
       setTimeout(() => setSuccessMsg(''), 4000);
     }
     setSaving(false);
@@ -171,11 +171,11 @@ export default function AdminCreatorsPage() {
 
               {/* Ownership summary (read-only) */}
               <div className="bg-background rounded-xl p-3 border border-border/50 space-y-1.5">
-                <p className="text-xs text-muted-foreground font-semibold tracking-widest mb-2">EXISTING ECOSYSTEM OWNERSHIP</p>
+                <p className="text-xs text-muted-foreground font-semibold tracking-widest mb-2">EXISTING ECOSYSTEM CREDITS</p>
                 {[
-                  { label: 'Original Stakes', value: new Intl.NumberFormat('en-US').format(selectedInvestor.originalStakesPurchased) },
-                  { label: 'Additional Stakes', value: new Intl.NumberFormat('en-US').format(selectedInvestor.additionalStakesPurchased) },
-                  { label: 'Current Stakes', value: new Intl.NumberFormat('en-US').format(selectedInvestor.currentStakesOwned) },
+                  { label: 'Original Credits', value: new Intl.NumberFormat('en-US').format(selectedInvestor.originalStakesPurchased) },
+                  { label: 'Additional Credits', value: new Intl.NumberFormat('en-US').format(selectedInvestor.additionalStakesPurchased) },
+                  { label: 'Current Credits', value: new Intl.NumberFormat('en-US').format(selectedInvestor.currentStakesOwned) },
                   { label: 'Ownership %', value: formatOwnership(selectedInvestor.ownershipPercentage) },
                 ].map((item, i) => (
                   <div key={i} className="flex justify-between text-xs">

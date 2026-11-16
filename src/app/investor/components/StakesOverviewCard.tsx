@@ -4,8 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '@/contexts/AuthContext';
-import { formatCurrency, formatDate, formatOwnership, formatStakes } from '@/lib/format';
-import StakesOverviewChart from './StakesOverviewChart';
+import { formatCurrency, formatDate, formatStakes } from '@/lib/format';
 
 export default function StakesOverviewCard() {
   const { investorProfile, loading } = useAuth();
@@ -21,33 +20,28 @@ export default function StakesOverviewCard() {
   const tableRows = [
     {
       id: 'row-original',
-      label: 'Original Stakes Purchased',
+      label: 'Original Credits Purchased',
       value: show(formatStakes(investorProfile?.originalStakesPurchased)),
     },
     {
       id: 'row-additional',
-      label: 'Additional Stakes Purchased',
+      label: 'Additional Credits Purchased',
       value: show(formatStakes(investorProfile?.additionalStakesPurchased)),
     },
     {
       id: 'row-current',
-      label: 'Current Stakes Owned',
+      label: 'Current Credits Owned',
       value: show(formatStakes(investorProfile?.currentStakesOwned)),
     },
     {
       id: 'row-sold',
-      label: 'Stakes Sold / Transferred',
+      label: 'Credits Sold / Transferred',
       value: show(formatStakes(stakesOut)),
     },
     {
       id: 'row-repurchased',
-      label: 'Stakes Repurchased (Company)',
+      label: 'Credits Repurchased (Company)',
       value: show(formatStakes(investorProfile?.stakesRepurchased)),
-    },
-    {
-      id: 'row-ownership',
-      label: 'Current Ownership %',
-      value: show(formatOwnership(investorProfile?.ownershipPercentage)),
     },
   ];
 
@@ -77,7 +71,7 @@ export default function StakesOverviewCard() {
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
         <ChartBarIcon className="w-5 h-5 text-primary" />
-        <h2 className="text-white font-semibold text-base">My Ecosystem Stakes Overview</h2>
+        <h2 className="text-white font-semibold text-base">My Ecosystem Credits Overview</h2>
       </div>
       <div className="flex flex-col lg:flex-row gap-6 items-start">
         {/* Left table */}
@@ -89,16 +83,11 @@ export default function StakesOverviewCard() {
             </div>
           ))}
           <Link
-            href="/investor/ecosystem-stakes"
+            href="/investor/ecosystem-credits"
             className="inline-block mt-4 px-4 py-2 rounded-lg border border-primary text-primary text-sm font-semibold hover:bg-primary hover:text-white transition-all duration-150 active:scale-95"
           >
-            View Full Ownership History
+            View Full Credit Purchase History
           </Link>
-        </div>
-
-        {/* Center donut */}
-        <div className="flex items-center justify-center flex-shrink-0">
-          <StakesOverviewChart ownershipPercentage={investorProfile?.ownershipPercentage || 0} />
         </div>
 
         {/* Right details */}

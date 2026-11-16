@@ -7,7 +7,6 @@ import { adminService, type Investor } from '@/lib/services/investorService';
 import { AdminLayout } from '../../certificates/page';
 import { ArrowLeftIcon, ArrowPathIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { formatOwnership } from '@/lib/format';
 
 export default function AdminCertificateViewPage() {
   const { isAdmin, loading } = useAuth();
@@ -127,7 +126,7 @@ export default function AdminCertificateViewPage() {
           <div className="bg-primary px-8 py-5 flex items-center justify-between">
             <div>
               <p className="text-white text-xs font-bold tracking-widest uppercase opacity-80">Official Certificate of</p>
-              <p className="text-white text-xl font-extrabold tracking-wide">Ecosystem Stake Ownership</p>
+              <p className="text-white text-xl font-extrabold tracking-wide">Ecosystem Credits</p>
             </div>
             <div className="text-right">
               <p className="text-white/80 text-xs font-semibold tracking-widest">CHEW NETWORK</p>
@@ -151,12 +150,9 @@ export default function AdminCertificateViewPage() {
               </div>
 
               <div className="text-center mb-6">
-                <p className="text-muted-foreground text-xs mb-1">is the registered owner of</p>
+                <p className="text-muted-foreground text-xs mb-1">holds</p>
                 <p className="text-white text-5xl font-extrabold tracking-tight">{formatStakes(investor.currentStakesOwned)}</p>
-                <p className="text-primary text-base font-semibold mt-1">Ecosystem Stakes</p>
-                <p className="text-muted-foreground text-xs mt-1">
-                  representing <span className="text-white font-semibold">{formatOwnership(investor.ownershipPercentage)}</span> of Chew Network
-                </p>
+                <p className="text-primary text-base font-semibold mt-1">Ecosystem Credits</p>
               </div>
 
               {/* Details grid */}

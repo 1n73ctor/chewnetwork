@@ -18,7 +18,7 @@ const isGroup = (entry: AdminNavEntry): entry is AdminNavGroup => 'children' in 
 export const adminNavItems: AdminNavEntry[] = [
   { id: 'dashboard', label: 'Dashboard', href: '/admin', icon: <HomeIcon className="w-4 h-4" /> },
   { id: 'investors', label: 'Investors', href: '/admin/investors', icon: <UsersIcon className="w-4 h-4" /> },
-  { id: 'transactions', label: 'Stake Transactions', href: '/admin/transactions', icon: <CircleStackIcon className="w-4 h-4" /> },
+  { id: 'transactions', label: 'Credit Transactions', href: '/admin/transactions', icon: <CircleStackIcon className="w-4 h-4" /> },
   { id: 'certificates', label: 'Certificates', href: '/admin/certificates', icon: <DocumentTextIcon className="w-4 h-4" /> },
   { id: 'documents', label: 'Documents', href: '/admin/documents', icon: <FolderIcon className="w-4 h-4" /> },
   { id: 'reports', label: 'Investor Reports', href: '/admin/reports', icon: <DocumentChartBarIcon className="w-4 h-4" /> },
@@ -173,7 +173,7 @@ export default function AdminCertificatesPage() {
       <div className="p-4 lg:p-6 space-y-5">
         <div>
           <h1 className="text-white text-2xl font-bold">Certificates</h1>
-          <p className="text-muted-foreground text-sm mt-1">View and manage investor ownership certificates</p>
+          <p className="text-muted-foreground text-sm mt-1">View and manage investor credit certificates</p>
         </div>
 
         {successMsg && (
@@ -208,7 +208,7 @@ export default function AdminCertificatesPage() {
                     <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Investor ID</th>
                     <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Name</th>
                     <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Certificate #</th>
-                    <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Stakes</th>
+                    <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Credits</th>
                     <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Ownership</th>
                     <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Status</th>
                     <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Actions</th>
@@ -255,7 +255,7 @@ export default function AdminCertificatesPage() {
 
         <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
           <p className="text-amber-300/80 text-xs leading-relaxed">
-            <strong className="text-amber-300">Note:</strong> Reissuing a certificate creates a new certificate record and audit log entry. It does not modify, delete, or alter any transaction history or ownership records.
+            <strong className="text-amber-300">Note:</strong> Reissuing a certificate creates a new certificate record and audit log entry. It does not modify, delete, or alter any transaction history or credit records.
           </p>
         </div>
       </div>

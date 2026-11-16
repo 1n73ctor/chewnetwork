@@ -55,8 +55,8 @@ export default function AdminExportsPage() {
 
   const getHeaders = () => [
     'Investor ID', 'First Name', 'Last Name', 'Email', 'Phone', 'Round',
-    'Original Investment', 'Total Investment', 'Stake Price', 'Original Stakes', 'Additional Stakes',
-    'Transfers In', 'Transfers Out', 'Redeemed / Sold', 'Company Repurchases', 'Current Stakes',
+    'Original Investment', 'Total Investment', 'Credit Price', 'Original Credits', 'Additional Credits',
+    'Transfers In', 'Transfers Out', 'Redeemed / Sold', 'Company Repurchases', 'Current Credits',
     'Ownership %', 'Join Date', 'Certificate Number', 'Account Status',
   ];
 
@@ -133,7 +133,7 @@ export default function AdminExportsPage() {
     <div class="subtitle">Generated: ${dateStr} &nbsp;|&nbsp; ${investors.length} investors</div>
     <div class="stats">
       <div class="stat"><div class="stat-label">Total Investors</div><div class="stat-value">${investors.length}</div></div>
-      <div class="stat"><div class="stat-label">Total Stakes</div><div class="stat-value">${formatStakes(totalStakes)}</div></div>
+      <div class="stat"><div class="stat-label">Total Credits</div><div class="stat-value">${formatStakes(totalStakes)}</div></div>
       <div class="stat"><div class="stat-label">Total Investment</div><div class="stat-value">${formatCurrency(totalInvestment)}</div></div>
     </div>
     <table><thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>`;
@@ -165,7 +165,7 @@ export default function AdminExportsPage() {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-white text-2xl font-bold">Master Ledger Export</h1>
-            <p className="text-muted-foreground text-sm mt-1">Export the complete Ecosystem Stake ownership ledger</p>
+            <p className="text-muted-foreground text-sm mt-1">Export the complete Ecosystem Credit ledger</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <button
@@ -199,7 +199,7 @@ export default function AdminExportsPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             { label: 'Total Investors', value: investors.length.toString() },
-            { label: 'Total Stakes Issued', value: formatStakes(investors.reduce((s, i) => s + (i.currentStakesOwned || 0), 0)) },
+            { label: 'Total Credits Issued', value: formatStakes(investors.reduce((s, i) => s + (i.currentStakesOwned || 0), 0)) },
             { label: 'Total Investment', value: formatCurrency(investors.reduce((s, i) => s + (i.totalInvestment || 0), 0)) },
             { label: 'Total Ownership Issued', value: formatOwnership(investors.reduce((s, i) => s + (i.ownershipPercentage || 0), 0)) },
           ].map((stat, i) => (
@@ -213,7 +213,7 @@ export default function AdminExportsPage() {
         {/* Full ledger table */}
         <div className="bg-card border border-border rounded-xl">
           <div className="px-4 py-3 border-b border-border flex items-center justify-between gap-3">
-            <h3 className="text-white font-bold text-sm">Complete Ownership Ledger</h3>
+            <h3 className="text-white font-bold text-sm">Complete Credit Ledger</h3>
             <div className="flex items-center gap-3">
               {overflow.can && overflow.atStart && (
                 <span className="text-xs text-primary font-semibold whitespace-nowrap">Scroll for more columns →</span>
@@ -240,7 +240,7 @@ export default function AdminExportsPage() {
               <table className="min-w-full w-max text-xs">
                 <thead>
                   <tr className="border-b border-border bg-background/30">
-                    {['Investor ID', 'Name', 'Email', 'Round', 'Total Invested', 'Stake Price', 'Orig Stakes', 'Add Stakes', 'Transferred', 'Redeemed', 'Repurchased', 'Current Stakes', 'Ownership %', 'Join Date', 'Cert #', 'Status'].map((h, i) => (
+                    {['Investor ID', 'Name', 'Email', 'Round', 'Total Invested', 'Credit Price', 'Orig Credits', 'Add Credits', 'Transferred', 'Redeemed', 'Repurchased', 'Current Credits', 'Ownership %', 'Join Date', 'Cert #', 'Status'].map((h, i) => (
                       <th
                         key={h}
                         className={`text-left px-3 py-2 text-muted-foreground font-semibold whitespace-nowrap ${

@@ -57,7 +57,7 @@ export default function BeneficiaryInfoPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-white text-2xl font-bold">Beneficiary Info</h1>
-            <p className="text-muted-foreground text-sm mt-1">Designate your Ecosystem Stake beneficiary</p>
+            <p className="text-muted-foreground text-sm mt-1">Designate your Ecosystem Credit beneficiary</p>
           </div>
           {!editing && (
             <button
@@ -116,7 +116,7 @@ export default function BeneficiaryInfoPage() {
               <div className="text-center py-6">
                 <UserGroupIcon className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
                 <p className="text-white font-semibold mb-1">No Beneficiary Designated</p>
-                <p className="text-muted-foreground text-sm">Click &quot;Add Beneficiary&quot; to designate a beneficiary for your Ecosystem Stakes.</p>
+                <p className="text-muted-foreground text-sm">Click &quot;Add Beneficiary&quot; to designate a beneficiary for your Ecosystem Credits.</p>
               </div>
             )}
           </div>
@@ -166,7 +166,7 @@ export default function BeneficiaryInfoPage() {
         {/* Legal notice */}
         <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
           <p className="text-amber-300/80 text-xs leading-relaxed">
-            <strong className="text-amber-300">Important Notice:</strong> Recording beneficiary information here does not automatically transfer ownership of Ecosystem Stakes. Legal ownership transfers remain controlled by Chew Network&apos;s official documents and records. This information is recorded for reference purposes only.
+            <strong className="text-amber-300">Important Notice:</strong> Recording beneficiary information here does not automatically transfer your Ecosystem Credits. Legal transfers of credits remain controlled by Chew Network&apos;s official documents and records. This information is recorded for reference purposes only.
           </p>
         </div>
       </div>

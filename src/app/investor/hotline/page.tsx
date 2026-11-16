@@ -68,7 +68,7 @@ export default function InvestorHotlinePage() {
           <div className="bg-card border border-border rounded-xl p-4">
             <p className="text-xs text-muted-foreground font-semibold tracking-widest mb-2">WHAT TO EXPECT</p>
             <ul className="space-y-1.5">
-              {['Dedicated investor support team', 'Account and ownership questions', 'Document requests', 'Certificate inquiries', 'General investor relations'].map((item, i) => (
+              {['Dedicated investor support team', 'Account and credit questions', 'Document requests', 'Certificate inquiries', 'General investor relations'].map((item, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
                   <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
                   {item}

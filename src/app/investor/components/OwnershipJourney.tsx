@@ -7,7 +7,7 @@ import {
 export default function OwnershipJourney() {
   return (
     <div className="card-surface p-5">
-      <h2 className="text-white font-semibold text-base mb-6">Your Ownership Journey</h2>
+      <h2 className="text-white font-semibold text-base mb-6">Your Credit Journey</h2>
 
       <div className="flex flex-col lg:flex-row gap-6 items-start">
         {/* Timeline */}
@@ -52,7 +52,7 @@ export default function OwnershipJourney() {
             <span className="badge-gray">NOT YET OPEN</span>
           </div>
           <div>
-            <p className="text-muted-foreground text-xs mb-1">Eligible Stakes</p>
+            <p className="text-muted-foreground text-xs mb-1">Eligible Credits</p>
             <p className="text-white text-sm font-medium leading-snug">To Be Determined Under Offering Documents</p>
           </div>
         </div>

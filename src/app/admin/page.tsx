@@ -68,7 +68,7 @@ export default function AdminDashboardPage() {
           {[
             { label: 'Total Investors', value: dataLoading ? '...' : investors.length.toString(), sub: 'Registered' },
             { label: 'Active Investors', value: dataLoading ? '...' : activeInvestors.toString(), sub: 'Active accounts' },
-            { label: 'Total Stakes Issued', value: dataLoading ? '...' : formatStakes(totalStakes), sub: 'Ecosystem Stakes' },
+            { label: 'Total Credits Issued', value: dataLoading ? '...' : formatStakes(totalStakes), sub: 'Ecosystem Credits' },
             { label: 'Total Investment', value: dataLoading ? '...' : formatCurrency(totalInvestment), sub: 'USD raised' },
           ].map((stat, i) => (
             <div key={i} className="stat-card">
@@ -128,7 +128,7 @@ export default function AdminDashboardPage() {
                     <tr className="border-b border-border">
                       <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Investor ID</th>
                       <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Name</th>
-                      <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Stakes</th>
+                      <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Credits</th>
                       <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Ownership</th>
                       <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Status</th>
                       <th className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold">Round</th>

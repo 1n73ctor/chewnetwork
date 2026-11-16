@@ -5,12 +5,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   IdentificationIcon,
   CircleStackIcon,
-  ChartPieIcon,
   TagIcon,
   CurrencyDollarIcon,
   FlagIcon,
 } from '@heroicons/react/24/outline';
-import { formatOwnership } from '@/lib/format';
 
 export default function StatsRow() {
   const { investorProfile, loading } = useAuth();
@@ -33,25 +31,17 @@ export default function StatsRow() {
     {
       id: 'stat-stakes',
       icon: <CircleStackIcon className="w-5 h-5 text-primary" />,
-      label: 'Ecosystem Stakes Owned',
+      label: 'Ecosystem Credits Owned',
       value: loading ? '...' : formatStakes(investorProfile?.currentStakesOwned || 0),
-      sub: 'Stakes',
-      subColor: 'text-muted-foreground',
-    },
-    {
-      id: 'stat-ownership',
-      icon: <ChartPieIcon className="w-5 h-5 text-primary" />,
-      label: 'Ownership Represented',
-      value: loading ? '...' : formatOwnership(investorProfile?.ownershipPercentage || 0),
-      sub: 'Of Chew Network',
+      sub: 'Credits',
       subColor: 'text-muted-foreground',
     },
     {
       id: 'stat-price',
       icon: <TagIcon className="w-5 h-5 text-primary" />,
-      label: 'Original Stake Price',
+      label: 'Original Credit Price',
       value: loading ? '...' : `$${(investorProfile?.originalStakePrice || 0.01).toFixed(2)}`,
-      sub: 'Per Stake',
+      sub: 'Per Credit',
       subColor: 'text-muted-foreground',
     },
     {

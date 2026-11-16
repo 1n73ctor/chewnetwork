@@ -5,17 +5,14 @@ import AppLayout from '@/components/portal/AppLayout';
 import { useAuth } from '@/contexts/AuthContext';
 
 import { BuildingStorefrontIcon, CheckCircleIcon, XCircleIcon, ArrowTopRightOnSquareIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
-import { formatOwnership } from '@/lib/format';
 
 export default function BuildWithChewPage() {
   const { investorProfile, loading } = useAuth();
   const [stakes, setStakes] = useState<number>(0);
-  const [ownership, setOwnership] = useState<number>(0);
 
   useEffect(() => {
     if (investorProfile) {
       setStakes(investorProfile.currentStakesOwned || 0);
-      setOwnership(investorProfile.ownershipPercentage || 0);
     }
   }, [investorProfile]);
 
@@ -62,16 +59,12 @@ export default function BuildWithChewPage() {
           <h2 className="text-white font-bold text-sm tracking-widest mb-4">YOUR CURRENT PARTICIPATION</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-background rounded-xl p-4 border border-border/50">
-              <p className="text-xs text-muted-foreground font-semibold tracking-widest mb-2">ECOSYSTEM OWNER</p>
+              <p className="text-xs text-muted-foreground font-semibold tracking-widest mb-2">ECOSYSTEM CREDIT HOLDER</p>
               <StatusBadge active={true} label="ACTIVE" />
               <div className="mt-3 space-y-1.5">
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Stakes Owned</span>
+                  <span className="text-muted-foreground">Credits Owned</span>
                   <span className="text-white font-semibold">{formatStakes(stakes)}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Ownership</span>
-                  <span className="text-primary font-semibold">{formatOwnership(ownership)}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Investor ID</span>
@@ -148,17 +141,17 @@ export default function BuildWithChewPage() {
           </div>
         )}
 
-        {/* Ownership note */}
+        {/* Credits note */}
         <div className="bg-card border border-border rounded-xl p-5">
-          <h2 className="text-white font-bold text-sm mb-3">Your Ecosystem Ownership Is Protected</h2>
+          <h2 className="text-white font-bold text-sm mb-3">Your Ecosystem Credits Are Protected</h2>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            Adding Creator Program services does not affect your Ecosystem Stake ownership. Your stakes, ownership percentage, and investment history remain exactly as recorded — regardless of any creator program activity.
+            Adding Creator Program services does not affect your Ecosystem Credits. Your credits and investment history remain exactly as recorded — regardless of any creator program activity.
           </p>
           <div className="mt-4 grid grid-cols-3 gap-3">
             {[
-              { label: 'Original Stakes', value: formatStakes(investorProfile?.originalStakesPurchased || 0) },
-              { label: 'Additional Stakes', value: formatStakes(investorProfile?.additionalStakesPurchased || 0) },
-              { label: 'Current Stakes', value: formatStakes(stakes) },
+              { label: 'Original Credits', value: formatStakes(investorProfile?.originalStakesPurchased || 0) },
+              { label: 'Additional Credits', value: formatStakes(investorProfile?.additionalStakesPurchased || 0) },
+              { label: 'Current Credits', value: formatStakes(stakes) },
             ].map((item, i) => (
               <div key={i} className="bg-background rounded-xl p-3 text-center border border-border/50">
                 <p className="text-white font-bold text-lg">{item.value}</p>

@@ -12,7 +12,7 @@ const docTypeLabels: Record<string, string> = {
   investment_certificate: 'Investment Certificate',
   welcome_kit: 'Welcome Kit',
   payment_receipt: 'Payment Receipt',
-  ownership_document: 'Ownership Document',
+  ownership_document: 'Credit Document',
   quarterly_report: 'Quarterly Report',
   transaction_document: 'Transaction Document',
   beneficiary_document: 'Beneficiary Document',
