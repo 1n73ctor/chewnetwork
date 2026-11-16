@@ -28,7 +28,7 @@ export default function AdminTransactionsPage() {
 
   const [form, setForm] = useState({
     investorId: '', transactionType: 'purchase', numberOfStakes: '',
-    pricePerStake: '0.05', transactionDate: new Date().toISOString().split('T')[0],
+    pricePerStake: '0.01', transactionDate: new Date().toISOString().split('T')[0],
     round: 'Phase 1', notes: '',
   });
 
@@ -151,7 +151,7 @@ export default function AdminTransactionsPage() {
                 </div>
                 {[
                   { key: 'numberOfStakes', label: 'Number of Credits', placeholder: '50000' },
-                  { key: 'pricePerStake', label: 'Price Per Credit ($)', placeholder: '0.05' },
+                  { key: 'pricePerStake', label: 'Price Per Credit ($)', placeholder: '0.01' },
                   { key: 'transactionDate', label: 'Transaction Date', placeholder: '', type: 'date' },
                   { key: 'round', label: 'Round', placeholder: 'Phase 1' },
                 ].map((field) => (

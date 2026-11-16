@@ -29,7 +29,7 @@ export default function AdminInvestorsPage() {
 
   const [addForm, setAddForm] = useState({
     firstName: '', lastName: '', email: '', phone: '', password: '',
-    round: 'Phase 1', originalInvestment: '', originalStakePrice: '0.05',
+    round: 'Phase 1', originalInvestment: '', originalStakePrice: '0.01',
     joinDate: new Date().toISOString().split('T')[0],
   });
 
@@ -56,7 +56,7 @@ export default function AdminInvestorsPage() {
   const handleAddInvestor = async () => {
     setSaving(true);
     const investment = parseFloat(addForm.originalInvestment) || 0;
-    const stakePrice = parseFloat(addForm.originalStakePrice) || 0.05;
+    const stakePrice = parseFloat(addForm.originalStakePrice) || 0.01;
     const stakes = stakePrice > 0 ? Math.floor(investment / stakePrice) : 0;
     const inv = await adminService.createInvestor({
       firstName: addForm.firstName,
@@ -84,7 +84,7 @@ export default function AdminInvestorsPage() {
       setShowAddForm(false);
       setAddForm({
         firstName: '', lastName: '', email: '', phone: '', password: '',
-        round: 'Phase 1', originalInvestment: '', originalStakePrice: '0.05',
+        round: 'Phase 1', originalInvestment: '', originalStakePrice: '0.01',
         joinDate: new Date().toISOString().split('T')[0],
       });
       setSuccessMsg(
@@ -238,7 +238,7 @@ export default function AdminInvestorsPage() {
                   { key: 'round', label: 'Round', placeholder: 'Phase 1' },
                   { key: 'joinDate', label: 'Join Date', placeholder: '', type: 'date' },
                   { key: 'originalInvestment', label: 'Investment Amount ($)', placeholder: '500.00' },
-                  { key: 'originalStakePrice', label: 'Credit Price ($)', placeholder: '0.05' },
+                  { key: 'originalStakePrice', label: 'Credit Price ($)', placeholder: '0.01' },
                 ].map((field) => (
                   <div key={field.key}>
                     <label className="text-xs text-muted-foreground font-medium mb-1.5 block">{field.label}</label>
