@@ -55,14 +55,14 @@ export default function AdminExportsPage() {
 
   const getHeaders = () => [
     'Investor ID', 'First Name', 'Last Name', 'Email', 'Phone', 'Round',
-    'Original Investment', 'Total Investment', 'Credit Price', 'Original Credits', 'Additional Credits',
+    'Original Investment', 'Total Investment', 'Original Credits', 'Additional Credits',
     'Transfers In', 'Transfers Out', 'Redeemed / Sold', 'Company Repurchases', 'Current Credits',
     'Ownership %', 'Join Date', 'Certificate Number', 'Account Status',
   ];
 
   const getRows = () => investors.map((inv) => [
     inv.investorId, inv.firstName, inv.lastName, inv.email, inv.phone || '',
-    inv.round, inv.originalInvestment, inv.totalInvestment, inv.originalStakePrice,
+    inv.round, inv.originalInvestment, inv.totalInvestment,
     inv.originalStakesPurchased, inv.additionalStakesPurchased,
     // stakesTransferred is transfers out; stakesSold is redemptions. They were
     // previously the same value, so this column reported the wrong one.
@@ -240,7 +240,7 @@ export default function AdminExportsPage() {
               <table className="min-w-full w-max text-xs">
                 <thead>
                   <tr className="border-b border-border bg-background/30">
-                    {['Investor ID', 'Name', 'Email', 'Round', 'Total Invested', 'Credit Price', 'Orig Credits', 'Add Credits', 'Transferred', 'Redeemed', 'Repurchased', 'Current Credits', 'Ownership %', 'Join Date', 'Cert #', 'Status'].map((h, i) => (
+                    {['Investor ID', 'Name', 'Email', 'Round', 'Total Invested', 'Orig Credits', 'Add Credits', 'Transferred', 'Redeemed', 'Repurchased', 'Current Credits', 'Ownership %', 'Join Date', 'Cert #', 'Status'].map((h, i) => (
                       <th
                         key={h}
                         className={`text-left px-3 py-2 text-muted-foreground font-semibold whitespace-nowrap ${
@@ -264,7 +264,6 @@ export default function AdminExportsPage() {
                       <td className="px-3 py-2 text-muted-foreground">{inv.email}</td>
                       <td className="px-3 py-2 text-muted-foreground">{inv.round}</td>
                       <td className="px-3 py-2 text-white">{formatCurrency(inv.totalInvestment)}</td>
-                      <td className="px-3 py-2 text-white">${inv.originalStakePrice?.toFixed(4)}</td>
                       <td className="px-3 py-2 text-white">{formatStakes(inv.originalStakesPurchased)}</td>
                       <td className="px-3 py-2 text-white">{formatStakes(inv.additionalStakesPurchased)}</td>
                       <td className="px-3 py-2 text-white">{formatStakes(inv.stakesTransferred)}</td>
