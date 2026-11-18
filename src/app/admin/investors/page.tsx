@@ -27,7 +27,7 @@ export default function AdminInvestorsPage() {
 
   const [addForm, setAddForm] = useState({
     firstName: '', lastName: '', email: '', phone: '', password: '',
-    round: 'Phase 1', originalInvestment: '', originalStakePrice: '0.01',
+    round: 'Phase 1', originalInvestment: '', originalStakesPurchased: '',
     joinDate: new Date().toISOString().split('T')[0],
   });
 
@@ -55,8 +55,11 @@ export default function AdminInvestorsPage() {
   const handleAddInvestor = async () => {
     setSaving(true);
     const investment = parseFloat(addForm.originalInvestment) || 0;
-    const stakePrice = parseFloat(addForm.originalStakePrice) || 0.01;
-    const stakes = stakePrice > 0 ? Math.floor(investment / stakePrice) : 0;
+    // Credits are entered directly now, the way the partners sheet records
+    // them, and the price is whatever those two figures imply. It used to be
+    // the other way round, with a $0.01 price that no longer holds for anyone.
+    const stakes = Math.max(0, Math.floor(parseFloat(addForm.originalStakesPurchased) || 0));
+    const stakePrice = stakes > 0 ? investment / stakes : 0;
     const inv = await adminService.createInvestor({
       firstName: addForm.firstName,
       lastName: addForm.lastName,
@@ -83,7 +86,7 @@ export default function AdminInvestorsPage() {
       setShowAddForm(false);
       setAddForm({
         firstName: '', lastName: '', email: '', phone: '', password: '',
-        round: 'Phase 1', originalInvestment: '', originalStakePrice: '0.01',
+        round: 'Phase 1', originalInvestment: '', originalStakesPurchased: '',
         joinDate: new Date().toISOString().split('T')[0],
       });
       setSuccessMsg(
@@ -247,7 +250,7 @@ export default function AdminInvestorsPage() {
                   { key: 'round', label: 'Round', placeholder: 'Phase 1' },
                   { key: 'joinDate', label: 'Join Date', placeholder: '', type: 'date' },
                   { key: 'originalInvestment', label: 'Investment Amount ($)', placeholder: '500.00' },
-                  { key: 'originalStakePrice', label: 'Credit Price ($)', placeholder: '0.01' },
+                  { key: 'originalStakesPurchased', label: 'Credits', placeholder: '100000' },
                 ].map((field) => (
                   <div key={field.key}>
                     <label className="text-xs text-muted-foreground font-medium mb-1.5 block">{field.label}</label>
@@ -261,17 +264,6 @@ export default function AdminInvestorsPage() {
                   </div>
                 ))}
               </div>
-              {addForm.originalInvestment && addForm.originalStakePrice && (
-                <div className="bg-primary/5 border border-primary/20 rounded-lg px-4 py-3 mb-4">
-                  <p className="text-sm text-muted-foreground">
-                    Calculated Credits:{' '}
-                    <span className="text-white font-bold">
-                      {formatStakes(Math.floor(parseFloat(addForm.originalInvestment) / parseFloat(addForm.originalStakePrice)))}
-                    </span>
-                    {' '}Ecosystem Credits
-                  </p>
-                </div>
-              )}
               <div className="flex gap-3">
                 <button onClick={() => setShowAddForm(false)} className="flex-1 bg-background border border-border text-white py-2.5 rounded-xl text-sm font-medium transition-all">Cancel</button>
                 <button onClick={handleAddInvestor} disabled={saving} className="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white py-2.5 rounded-xl text-sm font-bold transition-all">

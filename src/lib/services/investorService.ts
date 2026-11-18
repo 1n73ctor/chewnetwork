@@ -460,7 +460,7 @@ export const adminService = {
         phone: investorData.phone,
         round: investorData.round || 'Phase 1',
         original_investment: investorData.originalInvestment || 0,
-        original_stake_price: investorData.originalStakePrice || 0.01,
+        original_stake_price: investorData.originalStakePrice ?? 0.01,
         original_stakes_purchased: investorData.originalStakesPurchased || 0,
         current_stakes_owned: investorData.currentStakesOwned || 0,
         join_date: investorData.joinDate || new Date().toISOString().split('T')[0],
@@ -476,7 +476,8 @@ export const adminService = {
     // against them.
     const openingStakes = investorData.originalStakesPurchased || 0;
     if (openingStakes > 0) {
-      const pricePerStake = investorData.originalStakePrice || 0.01;
+      // ?? not ||: a derived price of 0 is legitimate and must not fall back.
+      const pricePerStake = investorData.originalStakePrice ?? 0.01;
       const { error: txError } = await supabase.from('stake_transactions').insert({
         investor_id: data.id,
         transaction_type: 'purchase',
