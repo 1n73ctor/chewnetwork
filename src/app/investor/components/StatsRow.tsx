@@ -6,6 +6,7 @@ import {
   IdentificationIcon,
   CircleStackIcon,
   CurrencyDollarIcon,
+  UserGroupIcon,
   FlagIcon,
 } from '@heroicons/react/24/outline';
 
@@ -46,6 +47,16 @@ export default function StatsRow() {
       subColor: 'text-muted-foreground',
     },
     {
+      id: 'stat-targeted-subscribers',
+      icon: <UserGroupIcon className="w-5 h-5 text-primary" />,
+      label: 'Targeted Subscribers',
+      // Free text, so a range like '3-6+' shows as typed. An em dash until an
+      // admin sets one, rather than a 0 that would read as a real target.
+      value: loading ? '...' : (investorProfile?.targetedSubscribers || '—'),
+      sub: 'Target',
+      subColor: 'text-muted-foreground',
+    },
+    {
       id: 'stat-round',
       icon: <FlagIcon className="w-5 h-5 text-primary" />,
       label: 'Round',
@@ -56,9 +67,8 @@ export default function StatsRow() {
   ];
 
   return (
-    // Four cards since the credit price was dropped, so the wide breakpoint is
-    // four across rather than six with two empty columns trailing.
-    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+    // Five cards: the credit price went, Targeted Subscribers arrived.
+    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3">
       {stats?.map((stat) => (
         <div key={stat?.id} className="stat-card">
           <div className="flex items-center gap-2 mb-1">

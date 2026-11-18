@@ -28,7 +28,7 @@ export default function AdminTransactionsPage() {
 
   const [form, setForm] = useState({
     investorId: '', transactionType: 'purchase', numberOfStakes: '',
-    pricePerStake: '0.01', transactionDate: new Date().toISOString().split('T')[0],
+    grossAmount: '', transactionDate: new Date().toISOString().split('T')[0],
     round: 'Phase 1', notes: '',
   });
 
@@ -74,13 +74,16 @@ export default function AdminTransactionsPage() {
   const handleAddTransaction = async () => {
     setSaving(true);
     const stakes = parseInt(form.numberOfStakes) || 0;
-    const price = parseFloat(form.pricePerStake) || 0;
+    // Credits and the money are what is known; the per-credit price is derived
+    // from them rather than typed, so the two can never disagree.
+    const gross = parseFloat(form.grossAmount) || 0;
+    const price = stakes > 0 ? gross / stakes : 0;
     const ok = await adminService.addTransaction({
       investorId: form.investorId,
       transactionType: form.transactionType,
       numberOfStakes: stakes,
       pricePerStake: price,
-      grossAmount: stakes * price,
+      grossAmount: gross,
       transactionDate: form.transactionDate,
       round: form.round,
       notes: form.notes,
@@ -151,7 +154,7 @@ export default function AdminTransactionsPage() {
                 </div>
                 {[
                   { key: 'numberOfStakes', label: 'Number of Credits', placeholder: '50000' },
-                  { key: 'pricePerStake', label: 'Price Per Credit ($)', placeholder: '0.01' },
+                  { key: 'grossAmount', label: 'Amount ($)', placeholder: '5000.00' },
                   { key: 'transactionDate', label: 'Transaction Date', placeholder: '', type: 'date' },
                   { key: 'round', label: 'Round', placeholder: 'Phase 1' },
                 ].map((field) => (
@@ -177,13 +180,6 @@ export default function AdminTransactionsPage() {
                   />
                 </div>
               </div>
-              {form.numberOfStakes && form.pricePerStake && (
-                <div className="bg-primary/5 border border-primary/20 rounded-lg px-4 py-3 mb-4">
-                  <p className="text-sm text-muted-foreground">
-                    Gross Amount: <span className="text-white font-bold">{formatCurrency(parseInt(form.numberOfStakes) * parseFloat(form.pricePerStake))}</span>
-                  </p>
-                </div>
-              )}
               <div className="flex gap-3">
                 <button onClick={() => setShowForm(false)} className="flex-1 bg-background border border-border text-white py-2.5 rounded-xl text-sm font-medium">Cancel</button>
                 <button onClick={handleAddTransaction} disabled={saving || !form.investorId} className="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white py-2.5 rounded-xl text-sm font-bold">

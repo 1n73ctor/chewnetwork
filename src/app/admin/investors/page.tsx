@@ -8,8 +8,6 @@ import { adminService, type Investor } from '@/lib/services/investorService';
 import { formatDate } from '@/lib/format';
 import { AdminLayout } from '../certificates/page';
 import { PlusIcon, MagnifyingGlassIcon, XMarkIcon, CheckIcon, PencilIcon, NoSymbolIcon, KeyIcon } from '@heroicons/react/24/outline';
-import { ownershipPercent } from '@/lib/stakes';
-import { formatOwnership } from '@/lib/format';
 
 export default function AdminInvestorsPage() {
   const { isAdmin, loading } = useAuth();
@@ -29,7 +27,7 @@ export default function AdminInvestorsPage() {
 
   const [addForm, setAddForm] = useState({
     firstName: '', lastName: '', email: '', phone: '', password: '',
-    round: 'Phase 1', originalInvestment: '', originalStakePrice: '0.01',
+    round: 'Phase 1', originalInvestment: '', originalStakesPurchased: '',
     joinDate: new Date().toISOString().split('T')[0],
   });
 
@@ -57,8 +55,11 @@ export default function AdminInvestorsPage() {
   const handleAddInvestor = async () => {
     setSaving(true);
     const investment = parseFloat(addForm.originalInvestment) || 0;
-    const stakePrice = parseFloat(addForm.originalStakePrice) || 0.01;
-    const stakes = stakePrice > 0 ? Math.floor(investment / stakePrice) : 0;
+    // Credits are entered directly now, the way the partners sheet records
+    // them, and the price is whatever those two figures imply. It used to be
+    // the other way round, with a $0.01 price that no longer holds for anyone.
+    const stakes = Math.max(0, Math.floor(parseFloat(addForm.originalStakesPurchased) || 0));
+    const stakePrice = stakes > 0 ? investment / stakes : 0;
     const inv = await adminService.createInvestor({
       firstName: addForm.firstName,
       lastName: addForm.lastName,
@@ -85,7 +86,7 @@ export default function AdminInvestorsPage() {
       setShowAddForm(false);
       setAddForm({
         firstName: '', lastName: '', email: '', phone: '', password: '',
-        round: 'Phase 1', originalInvestment: '', originalStakePrice: '0.01',
+        round: 'Phase 1', originalInvestment: '', originalStakesPurchased: '',
         joinDate: new Date().toISOString().split('T')[0],
       });
       setSuccessMsg(
@@ -249,7 +250,7 @@ export default function AdminInvestorsPage() {
                   { key: 'round', label: 'Round', placeholder: 'Phase 1' },
                   { key: 'joinDate', label: 'Join Date', placeholder: '', type: 'date' },
                   { key: 'originalInvestment', label: 'Investment Amount ($)', placeholder: '500.00' },
-                  { key: 'originalStakePrice', label: 'Credit Price ($)', placeholder: '0.01' },
+                  { key: 'originalStakesPurchased', label: 'Credits', placeholder: '100000' },
                 ].map((field) => (
                   <div key={field.key}>
                     <label className="text-xs text-muted-foreground font-medium mb-1.5 block">{field.label}</label>
@@ -263,23 +264,6 @@ export default function AdminInvestorsPage() {
                   </div>
                 ))}
               </div>
-              {addForm.originalInvestment && addForm.originalStakePrice && (
-                <div className="bg-primary/5 border border-primary/20 rounded-lg px-4 py-3 mb-4">
-                  <p className="text-sm text-muted-foreground">
-                    Calculated Credits:{' '}
-                    <span className="text-white font-bold">
-                      {formatStakes(Math.floor(parseFloat(addForm.originalInvestment) / parseFloat(addForm.originalStakePrice)))}
-                    </span>
-                    {' '}Ecosystem Credits
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Ownership:{' '}
-                    <span className="text-primary font-bold">
-                      {formatOwnership(ownershipPercent(Math.floor(parseFloat(addForm.originalInvestment) / parseFloat(addForm.originalStakePrice))))}
-                    </span>
-                  </p>
-                </div>
-              )}
               <div className="flex gap-3">
                 <button onClick={() => setShowAddForm(false)} className="flex-1 bg-background border border-border text-white py-2.5 rounded-xl text-sm font-medium transition-all">Cancel</button>
                 <button onClick={handleAddInvestor} disabled={saving} className="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white py-2.5 rounded-xl text-sm font-bold transition-all">
@@ -310,7 +294,7 @@ export default function AdminInvestorsPage() {
                 <table className="min-w-full w-max text-sm">
                   <thead>
                     <tr className="border-b border-border">
-                      {['Investor ID', 'Name', 'Email', 'Credits', 'Ownership %', 'Total Invested', 'Round', 'Login', 'Status'].map((h) => (
+                      {['Investor ID', 'Name', 'Email', 'Credits', 'Total Invested', 'Round', 'Login', 'Status'].map((h) => (
                         <th key={h} className="text-left px-4 py-3 text-xs text-muted-foreground font-semibold whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
@@ -322,7 +306,6 @@ export default function AdminInvestorsPage() {
                         <td className="px-4 py-3 text-white whitespace-nowrap">{inv.firstName} {inv.lastName}</td>
                         <td className="px-4 py-3 text-muted-foreground text-xs">{inv.email}</td>
                         <td className="px-4 py-3 text-white">{formatStakes(inv.currentStakesOwned)}</td>
-                        <td className="px-4 py-3 text-white text-xs">{formatOwnership(inv.ownershipPercentage)}</td>
                         {/* Total, not the opening amount: originalInvestment
                             never grows when more stakes are bought. */}
                         <td className="px-4 py-3 text-white text-xs">{formatCurrency(inv.totalInvestment)}</td>
@@ -476,7 +459,6 @@ export default function AdminInvestorsPage() {
                     { label: 'Credits Sold', value: formatStakes(selectedInvestor.stakesSold) },
                     { label: 'Credits Transferred', value: formatStakes(selectedInvestor.stakesTransferred) },
                     { label: 'Repurchased', value: formatStakes(selectedInvestor.stakesRepurchased) },
-                    { label: 'Ownership %', value: formatOwnership(selectedInvestor.ownershipPercentage) },
                     { label: 'Beneficiary', value: selectedInvestor.beneficiaryName || '—' },
                     { label: 'Creator Program', value: selectedInvestor.creatorProgramStatus ? 'Active' : 'Not Active' },
                   ].map((field, i) => (
