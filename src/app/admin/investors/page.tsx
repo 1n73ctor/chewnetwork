@@ -470,7 +470,6 @@ export default function AdminInvestorsPage() {
                     { label: 'Total Investment', value: formatCurrency(selectedInvestor.totalInvestment) },
                     { label: 'Targeted Subscribers', value: selectedInvestor.targetedSubscribers || '—' },
                     { label: 'Total Subscribers', value: formatStakes(selectedInvestor.totalSubscribers) },
-                    { label: 'Credit Price', value: `$${selectedInvestor.originalStakePrice?.toFixed(4)}` },
                     { label: 'Original Credits', value: formatStakes(selectedInvestor.originalStakesPurchased) },
                     { label: 'Additional Credits', value: formatStakes(selectedInvestor.additionalStakesPurchased) },
                     { label: 'Current Credits', value: formatStakes(selectedInvestor.currentStakesOwned) },

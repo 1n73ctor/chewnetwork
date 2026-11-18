@@ -5,7 +5,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   IdentificationIcon,
   CircleStackIcon,
-  TagIcon,
   CurrencyDollarIcon,
   FlagIcon,
 } from '@heroicons/react/24/outline';
@@ -37,15 +36,6 @@ export default function StatsRow() {
       subColor: 'text-muted-foreground',
     },
     {
-      id: 'stat-price',
-      icon: <TagIcon className="w-5 h-5 text-primary" />,
-      label: 'Original Credit Price',
-      // ?? not ||: a real price of 0 is falsy and would show the 0.01 fallback.
-      value: loading ? '...' : `$${(investorProfile?.originalStakePrice ?? 0.01).toFixed(2)}`,
-      sub: 'Per Credit',
-      subColor: 'text-muted-foreground',
-    },
-    {
       id: 'stat-investment',
       icon: <CurrencyDollarIcon className="w-5 h-5 text-primary" />,
       label: 'Total Investment',
@@ -66,7 +56,9 @@ export default function StatsRow() {
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
+    // Four cards since the credit price was dropped, so the wide breakpoint is
+    // four across rather than six with two empty columns trailing.
+    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
       {stats?.map((stat) => (
         <div key={stat?.id} className="stat-card">
           <div className="flex items-center gap-2 mb-1">
