@@ -6,7 +6,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { adminService, type Investor } from '@/lib/services/investorService';
 import { AdminLayout } from '../certificates/page';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import { formatOwnership } from '@/lib/format';
 
 export default function AdminExportsPage() {
   const { isAdmin, loading } = useAuth();
@@ -57,7 +56,7 @@ export default function AdminExportsPage() {
     'Investor ID', 'First Name', 'Last Name', 'Email', 'Phone', 'Round',
     'Original Investment', 'Total Investment', 'Original Credits', 'Additional Credits',
     'Transfers In', 'Transfers Out', 'Redeemed / Sold', 'Company Repurchases', 'Current Credits',
-    'Ownership %', 'Join Date', 'Certificate Number', 'Account Status',
+    'Join Date', 'Certificate Number', 'Account Status',
   ];
 
   const getRows = () => investors.map((inv) => [
@@ -67,7 +66,7 @@ export default function AdminExportsPage() {
     // stakesTransferred is transfers out; stakesSold is redemptions. They were
     // previously the same value, so this column reported the wrong one.
     0, inv.stakesTransferred, inv.stakesSold, inv.stakesRepurchased, inv.currentStakesOwned,
-    inv.ownershipPercentage?.toFixed(10), inv.joinDate,
+    inv.joinDate,
     inv.certificateNumber, inv.accountStatus,
   ]);
 
@@ -201,7 +200,6 @@ export default function AdminExportsPage() {
             { label: 'Total Investors', value: investors.length.toString() },
             { label: 'Total Credits Issued', value: formatStakes(investors.reduce((s, i) => s + (i.currentStakesOwned || 0), 0)) },
             { label: 'Total Investment', value: formatCurrency(investors.reduce((s, i) => s + (i.totalInvestment || 0), 0)) },
-            { label: 'Total Ownership Issued', value: formatOwnership(investors.reduce((s, i) => s + (i.ownershipPercentage || 0), 0)) },
           ].map((stat, i) => (
             <div key={i} className="stat-card">
               <p className="text-xs text-muted-foreground mb-1">{stat.label}</p>
@@ -240,7 +238,7 @@ export default function AdminExportsPage() {
               <table className="min-w-full w-max text-xs">
                 <thead>
                   <tr className="border-b border-border bg-background/30">
-                    {['Investor ID', 'Name', 'Email', 'Round', 'Total Invested', 'Orig Credits', 'Add Credits', 'Transferred', 'Redeemed', 'Repurchased', 'Current Credits', 'Ownership %', 'Join Date', 'Cert #', 'Status'].map((h, i) => (
+                    {['Investor ID', 'Name', 'Email', 'Round', 'Total Invested', 'Orig Credits', 'Add Credits', 'Transferred', 'Redeemed', 'Repurchased', 'Current Credits', 'Join Date', 'Cert #', 'Status'].map((h, i) => (
                       <th
                         key={h}
                         className={`text-left px-3 py-2 text-muted-foreground font-semibold whitespace-nowrap ${
@@ -270,7 +268,6 @@ export default function AdminExportsPage() {
                       <td className="px-3 py-2 text-white">{formatStakes(inv.stakesSold)}</td>
                       <td className="px-3 py-2 text-white">{formatStakes(inv.stakesRepurchased)}</td>
                       <td className="px-3 py-2 text-primary font-bold">{formatStakes(inv.currentStakesOwned)}</td>
-                      <td className="px-3 py-2 text-white">{formatOwnership(inv.ownershipPercentage)}</td>
                       <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">{inv.joinDate}</td>
                       <td className="px-3 py-2 text-muted-foreground">{inv.certificateNumber}</td>
                       <td className="px-3 py-2">
