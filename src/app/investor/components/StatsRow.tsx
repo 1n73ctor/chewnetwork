@@ -40,7 +40,8 @@ export default function StatsRow() {
       id: 'stat-price',
       icon: <TagIcon className="w-5 h-5 text-primary" />,
       label: 'Original Credit Price',
-      value: loading ? '...' : `$${(investorProfile?.originalStakePrice || 0.01).toFixed(2)}`,
+      // ?? not ||: a real price of 0 is falsy and would show the 0.01 fallback.
+      value: loading ? '...' : `$${(investorProfile?.originalStakePrice ?? 0.01).toFixed(2)}`,
       sub: 'Per Credit',
       subColor: 'text-muted-foreground',
     },

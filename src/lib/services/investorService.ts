@@ -28,6 +28,10 @@ export interface Investor {
   stakesTransferred: number;
   stakesRepurchased: number;
   ownershipPercentage: number;
+  /** Subscriber goal as written, so a range like '3-6+' survives. */
+  targetedSubscribers: string;
+  /** Subscribers reached so far. A count. */
+  totalSubscribers: number;
   beneficiaryName: string;
   beneficiaryRelationship: string;
   beneficiaryEmail: string;
@@ -140,6 +144,10 @@ function mapInvestor(row: any): Investor {
     stakesTransferred: Number(row.stakes_transferred),
     stakesRepurchased: Number(row.stakes_repurchased),
     ownershipPercentage: Number(row.ownership_percentage),
+    // Both tolerate the column being absent, so a bundle deployed ahead of the
+    // migration renders a blank target and a zero count instead of throwing.
+    targetedSubscribers: row.targeted_subscribers || '',
+    totalSubscribers: Number(row.total_subscribers || 0),
     beneficiaryName: row.beneficiary_name || '',
     beneficiaryRelationship: row.beneficiary_relationship || '',
     beneficiaryEmail: row.beneficiary_email || '',
@@ -538,6 +546,15 @@ export const adminService = {
     if (updates.round !== undefined) dbUpdates.round = updates.round;
     if (updates.notes !== undefined) dbUpdates.notes = updates.notes;
     if (updates.creatorProgramStatus !== undefined) dbUpdates.creator_program_status = updates.creatorProgramStatus;
+    // Blank clears the target rather than storing an empty string, so the page
+    // has one thing to test for when nothing has been set.
+    if (updates.targetedSubscribers !== undefined) {
+      dbUpdates.targeted_subscribers = String(updates.targetedSubscribers).trim() || null;
+    }
+    // A blank or unparseable count is left alone rather than silently zeroed.
+    if (updates.totalSubscribers !== undefined && Number.isFinite(Number(updates.totalSubscribers))) {
+      dbUpdates.total_subscribers = Math.max(0, Math.round(Number(updates.totalSubscribers)));
+    }
     dbUpdates.updated_at = new Date().toISOString();
     const { error } = await supabase.from('investors').update(dbUpdates).eq('id', id);
     if (error) { console.error('updateInvestor error:', error.message); return false; }
