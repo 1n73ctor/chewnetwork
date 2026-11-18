@@ -35,6 +35,7 @@ export default function AdminInvestorsPage() {
 
   const [editForm, setEditForm] = useState({
     firstName: '', lastName: '', email: '', phone: '', round: '', notes: '',
+    targetedSubscribers: '', totalSubscribers: '',
   });
 
   useEffect(() => {
@@ -105,6 +106,10 @@ export default function AdminInvestorsPage() {
       phone: inv.phone || '',
       round: inv.round || '',
       notes: inv.notes || '',
+      targetedSubscribers: inv.targetedSubscribers || '',
+      // Blank rather than '0' for an unset count, so saving an untouched form
+      // cannot write a zero over a figure someone meant to leave alone.
+      totalSubscribers: inv.totalSubscribers ? String(inv.totalSubscribers) : '',
     });
     setEditMode(true);
   };
@@ -129,6 +134,12 @@ export default function AdminInvestorsPage() {
       phone: editForm.phone,
       round: editForm.round,
       notes: editForm.notes,
+      targetedSubscribers: editForm.targetedSubscribers,
+      // Only sent when it is a number. A blank box leaves the stored count as
+      // it was; updateInvestor ignores anything it cannot read as a number.
+      ...(editForm.totalSubscribers.trim() === ''
+        ? {}
+        : { totalSubscribers: Number(editForm.totalSubscribers) }),
     });
     if (ok) {
       await adminService.createAuditLog('Investor Updated', selectedInvestor.id,
@@ -414,11 +425,14 @@ export default function AdminInvestorsPage() {
                       { key: 'email', label: 'Email' },
                       { key: 'phone', label: 'Phone' },
                       { key: 'round', label: 'Round' },
+                      { key: 'targetedSubscribers', label: 'Targeted Subscribers', placeholder: 'e.g. 100, 75+ or 3-6+' },
+                      { key: 'totalSubscribers', label: 'Total Subscribers', placeholder: 'Whole number, e.g. 12480' },
                     ].map((field) => (
                       <div key={field.key}>
                         <label className="text-xs text-muted-foreground font-medium mb-1.5 block">{field.label}</label>
                         <input
                           type="text"
+                          placeholder={(field as any).placeholder || ''}
                           value={(editForm as any)[field.key]}
                           onChange={(e) => setEditForm({ ...editForm, [field.key]: e.target.value })}
                           className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-primary transition-colors"
@@ -454,6 +468,8 @@ export default function AdminInvestorsPage() {
                     { label: 'Login', value: selectedInvestor.userId ? 'Linked' : 'No account — cannot sign in' },
                     { label: 'Original Investment', value: formatCurrency(selectedInvestor.originalInvestment) },
                     { label: 'Total Investment', value: formatCurrency(selectedInvestor.totalInvestment) },
+                    { label: 'Targeted Subscribers', value: selectedInvestor.targetedSubscribers || '—' },
+                    { label: 'Total Subscribers', value: formatStakes(selectedInvestor.totalSubscribers) },
                     { label: 'Credit Price', value: `$${selectedInvestor.originalStakePrice?.toFixed(4)}` },
                     { label: 'Original Credits', value: formatStakes(selectedInvestor.originalStakesPurchased) },
                     { label: 'Additional Credits', value: formatStakes(selectedInvestor.additionalStakesPurchased) },

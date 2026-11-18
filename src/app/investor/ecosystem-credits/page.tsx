@@ -63,7 +63,10 @@ export default function MyEcosystemCreditsPage() {
               ),
             },
             { label: 'Company Repurchases', value: formatStakes(investorProfile?.stakesRepurchased || 0) },
-            { label: 'Original Credit Price', value: `$${(investorProfile?.originalStakePrice || 0.01).toFixed(2)}` },
+            // ?? not ||: a genuine price of 0 (Elbert White, whose credits were
+            // paid for by someone else) is falsy and would otherwise display as
+            // the 0.01 fallback, which is simply a wrong number.
+            { label: 'Original Credit Price', value: `$${(investorProfile?.originalStakePrice ?? 0.01).toFixed(2)}` },
             { label: 'Original Investment', value: formatCurrency(investorProfile?.originalInvestment || 0) },
             {
               label: 'Total Investment',
@@ -71,6 +74,15 @@ export default function MyEcosystemCreditsPage() {
               // above is the opening amount alone and never grows.
               value: formatCurrency(investorProfile?.totalInvestment || 0),
               highlight: true,
+            },
+            {
+              label: 'Targeted Subscribers',
+              // Free text so a range survives as typed: '100', '75+', '3-6+'.
+              value: investorProfile?.targetedSubscribers || '—',
+            },
+            {
+              label: 'Total Subscribers',
+              value: formatStakes(investorProfile?.totalSubscribers || 0),
             },
             { label: 'Purchase Date', value: formatDate(investorProfile?.joinDate) },
             { label: 'Round', value: investorProfile?.round || 'Phase 1' },
