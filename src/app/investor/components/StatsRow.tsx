@@ -31,7 +31,7 @@ export default function StatsRow() {
     {
       id: 'stat-stakes',
       icon: <CircleStackIcon className="w-5 h-5 text-primary" />,
-      label: 'Ecosystem Credits Owned',
+      label: 'SeeItCookIt Credits Owned',
       value: loading ? '...' : formatStakes(investorProfile?.currentStakesOwned || 0),
       sub: 'Credits',
       subColor: 'text-muted-foreground',

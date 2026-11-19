@@ -59,7 +59,7 @@ export default function BuildWithChewPage() {
           <h2 className="text-white font-bold text-sm tracking-widest mb-4">YOUR CURRENT PARTICIPATION</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-background rounded-xl p-4 border border-border/50">
-              <p className="text-xs text-muted-foreground font-semibold tracking-widest mb-2">ECOSYSTEM CREDIT HOLDER</p>
+              <p className="text-xs text-muted-foreground font-semibold tracking-widest mb-2">SeeItCookIt CREDIT HOLDER</p>
               <StatusBadge active={true} label="ACTIVE" />
               <div className="mt-3 space-y-1.5">
                 <div className="flex justify-between text-xs">
@@ -143,9 +143,9 @@ export default function BuildWithChewPage() {
 
         {/* Credits note */}
         <div className="bg-card border border-border rounded-xl p-5">
-          <h2 className="text-white font-bold text-sm mb-3">Your Ecosystem Credits Are Protected</h2>
+          <h2 className="text-white font-bold text-sm mb-3">Your SeeItCookIt Credits Are Protected</h2>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            Adding Creator Program services does not affect your Ecosystem Credits. Your credits and investment history remain exactly as recorded — regardless of any creator program activity.
+            Adding Creator Program services does not affect your SeeItCookIt Credits. Your credits and investment history remain exactly as recorded — regardless of any creator program activity.
           </p>
           <div className="mt-4 grid grid-cols-3 gap-3">
             {[

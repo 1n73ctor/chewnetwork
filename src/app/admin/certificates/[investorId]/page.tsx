@@ -126,7 +126,7 @@ export default function AdminCertificateViewPage() {
           <div className="bg-primary px-8 py-5 flex items-center justify-between">
             <div>
               <p className="text-white text-xs font-bold tracking-widest uppercase opacity-80">Official Certificate of</p>
-              <p className="text-white text-xl font-extrabold tracking-wide">Ecosystem Credits</p>
+              <p className="text-white text-xl font-extrabold tracking-wide">SeeItCookIt Credits</p>
             </div>
             <div className="text-right">
               <p className="text-white/80 text-xs font-semibold tracking-widest">CHEW NETWORK</p>
@@ -152,7 +152,7 @@ export default function AdminCertificateViewPage() {
               <div className="text-center mb-6">
                 <p className="text-muted-foreground text-xs mb-1">holds</p>
                 <p className="text-white text-5xl font-extrabold tracking-tight">{formatStakes(investor.currentStakesOwned)}</p>
-                <p className="text-primary text-base font-semibold mt-1">Ecosystem Credits</p>
+                <p className="text-primary text-base font-semibold mt-1">SeeItCookIt Credits</p>
               </div>
 
               {/* Details grid */}

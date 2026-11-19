@@ -34,7 +34,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { id: 'nav-dashboard', label: 'Dashboard', href: '/investor', icon: <HomeIcon className="w-5 h-5 flex-shrink-0" /> },
-  { id: 'nav-credits', label: 'My Ecosystem Credits', href: '/investor/ecosystem-credits', icon: <ChartPieIcon className="w-5 h-5 flex-shrink-0" /> },
+  { id: 'nav-credits', label: 'My SeeItCookIt Credits', href: '/investor/ecosystem-credits', icon: <ChartPieIcon className="w-5 h-5 flex-shrink-0" /> },
   { id: 'nav-certificate', label: 'My Certificate', href: '/investor/certificate', icon: <DocumentTextIcon className="w-5 h-5 flex-shrink-0" /> },
   { id: 'nav-welcome', label: 'Welcome Kit', href: '/investor/welcome-kit', icon: <GiftIcon className="w-5 h-5 flex-shrink-0" /> },
   { id: 'nav-reports', label: 'Investor Reports', href: '/investor/reports', icon: <DocumentChartBarIcon className="w-5 h-5 flex-shrink-0" /> },

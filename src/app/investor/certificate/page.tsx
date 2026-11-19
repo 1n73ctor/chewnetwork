@@ -24,7 +24,7 @@ export default function MyCertificatePage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-white text-2xl font-bold">My Certificate</h1>
-            <p className="text-muted-foreground text-sm mt-1">Official Ecosystem Credit Certificate</p>
+            <p className="text-muted-foreground text-sm mt-1">Official SeeItCookIt Credit Certificate</p>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -60,8 +60,8 @@ export default function MyCertificatePage() {
                 <div className="w-px h-8 bg-primary/40" />
                 <div>
                   <p className="text-primary text-xs font-bold tracking-[0.3em] mb-1">CHEW NETWORK</p>
-                  <h2 className="text-white text-2xl lg:text-3xl font-extrabold tracking-tight">OFFICIAL ECOSYSTEM CREDIT</h2>
-                  <h2 className="text-white text-2xl lg:text-3xl font-extrabold tracking-tight">CREDIT CERTIFICATE</h2>
+                  <h2 className="text-white text-2xl lg:text-3xl font-extrabold tracking-tight">OFFICIAL SeeItCookIt CREDIT</h2>
+                  <h2 className="text-white text-2xl lg:text-3xl font-extrabold tracking-tight">CERTIFICATE</h2>
                 </div>
                 <div className="w-px h-8 bg-primary/40" />
               </div>
@@ -92,7 +92,7 @@ export default function MyCertificatePage() {
                   { label: 'Investor', value: `${investorProfile?.firstName || ''} ${investorProfile?.lastName || ''}`.trim() || '—' },
                   { label: 'Investor ID', value: investorProfile?.investorId || '—' },
                   { label: 'Certificate Number', value: investorProfile?.certificateNumber || '—' },
-                  { label: 'Ecosystem Credits', value: new Intl.NumberFormat('en-US').format(investorProfile?.currentStakesOwned || 0) },
+                  { label: 'SeeItCookIt Credits', value: new Intl.NumberFormat('en-US').format(investorProfile?.currentStakesOwned || 0) },
                   { label: 'Round', value: investorProfile?.round || 'Phase 1' },
                   { label: 'Issue Date', value: issueDate },
                   { label: 'Account Status', value: (investorProfile?.accountStatus || 'Active').toUpperCase() },
@@ -111,7 +111,7 @@ export default function MyCertificatePage() {
               <p className="text-white text-3xl font-extrabold mb-1">
                 {loading ? '...' : new Intl.NumberFormat('en-US').format(investorProfile?.currentStakesOwned || 0)}
               </p>
-              <p className="text-primary font-bold text-sm">ECOSYSTEM CREDITS</p>
+              <p className="text-primary font-bold text-sm">SeeItCookIt CREDITS</p>
             </div>
 
             {/* Footer */}
@@ -123,7 +123,7 @@ export default function MyCertificatePage() {
 
             <div className="text-center">
               <p className="text-muted-foreground text-xs leading-relaxed max-w-lg mx-auto">
-                This certificate is issued by Chew Network and records the holder&apos;s Ecosystem Credits as recorded in the official Chew Network credit ledger. Credit transfers are governed by Chew Network&apos;s official documents and records.
+                This certificate is issued by Chew Network and records the holder&apos;s SeeItCookIt Credits as recorded in the official Chew Network credit ledger. Credit transfers are governed by Chew Network&apos;s official documents and records.
               </p>
               <p className="text-primary text-xs font-bold tracking-widest mt-3">SEE IT. COOK IT. OWN THE FUTURE.</p>
             </div>

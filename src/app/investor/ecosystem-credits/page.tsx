@@ -36,7 +36,7 @@ export default function MyEcosystemCreditsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-white text-2xl font-bold">My Ecosystem Credits</h1>
+            <h1 className="text-white text-2xl font-bold">My SeeItCookIt Credits</h1>
             <p className="text-muted-foreground text-sm mt-1">
               {loading ? '...' : `Investor ID: ${investorProfile?.investorId || '—'} — Founding Owner & Investor`}
             </p>
