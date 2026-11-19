@@ -19,7 +19,7 @@ export default function WelcomeKitPage() {
   const contents = [
     'Welcome to Chew Network',
     'What Chew Network Is',
-    'What Ecosystem Credits Are',
+    'What SeeItCookIt Credits Are',
     'See It. Cook It.',
     'Chef Pepe',
     'How Credits Are Recorded',
@@ -56,7 +56,7 @@ export default function WelcomeKitPage() {
             </div>
 
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-              Welcome to the Chew Network family. This kit contains everything you need to understand your investment, your Ecosystem Credits, and the future of Chew Network.
+              Welcome to the Chew Network family. This kit contains everything you need to understand your investment, your SeeItCookIt Credits, and the future of Chew Network.
             </p>
 
             {/* Contents list */}

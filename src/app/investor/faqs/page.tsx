@@ -13,24 +13,24 @@ interface FAQ {
 
 const faqs: FAQ[] = [
   {
-    category: 'Ecosystem Credits',
-    question: 'What are Ecosystem Credits?',
-    answer: `Ecosystem Credits are the units recorded against your investor account in Chew Network. The Chew Network ecosystem is divided into ${formatTotalStakes()} total Ecosystem Credits.`,
+    category: 'SeeItCookIt Credits',
+    question: 'What are SeeItCookIt Credits?',
+    answer: `SeeItCookIt Credits are the units recorded against your investor account in Chew Network. The Chew Network ecosystem is divided into ${formatTotalStakes()} total SeeItCookIt Credits.`,
   },
   {
-    category: 'Ecosystem Credits',
-    question: 'Can I purchase additional Ecosystem Credits?',
+    category: 'SeeItCookIt Credits',
+    question: 'Can I purchase additional SeeItCookIt Credits?',
     answer: 'Additional credit purchases are subject to availability and the terms of the current offering round. Please contact the Investor Hotline or your Chew Network representative for information about additional purchase opportunities.',
   },
   {
-    category: 'Ecosystem Credits',
+    category: 'SeeItCookIt Credits',
     question: 'What is the original credit price?',
-    answer: 'Phase 1 Ecosystem Credits were offered at $0.01 per credit. Pricing for future rounds will be determined under separate offering documents.',
+    answer: 'Phase 1 SeeItCookIt Credits were offered at $0.01 per credit. Pricing for future rounds will be determined under separate offering documents.',
   },
   {
     category: 'Credits & Certificates',
     question: 'What is my Credit Certificate?',
-    answer: 'Your Official Ecosystem Credit Certificate is a formal document that records your investor ID, certificate number, number of credits held, and the round in which you invested. It serves as your official record of credits.',
+    answer: 'Your Official SeeItCookIt Credit Certificate is a formal document that records your investor ID, certificate number, number of credits held, and the round in which you invested. It serves as your official record of credits.',
   },
   {
     category: 'Credits & Certificates',
@@ -45,7 +45,7 @@ const faqs: FAQ[] = [
   {
     category: 'Transactions & History',
     question: 'How do I view my full credit purchase history?',
-    answer: 'Go to "My Ecosystem Credits" in the left sidebar and click "View Full Credit Purchase History." This shows every transaction including purchases, additional purchases, transfers, and company repurchases.',
+    answer: 'Go to "My SeeItCookIt Credits" in the left sidebar and click "View Full Credit Purchase History." This shows every transaction including purchases, additional purchases, transfers, and company repurchases.',
   },
   {
     category: 'Transactions & History',
@@ -85,7 +85,7 @@ const faqs: FAQ[] = [
   {
     category: 'Phase 2',
     question: 'Will my Phase 1 credits be affected by Phase 2?',
-    answer: 'Your Phase 1 Ecosystem Credits remain unchanged regardless of future phases. Phase 2 will be a separate offering. Your current credit records will never be altered by future phase activity.',
+    answer: 'Your Phase 1 SeeItCookIt Credits remain unchanged regardless of future phases. Phase 2 will be a separate offering. Your current credit records will never be altered by future phase activity.',
   },
   {
     category: 'Account & Security',
@@ -127,7 +127,7 @@ export default function FAQsPage() {
           </div>
           <div>
             <h1 className="text-white text-2xl font-bold">Investor FAQs</h1>
-            <p className="text-muted-foreground text-sm mt-0.5">Frequently asked questions about your Ecosystem Credits</p>
+            <p className="text-muted-foreground text-sm mt-0.5">Frequently asked questions about your SeeItCookIt Credits</p>
           </div>
         </div>
 

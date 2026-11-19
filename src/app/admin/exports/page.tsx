@@ -164,7 +164,7 @@ export default function AdminExportsPage() {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-white text-2xl font-bold">Master Ledger Export</h1>
-            <p className="text-muted-foreground text-sm mt-1">Export the complete Ecosystem Credit ledger</p>
+            <p className="text-muted-foreground text-sm mt-1">Export the complete SeeItCookIt Credit ledger</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <button

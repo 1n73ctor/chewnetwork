@@ -71,7 +71,7 @@ export default function StakesOverviewCard() {
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
         <ChartBarIcon className="w-5 h-5 text-primary" />
-        <h2 className="text-white font-semibold text-base">My Ecosystem Credits Overview</h2>
+        <h2 className="text-white font-semibold text-base">My SeeItCookIt Credits Overview</h2>
       </div>
       <div className="flex flex-col lg:flex-row gap-6 items-start">
         {/* Left table */}

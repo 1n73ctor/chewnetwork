@@ -11,7 +11,7 @@ interface TopbarProps {
 
 const PAGE_TITLES: Record<string, string> = {
   '/investor': 'Dashboard',
-  '/investor/ecosystem-credits': 'My Ecosystem Credits',
+  '/investor/ecosystem-credits': 'My SeeItCookIt Credits',
   '/investor/certificate': 'My Certificate',
   '/investor/welcome-kit': 'Welcome Kit',
   '/investor/reports': 'Investor Reports',
