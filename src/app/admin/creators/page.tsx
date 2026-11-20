@@ -170,7 +170,7 @@ export default function AdminCreatorsPage() {
 
               {/* Ownership summary (read-only) */}
               <div className="bg-background rounded-xl p-3 border border-border/50 space-y-1.5">
-                <p className="text-xs text-muted-foreground font-semibold tracking-widest mb-2">EXISTING SeeItCookIt CREDITS</p>
+                <p className="text-xs text-muted-foreground font-semibold tracking-widest mb-2">EXISTING SEEITCOOKIT CREDITS</p>
                 {[
                   { label: 'Original Credits', value: new Intl.NumberFormat('en-US').format(selectedInvestor.originalStakesPurchased) },
                   { label: 'Additional Credits', value: new Intl.NumberFormat('en-US').format(selectedInvestor.additionalStakesPurchased) },

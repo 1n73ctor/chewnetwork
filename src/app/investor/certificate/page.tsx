@@ -60,7 +60,7 @@ export default function MyCertificatePage() {
                 <div className="w-px h-8 bg-primary/40" />
                 <div>
                   <p className="text-primary text-xs font-bold tracking-[0.3em] mb-1">CHEW NETWORK</p>
-                  <h2 className="text-white text-2xl lg:text-3xl font-extrabold tracking-tight">OFFICIAL SeeItCookIt CREDIT</h2>
+                  <h2 className="text-white text-2xl lg:text-3xl font-extrabold tracking-tight">OFFICIAL SEEITCOOKIT CREDIT</h2>
                   <h2 className="text-white text-2xl lg:text-3xl font-extrabold tracking-tight">CERTIFICATE</h2>
                 </div>
                 <div className="w-px h-8 bg-primary/40" />
@@ -111,7 +111,7 @@ export default function MyCertificatePage() {
               <p className="text-white text-3xl font-extrabold mb-1">
                 {loading ? '...' : new Intl.NumberFormat('en-US').format(investorProfile?.currentStakesOwned || 0)}
               </p>
-              <p className="text-primary font-bold text-sm">SeeItCookIt CREDITS</p>
+              <p className="text-primary font-bold text-sm">SEEITCOOKIT CREDITS</p>
             </div>
 
             {/* Footer */}

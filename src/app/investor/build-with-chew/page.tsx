@@ -59,7 +59,7 @@ export default function BuildWithChewPage() {
           <h2 className="text-white font-bold text-sm tracking-widest mb-4">YOUR CURRENT PARTICIPATION</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-background rounded-xl p-4 border border-border/50">
-              <p className="text-xs text-muted-foreground font-semibold tracking-widest mb-2">SeeItCookIt CREDIT HOLDER</p>
+              <p className="text-xs text-muted-foreground font-semibold tracking-widest mb-2">SEEITCOOKIT CREDIT HOLDER</p>
               <StatusBadge active={true} label="ACTIVE" />
               <div className="mt-3 space-y-1.5">
                 <div className="flex justify-between text-xs">
