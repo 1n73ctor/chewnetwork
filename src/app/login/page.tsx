@@ -35,10 +35,21 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const reason = new URLSearchParams(window.location.search).get('reason');
+    const params = new URLSearchParams(window.location.search);
+    const reason = params.get('reason');
     if (reason === 'idle' || reason === 'max-session') setSignedOutReason(reason);
     // Set by the middleware or AuthContext when an admin deactivates the account.
     if (reason === BLOCKED_REASON) setSignedOutReason('deactivated');
+    // Drop ?reason= once it has been read. The notice is already held in
+    // component state, so it still shows; leaving the parameter in the URL
+    // meant a reload, a back-navigation or a bookmarked login link brought the
+    // message back long after the sign-out it described. ?next= is preserved -
+    // the form still needs somewhere to send them.
+    if (reason) {
+      params.delete('reason');
+      const qs = params.toString();
+      window.history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}`);
+    }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

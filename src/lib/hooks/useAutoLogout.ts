@@ -37,6 +37,21 @@ const writeStamp = (key: string, value: number): void => {
   }
 };
 
+/**
+ * Starts both clocks at "now". Called when a sign-in succeeds, because a
+ * session that began a second ago has not been idle for thirty minutes,
+ * whatever an earlier session happened to leave behind in localStorage.
+ *
+ * This is deliberately not done by the hook itself: the hook cannot tell a
+ * reload apart from a new session, and it must keep the stamps across a reload
+ * for the reasons in the note at the top of this file.
+ */
+export const startAutoLogoutSession = (): void => {
+  const now = Date.now();
+  writeStamp(SESSION_START_KEY, now);
+  writeStamp(LAST_ACTIVITY_KEY, now);
+};
+
 export const clearAutoLogoutStamps = (): void => {
   try {
     window.localStorage.removeItem(LAST_ACTIVITY_KEY);
@@ -72,6 +87,10 @@ export function useAutoLogout(enabled: boolean, onExpire: (reason: 'idle' | 'max
 
     let lastWrite = 0;
     const markActivity = () => {
+      // Expiry has fired and the sign-out is in flight. The page stays
+      // interactive until the redirect lands, so without this a click in that
+      // window would stamp activity onto a session that is already over.
+      if (firedRef.current) return;
       const stamp = Date.now();
       if (stamp - lastWrite < WRITE_THROTTLE_MS) return;
       lastWrite = stamp;
