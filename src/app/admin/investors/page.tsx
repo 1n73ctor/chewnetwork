@@ -28,6 +28,7 @@ export default function AdminInvestorsPage() {
   const [addForm, setAddForm] = useState({
     firstName: '', lastName: '', email: '', phone: '', password: '',
     round: 'Phase 1', originalInvestment: '', originalStakesPurchased: '',
+    targetedSubscribers: '', totalSubscribers: '',
     joinDate: new Date().toISOString().split('T')[0],
   });
 
@@ -52,7 +53,25 @@ export default function AdminInvestorsPage() {
       inv.email?.toLowerCase().includes(q) || inv.investorId?.toLowerCase().includes(q);
   });
 
+  // Admins type counts with commas. Number('12,480') is NaN, which both
+  // createInvestor and updateInvestor then skip, so the save would report
+  // success having changed nothing. Strip the separators first, and treat
+  // anything still unreadable as an error the admin can see rather than a
+  // value quietly thrown away. Blank means "leave it alone".
+  const readSubscriberCount = (raw: string): number | null | 'invalid' => {
+    const cleaned = raw.replace(/[,\s_]/g, '');
+    if (cleaned === '') return null;
+    const n = Number(cleaned);
+    if (!Number.isFinite(n) || n < 0) return 'invalid';
+    return Math.round(n);
+  };
+
   const handleAddInvestor = async () => {
+    const totalSubs = readSubscriberCount(addForm.totalSubscribers);
+    if (totalSubs === 'invalid') {
+      setErrorMsg('Total Subscribers must be a whole number, for example 12480. Leave it blank if you do not have the figure yet.');
+      return;
+    }
     setSaving(true);
     const investment = parseFloat(addForm.originalInvestment) || 0;
     // Credits are entered directly now, the way the partners sheet records
@@ -71,6 +90,9 @@ export default function AdminInvestorsPage() {
       originalStakesPurchased: stakes,
       currentStakesOwned: stakes,
       joinDate: addForm.joinDate,
+      targetedSubscribers: addForm.targetedSubscribers,
+      // Blank leaves the column at its default of 0.
+      ...(totalSubs === null ? {} : { totalSubscribers: totalSubs }),
     });
     if (inv) {
       await adminService.createAuditLog('Investor Created', inv.id, null, { investorId: inv.investorId, email: inv.email });
@@ -87,6 +109,7 @@ export default function AdminInvestorsPage() {
       setAddForm({
         firstName: '', lastName: '', email: '', phone: '', password: '',
         round: 'Phase 1', originalInvestment: '', originalStakesPurchased: '',
+        targetedSubscribers: '', totalSubscribers: '',
         joinDate: new Date().toISOString().split('T')[0],
       });
       setSuccessMsg(
@@ -127,6 +150,12 @@ export default function AdminInvestorsPage() {
 
   const handleSaveEdit = async () => {
     if (!selectedInvestor) return;
+    const totalSubs = readSubscriberCount(editForm.totalSubscribers);
+    if (totalSubs === 'invalid') {
+      setErrorMsg('Total Subscribers must be a whole number, for example 12480. Leave it blank to keep the figure already stored.');
+      return;
+    }
+    setErrorMsg('');
     setSaving(true);
     const ok = await adminService.updateInvestor(selectedInvestor.id, {
       firstName: editForm.firstName,
@@ -136,11 +165,8 @@ export default function AdminInvestorsPage() {
       round: editForm.round,
       notes: editForm.notes,
       targetedSubscribers: editForm.targetedSubscribers,
-      // Only sent when it is a number. A blank box leaves the stored count as
-      // it was; updateInvestor ignores anything it cannot read as a number.
-      ...(editForm.totalSubscribers.trim() === ''
-        ? {}
-        : { totalSubscribers: Number(editForm.totalSubscribers) }),
+      // A blank box leaves the stored count exactly as it was.
+      ...(totalSubs === null ? {} : { totalSubscribers: totalSubs }),
     });
     if (ok) {
       await adminService.createAuditLog('Investor Updated', selectedInvestor.id,
@@ -154,6 +180,10 @@ export default function AdminInvestorsPage() {
       setEditMode(false);
       setSuccessMsg('Investor updated successfully.');
       setTimeout(() => setSuccessMsg(''), 4000);
+    } else {
+      // Without this a rejected write left the form open and unchanged, which
+      // reads as the field simply not being editable.
+      setErrorMsg('Could not save the changes. Please check the values and try again.');
     }
     setSaving(false);
   };
@@ -251,6 +281,8 @@ export default function AdminInvestorsPage() {
                   { key: 'joinDate', label: 'Join Date', placeholder: '', type: 'date' },
                   { key: 'originalInvestment', label: 'Investment Amount ($)', placeholder: '500.00' },
                   { key: 'originalStakesPurchased', label: 'Credits', placeholder: '100000' },
+                  { key: 'targetedSubscribers', label: 'Targeted Subscribers', placeholder: 'e.g. 100, 75+ or 3-6+' },
+                  { key: 'totalSubscribers', label: 'Total Subscribers', placeholder: 'Whole number, e.g. 12480' },
                 ].map((field) => (
                   <div key={field.key}>
                     <label className="text-xs text-muted-foreground font-medium mb-1.5 block">{field.label}</label>

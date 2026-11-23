@@ -465,6 +465,14 @@ export const adminService = {
         current_stakes_owned: investorData.currentStakesOwned || 0,
         join_date: investorData.joinDate || new Date().toISOString().split('T')[0],
         account_status: 'active',
+        // Same guards updateInvestor uses: a blank target is stored as NULL
+        // rather than an empty string, so the portal has one thing to test
+        // for, and a count that will not read as a number falls back to 0
+        // instead of putting NaN into a bigint column.
+        targeted_subscribers: String(investorData.targetedSubscribers ?? '').trim() || null,
+        total_subscribers: Number.isFinite(Number(investorData.totalSubscribers))
+          ? Math.max(0, Math.round(Number(investorData.totalSubscribers)))
+          : 0,
       })
       .select()
       .single();
