@@ -34,7 +34,7 @@ export default function AdminInvestorsPage() {
 
   const [editForm, setEditForm] = useState({
     firstName: '', lastName: '', email: '', phone: '', round: '', notes: '',
-    targetedSubscribers: '', totalSubscribers: '',
+    targetedSubscribers: '', totalSubscribers: '', investedAmount: '',
   });
 
   useEffect(() => {
@@ -134,6 +134,12 @@ export default function AdminInvestorsPage() {
       // Blank rather than '0' for an unset count, so saving an untouched form
       // cannot write a zero over a figure someone meant to leave alone.
       totalSubscribers: inv.totalSubscribers ? String(inv.totalSubscribers) : '',
+      // Prefilled with the figure on screen, so an untouched form compares
+      // equal and writes nothing to the ledger.
+      investedAmount:
+        inv.originalInvestment === null || inv.originalInvestment === undefined
+          ? ''
+          : String(inv.originalInvestment),
     });
     setEditMode(true);
   };
@@ -155,6 +161,23 @@ export default function AdminInvestorsPage() {
       setErrorMsg('Total Subscribers must be a whole number, for example 12480. Leave it blank to keep the figure already stored.');
       return;
     }
+
+    // The invested amount is corrected through the ledger, not on the investor
+    // row, so it is resolved here and applied separately below. Unchanged or
+    // blank means the ledger is left completely alone.
+    const investedRaw = editForm.investedAmount.replace(/[$,\s_]/g, '');
+    let newInvestment: number | null = null;
+    if (investedRaw !== '') {
+      const parsed = Number(investedRaw);
+      if (!Number.isFinite(parsed) || parsed < 0) {
+        setErrorMsg('Investment Amount must be an amount in dollars, for example 2000.00.');
+        return;
+      }
+      const rounded = Math.round(parsed * 100) / 100;
+      const current = Math.round((selectedInvestor.originalInvestment || 0) * 100) / 100;
+      if (rounded !== current) newInvestment = rounded;
+    }
+
     setErrorMsg('');
     setSaving(true);
     const ok = await adminService.updateInvestor(selectedInvestor.id, {
@@ -168,6 +191,22 @@ export default function AdminInvestorsPage() {
       // A blank box leaves the stored count exactly as it was.
       ...(totalSubs === null ? {} : { totalSubscribers: totalSubs }),
     });
+    // Applied after the profile write and only when it actually changed, so a
+    // routine edit of a phone number never rewrites a ledger row.
+    if (ok && newInvestment !== null) {
+      const res = await adminService.updateInvestorInvestment(selectedInvestor.id, newInvestment);
+      if (!res.ok) {
+        setErrorMsg(`Profile saved, but the investment amount could not be updated: ${res.error}`);
+        setSaving(false);
+        return;
+      }
+      await adminService.createAuditLog(
+        'Investment Amount Updated', selectedInvestor.id,
+        { originalInvestment: selectedInvestor.originalInvestment },
+        { originalInvestment: newInvestment }
+      );
+    }
+
     if (ok) {
       await adminService.createAuditLog('Investor Updated', selectedInvestor.id,
         { firstName: selectedInvestor.firstName, lastName: selectedInvestor.lastName, email: selectedInvestor.email },
@@ -440,6 +479,7 @@ export default function AdminInvestorsPage() {
                       { key: 'email', label: 'Email' },
                       { key: 'phone', label: 'Phone' },
                       { key: 'round', label: 'Round' },
+                      { key: 'investedAmount', label: 'Investment Amount ($)', placeholder: 'e.g. 2000.00' },
                       { key: 'targetedSubscribers', label: 'Targeted Subscribers', placeholder: 'e.g. 100, 75+ or 3-6+' },
                       { key: 'totalSubscribers', label: 'Total Subscribers', placeholder: 'Whole number, e.g. 12480' },
                     ].map((field) => (
