@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { getClient } from '@/lib/supabase/client';
 import { investorService, type Investor } from '@/lib/services/investorService';
 import { isAdminUser } from '@/lib/authRedirect';
-import { useAutoLogout, clearAutoLogoutStamps } from '@/lib/hooks/useAutoLogout';
+import { useAutoLogout, clearAutoLogoutStamps, startAutoLogoutSession } from '@/lib/hooks/useAutoLogout';
 import { BLOCKED_MESSAGE, BLOCKED_REASON, MAINTENANCE_MESSAGE, isAccountActive } from '@/lib/accountStatus';
 
 interface AuthContextType {
@@ -250,6 +250,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error(BLOCKED_MESSAGE);
       }
     }
+
+    // Start the idle and session clocks from this moment. Without this, the
+    // stamps left behind by the previous session stayed in localStorage - the
+    // hook only writes them when they are absent, and it is not mounted while
+    // signed out, so nothing cleared them - and the first check after sign-in
+    // measured the new session against the old session's last activity. An
+    // investor returning the next day was signed straight back out with
+    // "signed out after 30 minutes of inactivity" and had to sign in twice.
+    startAutoLogoutSession();
 
     recordLoginEvent(data?.session?.access_token);
     return data;

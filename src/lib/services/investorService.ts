@@ -570,6 +570,90 @@ export const adminService = {
     return true;
   },
 
+  /**
+   * Corrects an investor's invested amount.
+   *
+   * original_investment and total_investment are not columns worth writing by
+   * hand: recalculate_ownership derives both from stake_transactions on every
+   * ledger change, so a figure typed onto the investor row survives only until
+   * the next transaction touches that investor. The correction therefore goes
+   * to the opening purchase row, which is what those columns are summed from,
+   * and the trigger republishes the totals itself.
+   */
+  async updateInvestorInvestment(
+    investorRowId: string,
+    amount: number
+  ): Promise<{ ok: boolean; error?: string }> {
+    if (!Number.isFinite(amount) || amount < 0) {
+      return { ok: false, error: 'Investment amount must be zero or more.' };
+    }
+    const gross = Math.round(amount * 100) / 100;
+    const supabase = createClient();
+
+    // The earliest purchase row is the opening position. Ordered the same way
+    // the ledger migrations pick it, so the two can never disagree about which
+    // row that is.
+    const { data: rows, error: findError } = await supabase
+      .from('stake_transactions')
+      .select('id, number_of_stakes')
+      .eq('investor_id', investorRowId)
+      .eq('transaction_type', 'purchase')
+      .order('transaction_date', { ascending: true })
+      .order('created_at', { ascending: true })
+      .order('id', { ascending: true })
+      .limit(1);
+    if (findError) return { ok: false, error: findError.message };
+
+    const opening = rows?.[0] as { id: string; number_of_stakes: number } | undefined;
+    const units = Number(opening?.number_of_stakes ?? 0);
+
+    if (opening) {
+      const { error } = await supabase
+        .from('stake_transactions')
+        .update({
+          gross_amount: gross,
+          // The price the row now represents. No division when there are no
+          // credits to divide by.
+          price_per_stake: units > 0 ? Math.round((gross / units) * 1e8) / 1e8 : 0,
+        })
+        .eq('id', opening.id);
+      if (error) return { ok: false, error: error.message };
+    } else {
+      // Nothing to correct. An opening row is created rather than writing the
+      // investor row, because with no purchase row the trigger pins
+      // total_investment to 0 and the correction would not survive.
+      const { data: investor } = await supabase
+        .from('investors')
+        .select('round, join_date')
+        .eq('id', investorRowId)
+        .maybeSingle();
+      const { error } = await supabase.from('stake_transactions').insert({
+        investor_id: investorRowId,
+        transaction_type: 'purchase',
+        number_of_stakes: 0,
+        price_per_stake: 0,
+        gross_amount: gross,
+        transaction_date: investor?.join_date || new Date().toISOString().split('T')[0],
+        round: investor?.round || 'Phase 1',
+        notes: 'Opening amount recorded by an administrator.',
+      });
+      if (error) return { ok: false, error: error.message };
+    }
+
+    // recalculate_ownership refreshes original_investment only when the
+    // purchase rows carry units, so a holding of 0 credits needs it set here -
+    // the same gap the 2026-11-20 restatement had to work around.
+    if (units === 0) {
+      const { error } = await supabase
+        .from('investors')
+        .update({ original_investment: gross, updated_at: new Date().toISOString() })
+        .eq('id', investorRowId);
+      if (error) return { ok: false, error: error.message };
+    }
+
+    return { ok: true };
+  },
+
   async createAuditLog(action: string, investorId?: string, oldValue?: any, newValue?: any): Promise<void> {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
