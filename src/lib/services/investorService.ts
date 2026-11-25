@@ -436,6 +436,29 @@ export const adminService = {
     }
   },
 
+  /**
+   * Sets an investor's password directly, creating and linking their login
+   * first if they have none. Routed through the server, which holds the
+   * service-role key needed to write another user's password.
+   */
+  async setInvestorPassword(
+    investorRowId: string,
+    password: string
+  ): Promise<{ ok: boolean; error?: string; mode?: string; emailConfirmed?: boolean }> {
+    try {
+      const res = await fetch('/api/admin/investors/password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ investorRowId, password }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) return { ok: false, error: body?.error || 'Could not set the password.' };
+      return { ok: true, mode: body?.mode, emailConfirmed: body?.emailConfirmed };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'Network error.' };
+    }
+  },
+
   /** Emails a password-reset link that lands on the investor's settings page. */
   async sendPasswordReset(email: string): Promise<{ ok: boolean; error?: string }> {
     const supabase = createClient();
