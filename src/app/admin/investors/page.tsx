@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { adminService, type Investor } from '@/lib/services/investorService';
 import { formatDate } from '@/lib/format';
 import { AdminLayout } from '../certificates/page';
-import { PlusIcon, MagnifyingGlassIcon, XMarkIcon, CheckIcon, PencilIcon, NoSymbolIcon, KeyIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, MagnifyingGlassIcon, XMarkIcon, CheckIcon, PencilIcon, NoSymbolIcon, KeyIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 
 export default function AdminInvestorsPage() {
   const { isAdmin, loading } = useAuth();
@@ -24,6 +24,14 @@ export default function AdminInvestorsPage() {
   const [confirmDeactivate, setConfirmDeactivate] = useState<Investor | null>(null);
 
   const [resetBusy, setResetBusy] = useState('');
+
+  // Set-password panel. Keyed by investor row id so it cannot stay open
+  // against a different investor after the selection changes.
+  const [pwFor, setPwFor] = useState<string | null>(null);
+  const [pwValue, setPwValue] = useState('');
+  const [pwConfirm, setPwConfirm] = useState('');
+  const [pwBusy, setPwBusy] = useState(false);
+  const [pwShow, setPwShow] = useState(false);
 
   const [addForm, setAddForm] = useState({
     firstName: '', lastName: '', email: '', phone: '', password: '',
@@ -152,6 +160,60 @@ export default function AdminInvestorsPage() {
     setSuccessMsg(res.ok ? `Password reset email sent to ${inv.email}.` : `Could not send reset: ${res.error}`);
     setResetBusy('');
     setTimeout(() => setSuccessMsg(''), 5000);
+  };
+
+  const closePasswordPanel = () => {
+    setPwFor(null); setPwValue(''); setPwConfirm(''); setPwShow(false);
+  };
+
+  const handleSetPassword = async () => {
+    if (!selectedInvestor) return;
+    if (pwValue.length < 8) {
+      setErrorMsg('Password must be at least 8 characters.');
+      return;
+    }
+    if (pwValue !== pwConfirm) {
+      setErrorMsg('The two passwords do not match.');
+      return;
+    }
+    setErrorMsg('');
+    setPwBusy(true);
+
+    const res = await adminService.setInvestorPassword(selectedInvestor.id, pwValue);
+    if (!res.ok) {
+      setErrorMsg(res.error || 'Could not set the password.');
+      setPwBusy(false);
+      return;
+    }
+
+    // The password itself is deliberately not recorded - only that it changed,
+    // for whom, and which of the three paths the server took.
+    await adminService.createAuditLog('Password Set By Admin', selectedInvestor.id, null, {
+      email: selectedInvestor.email,
+      mode: res.mode,
+    });
+
+    const updated = await adminService.getAllInvestors();
+    setInvestors(updated);
+    setSelectedInvestor(updated.find((i) => i.id === selectedInvestor.id) || null);
+
+    const what =
+      res.mode === 'created'
+        ? `Login created for ${selectedInvestor.email} and the password set. They can sign in now.`
+        : res.mode === 'relinked'
+          ? `An existing login for ${selectedInvestor.email} was found, linked to this investor, and its password set.`
+          : `Password updated for ${selectedInvestor.email}.`;
+    // No email goes out, so say so rather than let an admin assume one did.
+    setSuccessMsg(
+      what +
+      ' No email was sent - tell them the new password yourself.' +
+      (res.emailConfirmed === false
+        ? ' Warning: the address is still unconfirmed, so sign-in may be refused.'
+        : '')
+    );
+    closePasswordPanel();
+    setPwBusy(false);
+    setTimeout(() => setSuccessMsg(''), 10000);
   };
 
   const handleSaveEdit = async () => {
@@ -421,14 +483,34 @@ export default function AdminInvestorsPage() {
                         <PencilIcon className="w-3.5 h-3.5" />
                         Edit
                       </button>
+                      {/* Disabled without a linked login: resetPasswordForEmail
+                          reports success for an address with no account, so this
+                          button used to claim an email had been sent when none
+                          could be. Create Login is the action for that case. */}
                       <button
                         onClick={() => handleSendReset(selectedInvestor)}
-                        disabled={resetBusy === selectedInvestor.id || !selectedInvestor.email}
-                        title={selectedInvestor.userId ? 'Email a password reset link' : 'This investor has no login yet'}
+                        disabled={resetBusy === selectedInvestor.id || !selectedInvestor.email || !selectedInvestor.userId}
+                        title={selectedInvestor.userId
+                          ? 'Email a password reset link'
+                          : 'This investor has no login yet - use Create Login'}
                         className="flex items-center gap-1.5 text-xs bg-white/5 hover:bg-white/10 disabled:opacity-50 text-muted-foreground hover:text-white px-3 py-1.5 rounded-lg transition-all"
                       >
                         <KeyIcon className="w-3.5 h-3.5" />
                         {resetBusy === selectedInvestor.id ? 'Sending...' : 'Reset Password'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setPwFor(selectedInvestor.id);
+                          setPwValue(''); setPwConfirm(''); setPwShow(false);
+                          setErrorMsg('');
+                        }}
+                        title={selectedInvestor.userId
+                          ? 'Set a new password for this investor'
+                          : 'Create this investor a login and set its password'}
+                        className="flex items-center gap-1.5 text-xs bg-primary/10 hover:bg-primary/20 text-primary px-3 py-1.5 rounded-lg transition-all"
+                      >
+                        <LockClosedIcon className="w-3.5 h-3.5" />
+                        {selectedInvestor.userId ? 'Set Password' : 'Create Login'}
                       </button>
                       <button
                         onClick={() => setConfirmDeactivate(selectedInvestor)}
@@ -464,6 +546,75 @@ export default function AdminInvestorsPage() {
                       className={`flex-1 py-2 rounded-xl text-xs font-bold disabled:opacity-50 ${confirmDeactivate.accountStatus === 'active' ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-green-500 hover:bg-green-600 text-white'}`}
                     >
                       {saving ? 'Processing...' : (confirmDeactivate.accountStatus === 'active' ? 'Confirm Deactivate' : 'Confirm Activate')}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Set password / create login */}
+              {pwFor === selectedInvestor.id && !editMode && (
+                <div className="bg-primary/5 border border-primary/30 rounded-xl p-4 mb-4">
+                  <p className="text-white text-sm font-semibold mb-1">
+                    {selectedInvestor.userId
+                      ? 'Set a new portal password'
+                      : 'Create a login and set its password'}
+                  </p>
+                  <p className="text-muted-foreground text-xs mb-3">
+                    {selectedInvestor.userId
+                      ? `This replaces the password for ${selectedInvestor.email} straight away. No email is sent, so pass the new one on yourself.`
+                      : `${selectedInvestor.email} has no login yet. This creates one, confirms the address and sets the password, so they can sign in immediately.`}
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
+                    <div>
+                      <label className="text-xs text-muted-foreground font-medium mb-1.5 block">New Password</label>
+                      <input
+                        type={pwShow ? 'text' : 'password'}
+                        value={pwValue}
+                        onChange={(e) => setPwValue(e.target.value)}
+                        placeholder="At least 8 characters"
+                        autoComplete="new-password"
+                        className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-muted-foreground font-medium mb-1.5 block">Confirm Password</label>
+                      <input
+                        type={pwShow ? 'text' : 'password'}
+                        value={pwConfirm}
+                        onChange={(e) => setPwConfirm(e.target.value)}
+                        placeholder="Type it again"
+                        autoComplete="new-password"
+                        className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary transition-colors"
+                      />
+                    </div>
+                  </div>
+                  {pwValue.length > 0 && pwConfirm.length > 0 && pwValue !== pwConfirm && (
+                    <p className="text-red-400 text-xs mb-2">The two passwords do not match.</p>
+                  )}
+                  <label className="flex items-center gap-2 text-xs text-muted-foreground mb-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={pwShow}
+                      onChange={(e) => setPwShow(e.target.checked)}
+                      className="rounded border-border"
+                    />
+                    Show password
+                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={closePasswordPanel}
+                      className="flex-1 bg-background border border-border text-white py-2 rounded-xl text-xs font-medium"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSetPassword}
+                      disabled={pwBusy || pwValue.length < 8 || pwValue !== pwConfirm}
+                      className="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white py-2 rounded-xl text-xs font-bold"
+                    >
+                      {pwBusy
+                        ? 'Saving...'
+                        : selectedInvestor.userId ? 'Set Password' : 'Create Login & Set Password'}
                     </button>
                   </div>
                 </div>
